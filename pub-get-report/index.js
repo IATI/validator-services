@@ -19,46 +19,41 @@ module.exports = async (context, req) => {
 
         return;
     }
-    // try {
-    let result = null;
+    try {
+        let result = null;
 
-    if (id) {
-        result = await db.getReportForId(id);
-    } else if (hash) {
-        result = await db.getReportForHash(hash);
-    } else if (url) {
-        result = await db.getReportForUrl(url);
-    }
+        if (id) {
+            result = await db.getReportForId(id);
+        } else if (hash) {
+            result = await db.getReportForHash(hash);
+        } else if (url) {
+            result = await db.getReportForUrl(url);
+        }
 
-    if (result === null) {
-        const message = { client_error: 'The requested report does not exist.' };
+        if (result === null) {
+            const message = { client_error: 'The requested report does not exist.' };
+
+            context.res = {
+                status: 404,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(message),
+            };
+
+            return;
+        }
 
         context.res = {
-            status: 404,
+            status: 200,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(message),
+            body: JSON.stringify(result),
         };
 
         return;
-    }
-
-    context.res = {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(result),
-    };
-
-    
-    /* } catch (e) {
-        const message = {
-            server_error:
-                "Apologies - there's been an unexpected error on our side. Please contact support@iatistandard.org if you need help, quoting the full request you made.",
-        };
- 
+    } catch (e) {
         context.res = {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(message),
+            body: JSON.stringify(e),
         };
-    } */
+    }
 };

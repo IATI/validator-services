@@ -9,7 +9,17 @@
             "type": "node",
             "request": "attach",
             "port": 5858,
-            "preLaunchTask": "func: host start"
-        }
+            "preLaunchTask": "func: host start",
+            "env": {
+                "AZURE_STORAGE_CONNECTION_STRING": "DefaultEndpointsProtocol=https;AccountName=iatidev;AccountKey=QD2yXF3WOAC6d6zTDe0gycBIfaXf5ArKrRfiF/ArOiIAPeROQNgVbd0aDTQb5SsFcOSC/a4Q7sKBpFotKEQFxA==;EndpointSuffix=core.windows.net",
+                "AZURE_STORAGE_CONTAINER_SOURCE": "lydiate-localdev-source",
+                "DB_CONNECTION_STRING": "postgresql://dds:dds@localhost/dds",
+                "PGUSER": "dds",
+                "PGPASSWORD": "dds",
+                "PGHOST": "localhost",
+                "PGDATABASE": "dds2",
+                "PGPORT": "5432"
+            },
+        },
     ]
 }

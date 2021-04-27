@@ -1,9 +1,9 @@
 const db = require('../database/db');
 
 module.exports = async (context, req) => {
-    const {id} = req.query;
-    const {hash} = req.query;
-    const {url} = req.query;
+    const { id } = req.query;
+    const { hash } = req.query;
+    const { url } = req.query;
 
     if (!id && !url && !hash) {
         const message = {
@@ -60,7 +60,5 @@ module.exports = async (context, req) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(message),
         };
-
-        
     }
 };

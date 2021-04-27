@@ -5,8 +5,10 @@
             "type": "httpTrigger",
             "direction": "in",
             "name": "req",
-            "methods": ["get"],
-            "route": "pub/"
+            "methods": [
+                "get"
+            ],
+            "route": "pub/validation/existing"
         },
         {
             "type": "http",

@@ -48,11 +48,3 @@ jobs:
         with:
           app-name: ${{ env.STAGE }}-${{ env.NAME }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-
-      - name: 'Install newman'
-        run: |
-          npm i -g newman
-
-      - name: 'Run integration tests' # Update -e environment file with an environment that points to your deployed instance
-        run: |
-          newman run integration_tests/azure-function-node-microservice-template.postman_collection.json -e integration_tests/envs/UPDATE_ME.postman_environment.json

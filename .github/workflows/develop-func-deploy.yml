@@ -10,9 +10,14 @@ on:
 
 env:
   STAGE: dev # prefix to indicate environment stage
-  NAME: func-iati-servicename
+  NAME: func-iati-validator-services
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '14.x' # set this to the node version to use (supports 8.x, 10.x, 12.x)
+  PGUSER: ${{ secrets.PGUSER }}
+  PGPASSWORD: ${{ secrets.PGPASSWORD }}
+  PGHOST: ${{ secrets.PGHOST }}
+  PGDATABASE: ${{ secrets.PGDATABASE }}
+  PGPORT: ${{ secrets.PGPORT }}
 
 jobs:
   build-and-deploy:
@@ -43,6 +48,11 @@ jobs:
         with:
           app-name: ${{ env.STAGE }}-${{ env.NAME }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          PGUSER: ${{ env.PGUSER }}
+          PGPASSWORD: ${{ env.PGPASSWORD }}
+          PGHOST: ${{ env.PGHOST }}
+          PGDATABASE: ${{ env.PGDATABASE }}
+          PGPORT: ${{ env.PGPORT }}
 
       - name: 'Install newman'
         run: |

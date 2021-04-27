@@ -48,3 +48,36 @@ jobs:
         with:
           app-name: ${{ env.STAGE }}-${{ env.NAME }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+
+      - name: Set Env variables for connecting to Postgres and Redis instances
+        uses: Azure/appservice-settings@v1
+        with:
+          app-name: '${{env.STAGE}}-${{env.NAME}}'
+          app-settings-json: |
+            [
+                {
+                    "name": "PGDATABASE",
+                    "value": "${{ env.PGDATABASE }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "PGUSER",
+                    "value": "${{ env.PGUSER }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "PGPASSWORD",
+                    "value": "${{ env.PGPASSWORD }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "PGHOST",
+                    "value": "${{ env.PGHOST }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "PGPORT",
+                    "value": "${{ env.PGPORT }}",
+                    "slotSetting": false
+                }
+            ]

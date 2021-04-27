@@ -48,11 +48,6 @@ jobs:
         with:
           app-name: ${{ env.STAGE }}-${{ env.NAME }}
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          PGUSER: ${{ env.PGUSER }}
-          PGPASSWORD: ${{ env.PGPASSWORD }}
-          PGHOST: ${{ env.PGHOST }}
-          PGDATABASE: ${{ env.PGDATABASE }}
-          PGPORT: ${{ env.PGPORT }}
 
       - name: 'Install newman'
         run: |

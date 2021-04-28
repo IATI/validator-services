@@ -79,5 +79,10 @@ jobs:
                     "name": "PGPORT",
                     "value": "${{ env.PGPORT }}",
                     "slotSetting": false
+                },
+                {
+                  "name": "PGSSL",
+                  "value": "true",
+                  "slotSetting": false
                 }
             ]

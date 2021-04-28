@@ -1,5 +1,11 @@
 require('dotenv').config();
 
+let ssl = false;
+
+if (process.env.PGSSL) {
+    ssl = true;
+}
+
 module.exports = {
     APP_NAME: 'Validator Services',
     VERSION: process.env.npm_package_version,
@@ -12,6 +18,6 @@ module.exports = {
         password: process.env.PGPASSWORD,
         database: process.env.PGDATABASE,
         port: process.env.PGPORT,
-        ssl: process.env.PGSSL,
+        ssl,
     },
 };

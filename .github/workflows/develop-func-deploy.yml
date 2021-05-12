@@ -50,7 +50,7 @@ jobs:
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
 
       - name: Set Env variables for connecting to Postgres and Redis instances
-        uses: Azure/appservice-settings@v1
+        uses: Azure/appservice-settings@v1.1.1
         with:
           app-name: '${{env.STAGE}}-${{env.NAME}}'
           app-settings-json: |

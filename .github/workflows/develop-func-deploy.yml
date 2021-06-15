@@ -100,4 +100,4 @@ jobs:
           npm i newman
       - name: 'Run integration tests' # Update -e environment file with an environment that points to your deployed instance
         run: |
-          newman run integration-tests/validator-services-tests.postman_collection.json -e integration-tests/envs/validator-services-apim.postman_environment.json --env-var apiKey={{ env.API_KEY }}
+          newman run integration-tests/validator-services-tests.postman_collection.json -e integration-tests/envs/validator-services-apim.postman_environment.json --env-var apiKey=$API_KEY

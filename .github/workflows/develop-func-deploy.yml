@@ -18,6 +18,7 @@ env:
   PGHOST: ${{ secrets.PGHOST }}
   PGDATABASE: ${{ secrets.PGDATABASE }}
   PGPORT: ${{ secrets.PGPORT }}
+  API_KEY: ${{ secrets.APIM_API_KEY }}
 
 jobs:
   build-and-deploy:
@@ -86,3 +87,17 @@ jobs:
                   "slotSetting": false
                 }
             ]
+
+  integration-test:
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v2
+
+      - name: 'Install newman'
+        run: |
+          npm i newman
+      - name: 'Run integration tests' # Update -e environment file with an environment that points to your deployed instance
+        run: |
+          newman run integration-tests/validator-services-tests.postman_collection.json -e integration-tests/envs/validator-services-apim.postman_environment.json --env-var apiKey={{ env.API_KEY }}

@@ -1,0 +1,182 @@
+{
+	"info": {
+		"_postman_id": "d1142d7e-5b70-4aec-86c6-b75ab54a19a8",
+		"name": "validator-services-tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "pvt-get-publishers GET /pvt/publishers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Expect body to be an Array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array')",
+							"});",
+							"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'description', 'title', 'state', 'image_url', 'country_code', 'package_count', 'iati_id']);",
+							"});",
+							"pm.test(\"Set publisher id for tests\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.collectionVariables.set(\"publisher_id\", jsonData[0].org_id);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/pvt/publishers",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"pvt",
+						"publishers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "pvt-get-publisher-documents GET /pvt/publisher/{id}/documents",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Expect body to be an Array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array')",
+							"});",
+							"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'publisher', 'validation_created','valid']);",
+							"});",
+							"pm.test(\"Set document id for tests\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.collectionVariables.set(\"document_id\", jsonData[0].id);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/pvt/publisher/{{publisher_id}}/documents",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"pvt",
+						"publisher",
+						"{{publisher_id}}",
+						"documents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "pub-get-report GET /pub/validation/existing?id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Expect body to be an object\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('object')",
+							"});",
+							"pm.test(\"Expect object to have certain keys\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/pub/validation/existing?id={{document_id}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"pub",
+						"validation",
+						"existing"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{document_id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "{{apiKey}}",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "Ocp-Apim-Subscription-Key",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "publisher_id",
+			"value": "f402080b-72ee-4baf-a010-77f56a67ec71"
+		},
+		{
+			"key": "document_id",
+			"value": ""
+		}
+	]
+}

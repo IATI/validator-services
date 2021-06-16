@@ -1,13 +1,11 @@
 {
     "bindings": [
         {
-            "authLevel": "anonymous",
+            "authLevel": "function",
             "type": "httpTrigger",
             "direction": "in",
             "name": "req",
-            "methods": [
-                "get"
-            ],
+            "methods": ["get"],
             "route": "pub/validation/existing"
         },
         {

@@ -139,12 +139,12 @@
 		"apikey": [
 			{
 				"key": "value",
-				"value": "{{apiKey}}",
+				"value": "{{defaultKey}}",
 				"type": "string"
 			},
 			{
 				"key": "key",
-				"value": "Ocp-Apim-Subscription-Key",
+				"value": "x-functions-key",
 				"type": "string"
 			}
 		]

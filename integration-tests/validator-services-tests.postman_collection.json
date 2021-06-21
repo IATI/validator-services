@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d1142d7e-5b70-4aec-86c6-b75ab54a19a8",
+		"_postman_id": "f1652bf0-7e38-460c-ab17-cc2ff1f1576e",
 		"name": "validator-services-tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -128,6 +128,82 @@
 							"key": "id",
 							"value": "{{document_id}}"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "pvt-get-single-publisher GET /pvt/publishers/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Expect body to be an Array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array')",
+							"});",
+							"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'description', 'title', 'state', 'image_url', 'country_code', 'package_count', 'iati_id']);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/pvt/publishers/{{publisher_id}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"pvt",
+						"publishers",
+						"{{publisher_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "pvt-get-single-publisher GET /pvt/documents/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Expect body to be an Array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array')",
+							"});",
+							"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'publisher', 'validation_created','valid']);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/pvt/documents/{{document_id}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"pvt",
+						"documents",
+						"{{document_id}}"
 					]
 				}
 			},

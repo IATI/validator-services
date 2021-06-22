@@ -65,25 +65,20 @@ let myEnvVariable = config.ENV_VAR
 
 ## Endpoints /api
 
-### `GET /pvt?name=Name`
+### pub-get-report: `[GET] /pub/validation/existing`
 
--   Returns
+-   Query Params:
+    -   `id`
+    -   `hash`
+    -   `url`
 
-```
-Private API.
-Version <0.0.0>
-Hello, <Name>. This HTTP triggered function executed successfully.
-```
+### pvt-get-publisher-documents: `[GET] /pvt/publisher/{id}/documents`
 
-### `GET /pub?name=Name`
+### pvt-get-single-document: `[GET] /pvt/documents/{id}`
 
--   Returns
+### pvt-get-publishers: `[GET] /pvt/publishers`
 
-```
-Public API.
-Version <0.0.0>
-Hello, <Name>. This HTTP triggered function executed successfully.
-```
+### pvt-get-single-publisher: `[GET] /pvt/publishers/{id}`
 
 ## Creating a new route
 

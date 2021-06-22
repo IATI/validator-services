@@ -51,7 +51,7 @@ module.exports = {
 
     getPublishersWithDocuments: async () => {
         const sql = `
-            SELECT org_id, name, description, title, state, image_url, country_code, package_count, iati_id
+            SELECT org_id, name, title, state, country_code, package_count, iati_id
             FROM publisher
             WHERE package_count > 0
         `;

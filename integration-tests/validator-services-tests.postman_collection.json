@@ -24,6 +24,10 @@
 							"pm.test(\"Set publisher id for tests\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.collectionVariables.set(\"publisher_id\", jsonData[0].org_id);",
+							"})",
+							"pm.test(\"Set publisher name for tests\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.collectionVariables.set(\"publisher_name\", jsonData[1].name);",
 							"})"
 						],
 						"type": "text/javascript"
@@ -134,7 +138,7 @@
 			"response": []
 		},
 		{
-			"name": "pvt-get-single-publisher GET /pvt/publishers/{id}",
+			"name": "pvt-get-single-publisher GET /pvt/publishers/{id}?lookupKey=id",
 			"event": [
 				{
 					"listen": "test",
@@ -158,7 +162,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseURL}}/pvt/publishers/{{publisher_id}}",
+					"raw": "{{baseURL}}/pvt/publishers/{{publisher_id}}?lookupKey=id",
 					"host": [
 						"{{baseURL}}"
 					],
@@ -166,6 +170,56 @@
 						"pvt",
 						"publishers",
 						"{{publisher_id}}"
+					],
+					"query": [
+						{
+							"key": "lookupKey",
+							"value": "id"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "pvt-get-single-publisher GET /pvt/publishers/{name}?lookupKey=name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+							"pm.test(\"Expect body to be an Array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array')",
+							"});",
+							"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'description', 'title', 'state', 'image_url', 'country_code', 'package_count', 'iati_id']);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/pvt/publishers/{{publisher_name}}?lookupKey=name",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"pvt",
+						"publishers",
+						"{{publisher_name}}"
+					],
+					"query": [
+						{
+							"key": "lookupKey",
+							"value": "name"
+						}
 					]
 				}
 			},
@@ -252,6 +306,10 @@
 		},
 		{
 			"key": "document_id",
+			"value": ""
+		},
+		{
+			"key": "publisher_name",
 			"value": ""
 		}
 	]

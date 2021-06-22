@@ -47,7 +47,7 @@
 			"response": []
 		},
 		{
-			"name": "pvt-get-publisher-documents GET /pvt/publisher/{id}/documents",
+			"name": "pvt-get-publishers-documents GET /pvt/publishers/{id}/documents",
 			"event": [
 				{
 					"listen": "test",
@@ -75,13 +75,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseURL}}/pvt/publisher/{{publisher_id}}/documents",
+					"raw": "{{baseURL}}/pvt/publishers/{{publisher_id}}/documents",
 					"host": [
 						"{{baseURL}}"
 					],
 					"path": [
 						"pvt",
-						"publisher",
+						"publishers",
 						"{{publisher_id}}",
 						"documents"
 					]

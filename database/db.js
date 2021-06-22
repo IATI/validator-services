@@ -87,7 +87,7 @@ module.exports = {
         return module.exports.query(sql, [id]);
     },
 
-    getSinglePublisher: async (id) => {
+    getSinglePublisherById: async (id) => {
         const sql = `
         SELECT
             org_id,
@@ -103,6 +103,24 @@ module.exports = {
         WHERE org_id = $1
         `;
         return module.exports.query(sql, [id]);
+    },
+
+    getSinglePublisherByName: async (name) => {
+        const sql = `
+        SELECT
+            org_id,
+            name,
+            description,
+            title,
+            state,
+            image_url,
+            country_code,
+            package_count,
+            iati_id
+        FROM publisher
+        WHERE name = $1
+        `;
+        return module.exports.query(sql, [name]);
     },
 
     getSingleDocument: async (id) => {

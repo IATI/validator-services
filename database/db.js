@@ -51,7 +51,7 @@ module.exports = {
 
     getPublishersWithDocuments: async () => {
         const sql = `
-            SELECT org_id, name, description, title, state, image_url, country_code, package_count, iati_id
+            SELECT org_id, name, title, state, country_code, package_count, iati_id
             FROM publisher
             WHERE package_count > 0
         `;
@@ -83,6 +83,44 @@ module.exports = {
         LEFT JOIN validation AS val ON doc.validation = val.document_hash
         WHERE doc.publisher = $1
         ORDER BY url ASC
+        `;
+        return module.exports.query(sql, [id]);
+    },
+
+    getSinglePublisher: async (id) => {
+        const sql = `
+        SELECT
+            org_id,
+            name,
+            description,
+            title,
+            state,
+            image_url,
+            country_code,
+            package_count,
+            iati_id
+        FROM publisher
+        WHERE org_id = $1
+        `;
+        return module.exports.query(sql, [id]);
+    },
+
+    getSingleDocument: async (id) => {
+        const sql = `
+        SELECT
+            doc.id,
+            doc.hash,
+            doc.url,
+            doc.first_seen,
+            doc.downloaded,
+            doc.download_error,
+            doc.validation,
+            doc.publisher,
+            val.created as validation_created,
+            val.valid
+        FROM document as doc
+        LEFT JOIN validation AS val ON doc.validation = val.document_hash
+        WHERE doc.id = $1
         `;
         return module.exports.query(sql, [id]);
     },

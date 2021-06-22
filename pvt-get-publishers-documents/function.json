@@ -6,7 +6,7 @@
             "direction": "in",
             "name": "req",
             "methods": ["get"],
-            "route": "pvt/publisher/{id}/documents"
+            "route": "pvt/publishers/{id}/documents"
         },
         {
             "type": "http",

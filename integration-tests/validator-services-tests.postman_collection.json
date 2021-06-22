@@ -19,7 +19,7 @@
 							"});",
 							"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'description', 'title', 'state', 'image_url', 'country_code', 'package_count', 'iati_id']);",
+							"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'title', 'state', 'country_code', 'package_count', 'iati_id']);",
 							"});",
 							"pm.test(\"Set publisher id for tests\", function () {",
 							"    var jsonData = pm.response.json();",

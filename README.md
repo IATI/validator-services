@@ -65,20 +65,20 @@ let myEnvVariable = config.ENV_VAR
 
 ## Endpoints /api
 
+### pvt-get-publishers: `[GET] /pvt/publishers`
+
+### pvt-get-single-publisher: `[GET] /pvt/publishers/{id}`
+
+### pvt-get-publisher-documents: `[GET] /pvt/publishers/{id}/documents`
+
+### pvt-get-single-document: `[GET] /pvt/documents/{id}`
+
 ### pub-get-report: `[GET] /pub/validation/existing`
 
 -   Query Params:
     -   `id`
     -   `hash`
     -   `url`
-
-### pvt-get-publisher-documents: `[GET] /pvt/publisher/{id}/documents`
-
-### pvt-get-single-document: `[GET] /pvt/documents/{id}`
-
-### pvt-get-publishers: `[GET] /pvt/publishers`
-
-### pvt-get-single-publisher: `[GET] /pvt/publishers/{id}`
 
 ## Creating a new route
 

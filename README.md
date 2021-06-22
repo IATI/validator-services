@@ -67,7 +67,10 @@ let myEnvVariable = config.ENV_VAR
 
 ### pvt-get-publishers: `[GET] /pvt/publishers`
 
-### pvt-get-single-publisher: `[GET] /pvt/publishers/{id}`
+### pvt-get-single-publisher: `[GET] /pvt/publishers/{lookupValue}?lookupKey={lookupKey}`
+
+-   Query Params:
+    -   `lookupKey` - REQ - `id` or `name`
 
 ### pvt-get-publisher-documents: `[GET] /pvt/publishers/{id}/documents`
 

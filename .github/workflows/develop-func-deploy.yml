@@ -88,10 +88,10 @@ jobs:
                 }
             ]
 
- # integration-test:
+  # integration-test:
   #  needs: build-and-deploy
   #  runs-on: ubuntu-latest
-   # steps:
+  # steps:
   #    - name: 'Checkout GitHub Action'
   #      uses: actions/checkout@v2
 
@@ -100,4 +100,4 @@ jobs:
   #        npm i newman
   #    - name: 'Run integration tests' # Update -e environment file with an environment that points to your deployed instance
   #      run: |
-  #        newman run integration-tests/validator-services-tests.postman_collection.json -e integration-tests/envs/validator-services-apim.postman_environment.json --env-var defaultKey=$API_KEY
+  #        newman run integration-tests/validator-services-tests.postman_collection.json -e integration-tests/envs/validator-services-direct.postman_environment.json --env-var keyValue=$API_KEY

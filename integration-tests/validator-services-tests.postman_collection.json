@@ -64,7 +64,7 @@
 							"});",
 							"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'publisher', 'validation_created','valid']);",
+							"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'publisher', 'validation_created','valid', 'summary']);",
 							"});",
 							"pm.test(\"Set document id for tests\", function () {",
 							"    var jsonData = pm.response.json();",
@@ -239,7 +239,7 @@
 							"});",
 							"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'publisher', 'validation_created','valid']);",
+							"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'publisher', 'validation_created','valid', 'summary']);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -269,12 +269,12 @@
 		"apikey": [
 			{
 				"key": "value",
-				"value": "{{defaultKey}}",
+				"value": "{{keyValue}}",
 				"type": "string"
 			},
 			{
 				"key": "key",
-				"value": "x-functions-key",
+				"value": "{{keyName}}",
 				"type": "string"
 			}
 		]

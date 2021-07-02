@@ -78,7 +78,8 @@ module.exports = {
             doc.validation,
             doc.publisher,
             val.created as validation_created, 
-            val.valid
+            val.valid,
+            val.report -> 'summary' AS summary
         FROM document as doc
         LEFT JOIN validation AS val ON doc.validation = val.document_hash
         WHERE doc.publisher = $1
@@ -135,7 +136,8 @@ module.exports = {
             doc.validation,
             doc.publisher,
             val.created as validation_created,
-            val.valid
+            val.valid,
+            val.report -> 'summary' AS summary
         FROM document as doc
         LEFT JOIN validation AS val ON doc.validation = val.document_hash
         WHERE doc.id = $1

@@ -77,6 +77,7 @@ module.exports = {
             doc.download_error,
             doc.validation,
             doc.publisher,
+            doc.modified,
             val.created as validation_created, 
             val.valid,
             val.report -> 'summary' AS summary
@@ -135,6 +136,7 @@ module.exports = {
             doc.download_error,
             doc.validation,
             doc.publisher,
+            doc.modified,
             val.created as validation_created,
             val.valid,
             val.report -> 'summary' AS summary

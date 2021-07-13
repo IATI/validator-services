@@ -64,7 +64,7 @@
 							"});",
 							"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'publisher', 'validation_created','valid', 'summary']);",
+							"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'publisher', 'validation_created','valid', 'summary', 'modified']);",
 							"});",
 							"pm.test(\"Set document id for tests\", function () {",
 							"    var jsonData = pm.response.json();",
@@ -239,7 +239,7 @@
 							"});",
 							"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'publisher', 'validation_created','valid', 'summary']);",
+							"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'publisher', 'validation_created','valid', 'summary',  'modified']);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -264,21 +264,6 @@
 			"response": []
 		}
 	],
-	"auth": {
-		"type": "apikey",
-		"apikey": [
-			{
-				"key": "value",
-				"value": "{{keyValue}}",
-				"type": "string"
-			},
-			{
-				"key": "key",
-				"value": "{{keyName}}",
-				"type": "string"
-			}
-		]
-	},
 	"event": [
 		{
 			"listen": "prerequest",

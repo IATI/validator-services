@@ -168,4 +168,21 @@ module.exports = {
 
         return result;
     },
+
+    getAdhocValidationSession: async (sessionId) => {
+        const sql = `
+        SELECT 
+            hash, 
+            report, 
+            valid,
+            session_id,
+            id
+        FROM adhoc_validator as doc
+        WHERE session_id = $1
+        `;
+
+        const result = await module.exports.query(sql, [sessionId]);
+
+        return result;
+    },
 };

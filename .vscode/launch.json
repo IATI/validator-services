@@ -9,7 +9,7 @@
             "type": "node",
             "request": "attach",
             "port": 5858,
-            "preLaunchTask": "func: host start",
+            "preLaunchTask": "func: host start --javascript --cors http://localhost:4200",
             "env": {
                 "AZURE_STORAGE_CONNECTION_STRING": ,
                 "AZURE_STORAGE_CONTAINER_SOURCE": "lydiate-localdev-source",

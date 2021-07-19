@@ -16,7 +16,7 @@
         "pg-hstore": "^2.3.4"
     },
     "devDependencies": {
-        "@prettier/plugin-xml": "^1.0.1",
+        "@prettier/plugin-xml": "^1.0.2",
         "eslint": "^7.30.0",
         "eslint-config-airbnb-base": "^14.2.1",
         "eslint-config-prettier": "^8.3.0",

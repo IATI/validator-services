@@ -18,6 +18,7 @@ env:
   PGHOST: ${{ secrets.PROD_PGHOST }}
   PGDATABASE: ${{ secrets.PROD_PGDATABASE }}
   PGPORT: ${{ secrets.PROD_PGPORT }}
+  STORAGECONNECTOR:  ${{ secrets.PROD_STORAGECONNECTOR }}
   #API_KEY: ${{ secrets.PROD_DEFAULT_KEY }}
 
 jobs:
@@ -97,6 +98,11 @@ jobs:
                 {
                   "name": "PGSSL",
                   "value": "true",
+                  "slotSetting": false
+                },
+                {
+                  "name": "STORAGECONNECTOR",
+                  "value": "${{ env.STORAGECONNECTOR }}",
                   "slotSetting": false
                 }
             ]

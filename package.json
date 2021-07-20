@@ -12,6 +12,7 @@
     "dependencies": {
         "applicationinsights": "^2.1.4",
         "dotenv": "^10.0.0",
+        "parse-multipart": "^1.0.4",
         "pg": "^8.6.0",
         "pg-hstore": "^2.3.4"
     },

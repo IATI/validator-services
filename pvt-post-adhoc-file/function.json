@@ -1,17 +1,26 @@
 {
+    "disabled": false,
     "bindings": [
         {
-            "authLevel": "function",
             "type": "httpTrigger",
-            "direction": "in",
             "name": "req",
-            "methods": ["post"],
-            "route": "pvt/adhoc/file"
+            "direction": "in",
+            "dataType": "binary",
+            "methods": [
+                "post"
+            ]
         },
         {
             "type": "http",
             "direction": "out",
-            "name": "res"
+            "name": "response"
+        },
+        {
+            "name": "storage",
+            "type": "blob",
+            "path": "adhocsource/{hash}.xml",
+            "direction": "out",
+            "connection": "STORAGECONNECTOR"
         }
     ]
 }

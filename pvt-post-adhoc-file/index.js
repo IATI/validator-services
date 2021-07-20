@@ -1,21 +1,40 @@
+const multipart = require('parse-multipart');
 const db = require('../database/db');
 
-module.exports = async (context) => {
+function endWithBadResponse(context, message = 'Bad Request') {
+    context.log.error(message);
+    context.bindings.response = {
+        status: 400,
+        body: message,
+    };
+    context.done();
+}
+
+module.exports = (context, req) => {
     try {
-        const result = await db.getPublishersWithDocuments();
+        if (!req.body) {
+            return endWithBadResponse(context, `No IATI file attached`);
+        }
 
-        context.res = {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(result),
-        };
+        if (!req.query.hash) {
+            return endWithBadResponse(context, `No hash apparent`);
+        }
 
-        return;
-    } catch (e) {
-        context.res = {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(e),
-        };
+        if (!req.query.sessionId) {
+            return endWithBadResponse(context, `No sessionId apparent`);
+        }
+
+        const bodyBuffer = Buffer.from(req.body);
+
+        const boundary = multipart.getBoundary(req.headers['content-type']);
+        const parts = multipart.Parse(bodyBuffer, boundary);
+
+        context.bindings.storage = parts[0].data;
+        context.done();
+
+        return db.insertAdhocValidation(req.query.hash, req.query.sessionId);
+    } catch (err) {
+        context.log.error(err.message);
+        throw err;
     }
 };

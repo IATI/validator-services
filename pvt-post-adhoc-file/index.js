@@ -15,6 +15,10 @@ module.exports = (context, req) => {
             return endWithBadResponse(context, `No IATI file attached`);
         }
 
+        if (!req.query.filename) {
+            return endWithBadResponse(context, `No filename apparent`);
+        }
+
         if (!req.query.sessionId) {
             return endWithBadResponse(context, `No sessionId apparent`);
         }

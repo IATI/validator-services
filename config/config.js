@@ -13,6 +13,8 @@ module.exports = {
     APPINSIGHTS_INSTRUMENTATIONKEY: process.env.APPINSIGHTS_INSTRUMENTATIONKEY,
     NS_PER_SEC: 1e9,
     STORAGECONNECTOR: process.env.STORAGECONNECTOR,
+    VALIDATOR_API_URL: process.env.VALIDATOR_API_URL,
+    VALIDATOR_FUNC_KEY: process.env.VALIDATOR_FUNC_KEY,
     PGCONFIG: {
         host: process.env.PGHOST,
         user: process.env.PGUSER,

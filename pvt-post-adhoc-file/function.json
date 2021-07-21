@@ -18,7 +18,7 @@
         {
             "name": "storage",
             "type": "blob",
-            "path": "adhocsource/{hash}.xml",
+            "path": "adhocsource/{sessionId}-{rand-guid}.xml",
             "direction": "out",
             "connection": "STORAGECONNECTOR"
         }

@@ -14,9 +14,10 @@ module.exports = async (context) => {
                 },
             }
         );
-        const ids = context.bindingData.name.split('-');
+        const ids = context.bindingData.name.split('###');
         const sessionId = ids[0];
-        const guid = ids[1];
+        const filename = ids[1];
+        const guid = ids[2];
 
         let valid = null;
         const report = result.data;
@@ -27,7 +28,7 @@ module.exports = async (context) => {
             valid = true;
         }
 
-        await db.insertAdhocValidation(guid, sessionId, valid, report);
+        await db.insertAdhocValidation(guid, sessionId, filename, valid, report);
         context.done();
     } catch (err) {
         context.log.error(err.message);

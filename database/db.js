@@ -186,24 +186,20 @@ module.exports = {
         return result;
     },
 
-    insertAdhocValidation: async (hash, sessionId) => {
+    insertAdhocValidation: async (guid, sessionId, valid, report) => {
         const sql = `
-        INSERT INTO adhoc_validation (hash, session_id, created) VALUES ($1, $2, $3)
+        INSERT INTO adhoc_validation (guid, session_id, valid, report, created) VALUES ($1, $2, $3, $4, $5)
         `;
 
         const now = new Date();
 
-        const result = await module.exports.query(sql, [hash, sessionId, now.toISOString()]);
-
-        return result;
-    },
-
-    updateAdhocValidationWithReport: async (hash, report, valid) => {
-        const sql = `
-        UPDATE adhoc_validation SET report = $1, valid = $2 WHERE hash = $3
-        `;
-
-        const result = await module.exports.query(sql, [report, valid, hash]);
+        const result = await module.exports.query(sql, [
+            guid,
+            sessionId,
+            valid,
+            JSON.stringify(report),
+            now.toISOString(),
+        ]);
 
         return result;
     },

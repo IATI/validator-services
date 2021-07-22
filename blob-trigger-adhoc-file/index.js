@@ -28,9 +28,12 @@ module.exports = async (context) => {
             valid = true;
         }
 
-        await db.insertAdhocValidation(guid, sessionId, filename, valid, report);
+        const {created} = context.bindingData.properties;
+
+        await db.insertAdhocValidation(guid, sessionId, filename, valid, report, created);
         context.done();
     } catch (err) {
+        // TOMORROW catch Axios errors and handle them properly
         context.log.error(err.message);
         throw err;
     }

@@ -172,11 +172,13 @@ module.exports = {
     getAdhocValidationSession: async (sessionId) => {
         const sql = `
         SELECT 
-            hash, 
+            guid,
+            filename, 
             report, 
             valid,
             session_id,
-            id
+            created,
+            validated
         FROM adhoc_validation
         WHERE session_id = $1
         `;
@@ -186,9 +188,9 @@ module.exports = {
         return result;
     },
 
-    insertAdhocValidation: async (guid, sessionId, filename, valid, report) => {
+    insertAdhocValidation: async (guid, sessionId, filename, valid, report, created) => {
         const sql = `
-        INSERT INTO adhoc_validation (guid, session_id, filename, valid, report, created) VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO adhoc_validation (guid, session_id, filename, valid, report, created, validated) VALUES ($1, $2, $3, $4, $5, $6, $7)
         `;
 
         const now = new Date();
@@ -199,6 +201,7 @@ module.exports = {
             filename,
             valid,
             JSON.stringify(report),
+            created,
             now.toISOString(),
         ]);
 

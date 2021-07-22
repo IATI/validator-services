@@ -8,7 +8,8 @@
             "dataType": "binary",
             "methods": [
                 "post"
-            ]
+            ],
+            "route": "pvt/adhoc/upload"
         },
         {
             "type": "http",

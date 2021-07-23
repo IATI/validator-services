@@ -188,9 +188,17 @@ module.exports = {
         return result;
     },
 
-    insertAdhocValidation: async (guid, sessionId, filename, valid, report, created) => {
+    insertAdhocValidation: async (
+        guid,
+        sessionId,
+        filename,
+        valid,
+        report,
+        created,
+        errorStatus
+    ) => {
         const sql = `
-        INSERT INTO adhoc_validation (guid, session_id, filename, valid, report, created, validated) VALUES ($1, $2, $3, $4, $5, $6, $7)
+        INSERT INTO adhoc_validation (guid, session_id, filename, valid, report, created, validated, validation_api_error) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         `;
 
         const now = new Date();
@@ -203,6 +211,7 @@ module.exports = {
             JSON.stringify(report),
             created,
             now.toISOString(),
+            errorStatus,
         ]);
 
         return result;

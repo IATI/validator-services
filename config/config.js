@@ -18,6 +18,7 @@ module.exports = {
     REDIS_CACHE_SEC: process.env.REDIS_CACHE_SEC || 86400,
     REDIS_KEY: process.env.REDIS_KEY,
     REDIS_HOSTNAME: process.env.REDIS_HOSTNAME,
+    GITHUB_BASIC_TOKEN: process.env.GITHUB_BASIC_TOKEN,
     PGCONFIG: {
         host: process.env.PGHOST,
         user: process.env.PGUSER,

@@ -85,7 +85,7 @@ let myEnvVariable = config.ENV_VAR
 
 ## Creating a new route
 
-`func new --name <routename> --template "HTTP trigger" --authlevel "anonymous"`
+`func new --name <routename> --template "HTTP trigger" --authlevel "function"`
 
 ## AppInsights SDK
 

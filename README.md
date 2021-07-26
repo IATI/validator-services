@@ -78,6 +78,10 @@ let myEnvVariable = config.ENV_VAR
 
 ### pub-get-report: `[GET] /pub/validation/existing`
 
+### pvt-get-guidance-links: `[GET] /pvt/guidance-links/{version}`
+
+-   `version` - IATI version e.g. `2.03`
+
 -   Query Params:
     -   `id`
     -   `hash`

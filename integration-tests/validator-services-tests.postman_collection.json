@@ -6,264 +6,377 @@
 	},
 	"item": [
 		{
-			"name": "pvt-get-publishers GET /pvt/publishers",
-			"event": [
+			"name": "Publishers and Documents",
+			"item": [
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-							"pm.test(\"Expect body to be an Array\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.be.an('array')",
-							"});",
-							"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'title', 'state', 'country_code', 'package_count', 'iati_id']);",
-							"});",
-							"pm.test(\"Set publisher id for tests\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.collectionVariables.set(\"publisher_id\", jsonData[0].org_id);",
-							"})",
-							"pm.test(\"Set publisher name for tests\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.collectionVariables.set(\"publisher_name\", jsonData[1].name);",
-							"})"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{baseURL}}/pvt/publishers",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"pvt",
-						"publishers"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "pvt-get-publishers-documents GET /pvt/publishers/{id}/documents",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-							"pm.test(\"Expect body to be an Array\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.be.an('array')",
-							"});",
-							"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'publisher', 'validation_created','valid', 'summary', 'modified']);",
-							"});",
-							"pm.test(\"Set document id for tests\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.collectionVariables.set(\"document_id\", jsonData[0].id);",
-							"})"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{baseURL}}/pvt/publishers/{{publisher_id}}/documents",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"pvt",
-						"publishers",
-						"{{publisher_id}}",
-						"documents"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "pub-get-report GET /pub/validation/existing?id",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-							"pm.test(\"Expect body to be an object\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.be.an('object')",
-							"});",
-							"pm.test(\"Expect object to have certain keys\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{baseURL}}/pub/validation/existing?id={{document_id}}",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"pub",
-						"validation",
-						"existing"
-					],
-					"query": [
+					"name": "pvt-get-publishers GET /pvt/publishers",
+					"event": [
 						{
-							"key": "id",
-							"value": "{{document_id}}"
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Expect body to be an Array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array')",
+									"});",
+									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'title', 'state', 'country_code', 'package_count', 'iati_id']);",
+									"});",
+									"pm.test(\"Set publisher id for tests\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"publisher_id\", jsonData[0].org_id);",
+									"})",
+									"pm.test(\"Set publisher name for tests\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"publisher_name\", jsonData[1].name);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "pvt-get-single-publisher GET /pvt/publishers/{id}?lookupKey=id",
-			"event": [
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pvt/publishers",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"publishers"
+							]
+						}
+					},
+					"response": []
+				},
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-							"pm.test(\"Expect body to be an Array\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.be.an('array')",
-							"});",
-							"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'description', 'title', 'state', 'image_url', 'country_code', 'package_count', 'iati_id']);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{baseURL}}/pvt/publishers/{{publisher_id}}?lookupKey=id",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"pvt",
-						"publishers",
-						"{{publisher_id}}"
-					],
-					"query": [
+					"name": "pvt-get-publishers-documents GET /pvt/publishers/{id}/documents",
+					"event": [
 						{
-							"key": "lookupKey",
-							"value": "id"
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Expect body to be an Array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array')",
+									"});",
+									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'publisher', 'validation_created','valid', 'summary', 'modified']);",
+									"});",
+									"pm.test(\"Set document id for tests\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"document_id\", jsonData[0].id);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "pvt-get-single-publisher GET /pvt/publishers/{name}?lookupKey=name",
-			"event": [
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pvt/publishers/{{publisher_id}}/documents",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"publishers",
+								"{{publisher_id}}",
+								"documents"
+							]
+						}
+					},
+					"response": []
+				},
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-							"pm.test(\"Expect body to be an Array\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.be.an('array')",
-							"});",
-							"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'description', 'title', 'state', 'image_url', 'country_code', 'package_count', 'iati_id']);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{baseURL}}/pvt/publishers/{{publisher_name}}?lookupKey=name",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"pvt",
-						"publishers",
-						"{{publisher_name}}"
-					],
-					"query": [
+					"name": "pub-get-report GET /pub/validation/existing?id",
+					"event": [
 						{
-							"key": "lookupKey",
-							"value": "name"
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Expect body to be an object\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('object')",
+									"});",
+									"pm.test(\"Expect object to have certain keys\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
 						}
-					]
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pub/validation/existing?id={{document_id}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pub",
+								"validation",
+								"existing"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "{{document_id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pvt-get-single-publisher GET /pvt/publishers/{id}?lookupKey=id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Expect body to be an Array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array')",
+									"});",
+									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'description', 'title', 'state', 'image_url', 'country_code', 'package_count', 'iati_id']);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pvt/publishers/{{publisher_id}}?lookupKey=id",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"publishers",
+								"{{publisher_id}}"
+							],
+							"query": [
+								{
+									"key": "lookupKey",
+									"value": "id"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pvt-get-single-publisher GET /pvt/publishers/{name}?lookupKey=name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Expect body to be an Array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array')",
+									"});",
+									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'description', 'title', 'state', 'image_url', 'country_code', 'package_count', 'iati_id']);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pvt/publishers/{{publisher_name}}?lookupKey=name",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"publishers",
+								"{{publisher_name}}"
+							],
+							"query": [
+								{
+									"key": "lookupKey",
+									"value": "name"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pvt-get-single-document GET /pvt/documents/{id}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Expect body to be an Array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array')",
+									"});",
+									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'publisher', 'validation_created','valid', 'summary',  'modified']);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pvt/documents/{{document_id}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"documents",
+								"{{document_id}}"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "pvt-get-single-document GET /pvt/documents/{id}",
-			"event": [
+			"name": "Guidance Links",
+			"item": [
 				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-							"pm.test(\"Expect body to be an Array\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.be.an('array')",
-							"});",
-							"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'publisher', 'validation_created','valid', 'summary',  'modified']);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{baseURL}}/pvt/documents/{{document_id}}",
-					"host": [
-						"{{baseURL}}"
+					"name": "pvt-get-guidance-links - bad version",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {",
+									"    pm.response.to.have.status(422);",
+									"});",
+									"pm.test(\"Body contains error: true\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.error).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
 					],
-					"path": [
-						"pvt",
-						"documents",
-						"{{document_id}}"
-					]
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pvt/guidance-links/1.02",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"guidance-links",
+								"1.02"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pvt-get-guidance-links - good",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Body contains version: 2.03\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.version).to.eql(\"2.03\");",
+									"});",
+									"pm.test(\"commitSha is present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.commitSha).to.be.a('string').with.length.greaterThan(0);",
+									"});",
+									"pm.test(\"content object is present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.content).to.be.a('object');",
+									"});",
+									"pm.test(\"content object has a key 1.1.3\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(Object.keys(jsonData.content)).to.include('1.1.3');",
+									"});",
+									"pm.test(\"content object has sub-keys path and url\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(Object.keys(jsonData.content).reduce((acc, id) => [...acc].concat(Object.keys(jsonData.content[id])), [])).to.include.members(['path', 'url']);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pvt/guidance-links/2.03",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"guidance-links",
+								"2.03"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		}
 	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "{{keyValue}}",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "{{keyName}}",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",

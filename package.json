@@ -12,6 +12,7 @@
     "dependencies": {
         "applicationinsights": "^2.1.4",
         "dotenv": "^10.0.0",
+        "node-fetch": "^2.6.1",
         "pg": "^8.6.0",
         "pg-hstore": "^2.3.4"
     },

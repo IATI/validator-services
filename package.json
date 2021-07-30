@@ -14,17 +14,18 @@
         "axios": "^0.21.1",
         "dotenv": "^10.0.0",
         "parse-multipart": "^1.0.4",
-        "pg": "^8.6.0",
+        "node-fetch": "^2.6.1",
+        "pg": "^8.7.1",
         "pg-hstore": "^2.3.4"
     },
     "devDependencies": {
-        "@prettier/plugin-xml": "^0.13.1",
-        "eslint": "^7.30.0",
+        "@prettier/plugin-xml": "^1.0.2",
+        "eslint": "^7.31.0",
         "eslint-config-airbnb-base": "^14.2.1",
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-import": "^2.23.4",
         "husky": "^7.0.1",
-        "lint-staged": "^11.0.1",
+        "lint-staged": "^11.1.1",
         "prettier": "^2.3.2"
     },
     "lint-staged": {

@@ -31,6 +31,16 @@ module.exports = {
         return module.exports.getFirstRow(sql, [url]);
     },
 
+    getReportForTestfile: async (guid) => {
+        const sql = `
+            SELECT valid, report, filename, guid, session_id
+            FROM adhoc_validation
+            WHERE guid = $1
+        `;
+
+        return module.exports.getFirstRow(sql, [guid]);
+    },
+
     getReportForHash: async (hash) => {
         const sql = `
             SELECT document_hash as registry_hash, document_id as registry_id, document_url, valid, report
@@ -80,7 +90,7 @@ module.exports = {
             doc.modified,
             val.created as validation_created, 
             val.valid,
-            val.report -> 'summary' AS summary
+            val.report
         FROM document as doc
         LEFT JOIN validation AS val ON doc.validation = val.document_hash
         WHERE doc.publisher = $1
@@ -188,7 +198,17 @@ module.exports = {
         return result;
     },
 
-    insertAdhocValidation: async (
+    insertAdhocValidation: async (sessionId, filename) => {
+        const sql = `
+        INSERT INTO adhoc_validation (session_id, filename) VALUES ($1, $2)
+        `;
+
+        const result = await module.exports.query(sql, [sessionId, filename]);
+
+        return result;
+    },
+
+    updateAdhocValidation: async (
         guid,
         sessionId,
         filename,
@@ -198,20 +218,22 @@ module.exports = {
         errorStatus
     ) => {
         const sql = `
-        INSERT INTO adhoc_validation (guid, session_id, filename, valid, report, created, validated, validation_api_error) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       UPDATE adhoc_validation 
+       SET guid=$1, valid=$2, report=$3, created=$4, validated=$5, validation_api_error=$6
+       WHERE session_id=$7 AND filename=$8
         `;
 
         const now = new Date();
 
         const result = await module.exports.query(sql, [
             guid,
-            sessionId,
-            filename,
             valid,
             JSON.stringify(report),
             created,
             now.toISOString(),
             errorStatus,
+            sessionId,
+            filename,
         ]);
 
         return result;

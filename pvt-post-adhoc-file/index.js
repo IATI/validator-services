@@ -1,4 +1,5 @@
 const multipart = require('parse-multipart');
+const db = require('../database/db');
 
 function endWithBadResponse(context, message = 'Bad Request') {
     context.log.error(message);
@@ -9,7 +10,7 @@ function endWithBadResponse(context, message = 'Bad Request') {
     context.done();
 }
 
-module.exports = (context, req) => {
+module.exports = async (context, req) => {
     try {
         if (!req.body) {
             return endWithBadResponse(context, `No IATI file attached`);
@@ -29,6 +30,8 @@ module.exports = (context, req) => {
         const parts = multipart.Parse(bodyBuffer, boundary);
 
         context.bindings.storage = parts[0].data;
+
+        await db.insertAdhocValidation(req.query.sessionId, req.query.filename);
         return context.done();
     } catch (err) {
         context.log.error(err.message);

@@ -22,6 +22,12 @@ module.exports = async (context) => {
         }
 
         errorStatus = err.response.status;
+
+        if (errorStatus >= 500 || errorStatus === 404) {
+            context.log.error(err.message);
+            throw err;
+        }
+
         result = err.response;
     }
 
@@ -31,19 +37,21 @@ module.exports = async (context) => {
         const filename = ids[1];
         const guid = ids[2];
 
-        if (!errorStatus || (errorStatus >= 400 && errorStatus < 500)) {
-            report = result.data;
+        report = result.data;
 
+        if (Object.prototype.hasOwnProperty.call(report, 'summary')) {
             if (report.summary.critical > 0) {
                 valid = false;
             } else {
                 valid = true;
             }
+        } else {
+            report = null;
         }
 
         const { created } = context.bindingData.properties;
 
-        await db.insertAdhocValidation(
+        await db.updateAdhocValidation(
             guid,
             sessionId,
             filename,

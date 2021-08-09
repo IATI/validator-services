@@ -28,7 +28,14 @@ module.exports = async (context, req) => {
 
         const bodyBuffer = Buffer.from(req.body);
 
+        console.log('Got bodyBuffer');
+        console.log('Trying to get boundary from...');
+        console.log(req.headers['content-type']);
+
         const boundary = multipart.getBoundary(req.headers['content-type']);
+
+        console.log('Trying to parse bodyBuffer...');
+
         const parts = multipart.Parse(bodyBuffer, boundary);
 
         if (parts.length < 1) {

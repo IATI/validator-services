@@ -9,6 +9,7 @@ module.exports = async (context) => {
     let report = null;
 
     try {
+        console.log('Blob Trigger: Making Validator request');
         result = await axios.post(config.VALIDATOR_API_URL, context.bindings.myBlob.toString(), {
             headers: {
                 'Content-Type': 'application/json',
@@ -16,6 +17,7 @@ module.exports = async (context) => {
             },
         });
     } catch (err) {
+        console.log('Blob Trigger: Validator error');
         if (!err.response.status) {
             context.log.error(err.message);
             throw err;
@@ -39,6 +41,8 @@ module.exports = async (context) => {
 
         report = result.data;
 
+        console.log(report);
+
         if (Object.prototype.hasOwnProperty.call(report, 'summary')) {
             if (report.summary.critical > 0) {
                 valid = false;
@@ -50,6 +54,8 @@ module.exports = async (context) => {
         }
 
         const { created } = context.bindingData.properties;
+
+        console.log('Blob Trigger: Making DB update');
 
         await db.updateAdhocValidation(
             guid,

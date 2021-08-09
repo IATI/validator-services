@@ -18,7 +18,7 @@ env:
   PGHOST: ${{ secrets.PGHOST }}
   PGDATABASE: ${{ secrets.PGDATABASE }}
   PGPORT: ${{ secrets.PGPORT }}
-  STORAGECONNECTOR:  ${{ secrets.PROD_STORAGECONNECTOR }}
+  STORAGECONNECTOR:  ${{ secrets.STORAGECONNECTOR }}
   API_KEY: ${{ secrets.DEV_DEFAULT_KEY }}
 
 jobs:

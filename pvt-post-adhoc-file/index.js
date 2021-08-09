@@ -24,19 +24,11 @@ module.exports = async (context, req) => {
             return endWithBadResponse(context, `No sessionId apparent`);
         }
 
-        console.log(req.body);
+        const bodyBuffer = await Buffer.from(req.body);
 
-        const bodyBuffer = Buffer.from(req.body);
+        const boundary = await multipart.getBoundary(req.headers['content-type']);
 
-        console.log('Got bodyBuffer');
-        console.log('Trying to get boundary from...');
-        console.log(req.headers['content-type']);
-
-        const boundary = multipart.getBoundary(req.headers['content-type']);
-
-        console.log('Trying to parse bodyBuffer...');
-
-        const parts = multipart.Parse(bodyBuffer, boundary);
+        const parts = await multipart.Parse(bodyBuffer, boundary);
 
         if (parts.length < 1) {
             return endWithBadResponse(

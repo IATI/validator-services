@@ -3,6 +3,7 @@ const db = require('../database/db');
 const config = require('../config/config');
 
 module.exports = async (context) => {
+    console.log('Blob Trigger: Hit');
     let errorStatus = null;
     let result = null;
     let valid = null;

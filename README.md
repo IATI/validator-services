@@ -1,4 +1,4 @@
-# azure-function-node-microservice-template
+# Validator Services
 
 ## Prerequisities
 
@@ -127,7 +127,7 @@ Push the new tag and commit to gitHub
 
 ```bash
 git push origin main
-git push —-tags origin main
+git push —-tags
 ```
 
 Create a new Release in GitHub based on the latest tag. Publishing that release deploys the application.

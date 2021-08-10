@@ -31,6 +31,16 @@ module.exports = {
         return module.exports.getFirstRow(sql, [url]);
     },
 
+    getReportForTestfile: async (guid) => {
+        const sql = `
+            SELECT valid, report, filename, guid, session_id
+            FROM adhoc_validation
+            WHERE guid = $1
+        `;
+
+        return module.exports.getFirstRow(sql, [guid]);
+    },
+
     getReportForHash: async (hash) => {
         const sql = `
             SELECT document_hash as registry_hash, document_id as registry_id, document_url, valid, report
@@ -77,8 +87,10 @@ module.exports = {
             doc.download_error,
             doc.validation,
             doc.publisher,
+            doc.modified,
             val.created as validation_created, 
-            val.valid
+            val.valid,
+            val.report
         FROM document as doc
         LEFT JOIN validation AS val ON doc.validation = val.document_hash
         WHERE doc.publisher = $1
@@ -134,8 +146,10 @@ module.exports = {
             doc.download_error,
             doc.validation,
             doc.publisher,
+            doc.modified,
             val.created as validation_created,
-            val.valid
+            val.valid,
+            val.report -> 'summary' AS summary
         FROM document as doc
         LEFT JOIN validation AS val ON doc.validation = val.document_hash
         WHERE doc.id = $1
@@ -161,6 +175,66 @@ module.exports = {
         for (let i = 0; i < result.length; i += 1) {
             result[i].name = result[i].url.split('/').pop();
         }
+
+        return result;
+    },
+
+    getAdhocValidationSession: async (sessionId) => {
+        const sql = `
+        SELECT 
+            guid,
+            filename, 
+            report, 
+            valid,
+            session_id,
+            created,
+            validated
+        FROM adhoc_validation
+        WHERE session_id = $1
+        `;
+
+        const result = await module.exports.query(sql, [sessionId]);
+
+        return result;
+    },
+
+    insertAdhocValidation: async (sessionId, filename) => {
+        const sql = `
+        INSERT INTO adhoc_validation (session_id, filename) VALUES ($1, $2)
+        `;
+
+        const result = await module.exports.query(sql, [sessionId, filename]);
+
+        return result;
+    },
+
+    updateAdhocValidation: async (
+        guid,
+        sessionId,
+        filename,
+        valid,
+        report,
+        created,
+        errorStatus
+    ) => {
+        const sql = `
+       UPDATE adhoc_validation 
+       SET guid=$1, valid=$2, report=$3, created=$4, validated=$5, validation_api_error=$6
+       WHERE session_id=$7 AND filename=$8
+        `;
+
+        const now = new Date();
+
+        const result = await module.exports.query(sql, [
+            guid,
+            valid,
+            JSON.stringify(report),
+            created,
+            now.toISOString(),
+            errorStatus,
+            sessionId,
+            filename,
+        ]);
 
         return result;
     },

@@ -1,12 +1,12 @@
 {
     "bindings": [
         {
-            "authLevel": "anonymous",
-            "type": "httpTrigger",
+            "authLevel": "Function",
+            "type": "HttpTrigger",
             "direction": "in",
             "name": "req",
             "methods": ["get"],
-            "route": "pub/dsdocs"
+            "route": "pvt/guidance-links/{version}"
         },
         {
             "type": "http",

@@ -3,7 +3,7 @@
 ## Prerequisities
 
 -   nvm - [nvm](https://github.com/nvm-sh/nvm) - Node version manager
--   Node v12 LTS (lts/erbium)
+-   Node v14 LTS (lts/fermium)
     -   once you've installed nvm run `nvm use` which will look at `.nvmrc` for the node version, if it's not installed then it will prompt you to install it with `nvm install <version>`
 -   [Azure Functions Core Tools v3](https://github.com/Azure/azure-functions-core-tools)
 -   [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) version 2.4 or later.
@@ -78,6 +78,10 @@ let myEnvVariable = config.ENV_VAR
 
 ### pub-get-report: `[GET] /pub/validation/existing`
 
+### pvt-get-guidance-links: `[GET] /pvt/guidance-links/{version}`
+
+-   `version` - IATI version e.g. `2.03`
+
 -   Query Params:
     -   `id`
     -   `hash`
@@ -85,7 +89,7 @@ let myEnvVariable = config.ENV_VAR
 
 ## Creating a new route
 
-`func new --name <routename> --template "HTTP trigger" --authlevel "anonymous"`
+`func new --name <routename> --template "HTTP trigger" --authlevel "function"`
 
 ## AppInsights SDK
 
@@ -112,3 +116,20 @@ Import the `integrations-tests/azure-function-node-microservice-template.postman
 
 -   Update relevant items in `.github/workflows/develop-func-deploy.yml` (see comments inline)
 -   Create a [Service Principal](https://github.com/IATI/IATI-Internal-Wiki/blob/main/IATI-Unified-Infra/ServicePrincipals.md) and set the DEV_AZURE_CREDENTIALS GitHub Secret
+
+## Release / Version Management
+
+Increment the version on `main` branch using npm:
+
+`npm version major | minor | patch`
+
+Push the new tag and commit to gitHub
+
+```bash
+git push origin main
+git push —-tags origin main
+```
+
+Create a new Release in GitHub based on the latest tag. Publishing that release deploys the application.
+
+Once deployed successfully PR `main` back into `develop`.

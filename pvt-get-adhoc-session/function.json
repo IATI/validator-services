@@ -1,12 +1,14 @@
 {
     "bindings": [
         {
-            "authLevel": "anonymous",
+            "authLevel": "function",
             "type": "httpTrigger",
             "direction": "in",
             "name": "req",
-            "methods": ["get"],
-            "route": "pub/dsdocs"
+            "methods": [
+                "get"
+            ],
+            "route": "pvt/adhoc/session"
         },
         {
             "type": "http",

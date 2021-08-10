@@ -1,12 +1,9 @@
-name: Deploy_To_Dev_Function_On_Push
+name: Deploy_To_PROD_Function_On_Release
 
+# Runs when a Release is published from GitHub UI
 on:
-  push:
-    paths-ignore: # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
-      - '**/README.md' # don't run on README.md file updates anywhere in repo
-      - '**/dependabot.yml'
-    branches:
-      - main
+  release:
+    types: [published]
 
 env:
   STAGE: prod # prefix to indicate environment stage

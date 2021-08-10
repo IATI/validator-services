@@ -5,6 +5,8 @@ on:
     paths-ignore: # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
       - '**/README.md'
       - '**/dependabot.yml'
+      - '.github/workflows/develop-func-ci.yml'
+      - '.github/workflows/develop-func-deploy.yml'
     branches:
       - main
 

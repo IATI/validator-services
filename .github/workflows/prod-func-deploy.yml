@@ -18,7 +18,8 @@ env:
   PGHOST: ${{ secrets.PROD_PGHOST }}
   PGDATABASE: ${{ secrets.PROD_PGDATABASE }}
   PGPORT: ${{ secrets.PROD_PGPORT }}
-  STORAGECONNECTOR:  ${{ secrets.PROD_STORAGECONNECTOR }}
+  STORAGECONNECTOR: ${{ secrets.PROD_STORAGECONNECTOR }}
+  KV_NAME: ${{ secrets.PROD_KEY_VAULT_NAME }}
   #API_KEY: ${{ secrets.PROD_DEFAULT_KEY }}
 
 jobs:
@@ -40,20 +41,7 @@ jobs:
 
       - name: 'Resolve Project Dependencies Using Npm'
         shell: bash
-        run: |# integration-test:
-          #  needs: build-and-deploy
-          #  runs-on: ubuntu-latest
-           # steps:
-          #    - name: 'Checkout GitHub Action'
-          #      uses: actions/checkout@v2
-        
-          #    - name: 'Install newman'
-          #      run: |
-          #        npm i newman
-          #    - name: 'Run integration tests' # Update -e environment file with an environment that points to your deployed instance
-          #      run: |
-          #        newman run integration-tests/validator-services-tests.postman_collection.json -e integration-tests/envs/validator-services-apim.postman_environment.json --env-var defaultKey=$API_KEY
-        
+        run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           npm install
           popd
@@ -104,13 +92,23 @@ jobs:
                   "name": "STORAGECONNECTOR",
                   "value": "${{ env.STORAGECONNECTOR }}",
                   "slotSetting": false
+                },
+                {
+                    "name": "AzureWebJobsSecretStorageType",
+                    "value": "keyvault",
+                    "slotSetting": false
+                },
+                {
+                    "name": "AzureWebJobsSecretStorageKeyVaultName",
+                    "value": "${{ env.KV_NAME }}",
+                    "slotSetting": false
                 }
             ]
 
   # integration-test:
   #  needs: build-and-deploy
   #  runs-on: ubuntu-latest
-   # steps:
+  # steps:
   #    - name: 'Checkout GitHub Action'
   #      uses: actions/checkout@v2
 

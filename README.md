@@ -116,3 +116,20 @@ Import the `integrations-tests/azure-function-node-microservice-template.postman
 
 -   Update relevant items in `.github/workflows/develop-func-deploy.yml` (see comments inline)
 -   Create a [Service Principal](https://github.com/IATI/IATI-Internal-Wiki/blob/main/IATI-Unified-Infra/ServicePrincipals.md) and set the DEV_AZURE_CREDENTIALS GitHub Secret
+
+## Release / Version Management
+
+Increment the version on `main` branch using npm:
+
+`npm version major | minor | patch`
+
+Push the new tag and commit to gitHub
+
+```bash
+git push origin main
+git push —-tags origin main
+```
+
+Create a new Release in GitHub based on the latest tag. Publishing that release deploys the application.
+
+Once deployed successfully PR `main` back into `develop`.

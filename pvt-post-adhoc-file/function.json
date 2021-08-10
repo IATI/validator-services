@@ -1,0 +1,27 @@
+{
+    "disabled": false,
+    "bindings": [
+        {
+            "type": "httpTrigger",
+            "name": "req",
+            "direction": "in",
+            "dataType": "binary",
+            "methods": [
+                "post"
+            ],
+            "route": "pvt/adhoc/upload"
+        },
+        {
+            "type": "http",
+            "direction": "out",
+            "name": "response"
+        },
+        {
+            "name": "storage",
+            "type": "blob",
+            "path": "%ADHOC_CONTAINER%/{sessionId}###{filename}###{rand-guid}",
+            "direction": "out",
+            "connection": "STORAGECONNECTOR"
+        }
+    ]
+}

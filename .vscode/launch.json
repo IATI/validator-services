@@ -8,18 +8,8 @@
             "name": "Attach to Node Functions",
             "type": "node",
             "request": "attach",
-            "port": 5858,
-            "preLaunchTask": "func: host start",
-            "env": {
-                "AZURE_STORAGE_CONNECTION_STRING": ,
-                "AZURE_STORAGE_CONTAINER_SOURCE": "lydiate-localdev-source",
-                "DB_CONNECTION_STRING": "postgresql://dds:dds@localhost/dds",
-                "PGUSER": "dds",
-                "PGPASSWORD": "dds",
-                "PGHOST": "localhost",
-                "PGDATABASE": "dds2",
-                "PGPORT": "5432"
-            },
-        },
+            "port": 9229,
+            "preLaunchTask": "func: host start"
+        }
     ]
 }

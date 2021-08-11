@@ -5,6 +5,8 @@ on:
     paths-ignore: # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
       - '**/README.md' # don't run on README.md file updates anywhere in repo
       - '**/dependabot.yml'
+      - '.github/workflows/prod-func-ci.yml'
+      - '.github/workflows/prod-func-deploy.yml'
     branches:
       - develop
 
@@ -18,11 +20,12 @@ env:
   PGHOST: ${{ secrets.PGHOST }}
   PGDATABASE: ${{ secrets.PGDATABASE }}
   PGPORT: ${{ secrets.PGPORT }}
-  STORAGECONNECTOR:  ${{ secrets.STORAGECONNECTOR }}
-  ADHOC_CONTAINER:  ${{ secrets.ADHOC_CONTAINER }}
-  VALIDATOR_API_URL:  ${{ secrets.VALIDATOR_API_URL }}
-  VALIDATOR_FUNC_KEY:  ${{ secrets.VALIDATOR_FUNC_KEY }}
+  STORAGECONNECTOR: ${{ secrets.STORAGECONNECTOR }}
+  ADHOC_CONTAINER: ${{ secrets.ADHOC_CONTAINER }}
+  VALIDATOR_API_URL: ${{ secrets.VALIDATOR_API_URL }}
+  VALIDATOR_FUNC_KEY: ${{ secrets.VALIDATOR_FUNC_KEY }}
   API_KEY: ${{ secrets.DEV_DEFAULT_KEY }}
+  KV_NAME: ${{ secrets.DEV_KEY_VAULT_NAME }}
 
 jobs:
   build-and-deploy:
@@ -109,6 +112,16 @@ jobs:
                   "name": "VALIDATOR_FUNC_KEY",
                   "value": "${{ env.VALIDATOR_FUNC_KEY }}",
                   "slotSetting": false
+                },
+                { 
+                    "name": "AzureWebJobsSecretStorageType",
+                    "value": "keyvault",
+                    "slotSetting": false
+                },
+                {
+                    "name": "AzureWebJobsSecretStorageKeyVaultName",
+                    "value": "${{ env.KV_NAME }}",
+                    "slotSetting": false
                 }
             ]
 

@@ -1,6 +1,6 @@
 {
     "name": "azure-function-node-microservice-template",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "description": "",
     "scripts": {
         "start": "func start --javascript",
@@ -10,7 +10,7 @@
     },
     "author": "IATI",
     "dependencies": {
-        "applicationinsights": "^2.1.4",
+        "applicationinsights": "^2.1.5",
         "axios": "^0.21.1",
         "dotenv": "^10.0.0",
         "node-fetch": "^2.6.1",

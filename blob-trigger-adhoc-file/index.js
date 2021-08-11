@@ -3,7 +3,6 @@ const db = require('../database/db');
 const config = require('../config/config');
 
 module.exports = async (context) => {
-    console.log('Blob Trigger: Hit');
     let errorStatus = null;
     let result = null;
     let valid = null;
@@ -18,7 +17,6 @@ module.exports = async (context) => {
             },
         });
     } catch (err) {
-        console.log('Blob Trigger: Validator error');
         if (!err.response.status) {
             context.log.error(err.message);
             throw err;
@@ -41,8 +39,6 @@ module.exports = async (context) => {
         const guid = ids[2];
 
         report = result.data;
-
-        console.log(report);
 
         if (Object.prototype.hasOwnProperty.call(report, 'summary')) {
             if (report.summary.critical > 0) {

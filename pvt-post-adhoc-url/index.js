@@ -24,7 +24,7 @@ module.exports = async (context, req) => {
 
         context.bindings.storage = await result.text();
 
-        await db.insertAdhocValidation(req.query.sessionId, req.query.filename);
+        await db.insertAdhocValidation(req.query.sessionId, req.query.url);
         return context.done();
     } catch (err) {
         context.log.error(err.message);

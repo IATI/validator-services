@@ -1,4 +1,4 @@
-const axios = require('axios');
+const fetch = require('node-fetch');
 const db = require('../database/db');
 const config = require('../config/config');
 
@@ -10,11 +10,14 @@ module.exports = async (context) => {
 
     try {
         console.log('Blob Trigger: Making Validator request');
-        result = await axios.post(config.VALIDATOR_API_URL, context.bindings.myBlob.toString(), {
+
+        result = await fetch(config.VALIDATOR_API_URL, {
             headers: {
                 'Content-Type': 'application/json',
                 'x-functions-key': config.VALIDATOR_FUNC_KEY,
             },
+            body: context.bindings.myBlob.toString(),
+            method: 'post',
         });
     } catch (err) {
         if (!err.response.status) {
@@ -38,7 +41,7 @@ module.exports = async (context) => {
         const filename = ids[1];
         const guid = ids[2];
 
-        report = result.data;
+        report = await result.json();
 
         if (Object.prototype.hasOwnProperty.call(report, 'summary')) {
             if (report.summary.critical > 0) {

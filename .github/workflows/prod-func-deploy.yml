@@ -30,6 +30,7 @@ jobs:
         uses: actions/setup-node@v2.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
 
       - name: 'Login via Azure CLI'
         uses: azure/login@v1
@@ -39,6 +40,7 @@ jobs:
       - name: 'Resolve Project Dependencies Using Npm'
         shell: bash
         run: |
+          npm i -g npm
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           npm install
           popd

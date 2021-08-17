@@ -191,6 +191,7 @@ module.exports = {
             validated
         FROM adhoc_validation
         WHERE session_id = $1
+        ORDER BY created desc
         `;
 
         const result = await module.exports.query(sql, [sessionId]);

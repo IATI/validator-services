@@ -65,6 +65,8 @@ let myEnvVariable = config.ENV_VAR
 
 ## Endpoints /api
 
+### pub-get-version: `[GET] /pub/version`
+
 ### pvt-get-publishers: `[GET] /pvt/publishers`
 
 ### pvt-get-single-publisher: `[GET] /pvt/publishers/{lookupValue}?lookupKey={lookupKey}`

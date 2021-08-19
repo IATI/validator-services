@@ -80,6 +80,22 @@ let myEnvVariable = config.ENV_VAR
 
 ### pub-get-report: `[GET] /pub/validation/existing`
 
+### pvt-patch-validation-regenerate `[PATCH] /pvt/validation/regenerate`
+
+-   Body - JSON Object with a key of ids equal to an array of document IDs to flag for regeneration of its validation report
+
+```json
+{ "ids": ["id1", "id2"] }
+```
+
+-   Documents flagged as needing a validation report regeneration are moved to the top of the validation queue
+
+### pvt-patch-validation-regenerate-all `[PATCH] /pvt/validation/regenerate/all`
+
+-   Body - none
+
+-   Flags ALL documents (that already have an associated validation report), for regeneration of a validation report
+
 ### pvt-get-guidance-links: `[GET] /pvt/guidance-links/{version}`
 
 -   `version` - IATI version e.g. `2.03`

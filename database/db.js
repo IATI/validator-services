@@ -86,6 +86,7 @@ module.exports = {
             doc.downloaded,
             doc.download_error,
             doc.validation,
+            doc.regenerate_validation_report,
             doc.publisher,
             doc.modified,
             val.created as validation_created, 
@@ -145,6 +146,7 @@ module.exports = {
             doc.downloaded,
             doc.download_error,
             doc.validation,
+            doc.regenerate_validation_report,
             doc.publisher,
             doc.modified,
             val.created as validation_created,
@@ -236,6 +238,33 @@ module.exports = {
             sessionId,
             filename,
         ]);
+
+        return result;
+    },
+
+    updateRegenerateValidationForIds: async (ids) => {
+        const sql = `
+        UPDATE document
+        SET 
+            regenerate_validation_report = 't'
+        WHERE
+            id = ANY($1);
+        `;
+
+        const result = await module.exports.query(sql, [ids]);
+
+        return result;
+    },
+
+    updateRegenerateValidationForAll: async () => {
+        const sql = `
+        UPDATE document
+        SET 
+            regenerate_validation_report = 't'
+        WHERE validation is not Null
+        `;
+
+        const result = await module.exports.query(sql);
 
         return result;
     },

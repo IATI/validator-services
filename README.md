@@ -80,6 +80,8 @@ let myEnvVariable = config.ENV_VAR
 
 ### pub-get-report: `[GET] /pub/validation/existing`
 
+-   Response - JSON Schema Available `docs/validationReport.schema.json`
+
 ### pvt-patch-validation-regenerate `[PATCH] /pvt/validation/regenerate`
 
 -   Body - JSON Object with a key of ids equal to an array of document IDs to flag for regeneration of its validation report

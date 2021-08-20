@@ -7,7 +7,7 @@ on:
       - '**/dependabot.yml'
       - '.github/workflows/prod-func-ci.yml'
       - '.github/workflows/prod-func-deploy.yml'
-      - 'docs/'
+      - 'docs/*'
     branches:
       - develop
 

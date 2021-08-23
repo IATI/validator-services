@@ -1,4 +1,4 @@
-# azure-function-node-microservice-template
+# Validator Services
 
 ## Prerequisities
 
@@ -65,6 +65,8 @@ let myEnvVariable = config.ENV_VAR
 
 ## Endpoints /api
 
+### pub-get-version: `[GET] /pub/version`
+
 ### pvt-get-publishers: `[GET] /pvt/publishers`
 
 ### pvt-get-single-publisher: `[GET] /pvt/publishers/{lookupValue}?lookupKey={lookupKey}`
@@ -77,6 +79,24 @@ let myEnvVariable = config.ENV_VAR
 ### pvt-get-single-document: `[GET] /pvt/documents/{id}`
 
 ### pub-get-report: `[GET] /pub/validation/existing`
+
+-   Response - JSON Schema Available `docs/validationReport.schema.json`
+
+### pvt-patch-validation-regenerate `[PATCH] /pvt/validation/regenerate`
+
+-   Body - JSON Object with a key of ids equal to an array of document IDs to flag for regeneration of its validation report
+
+```json
+{ "ids": ["id1", "id2"] }
+```
+
+-   Documents flagged as needing a validation report regeneration are moved to the top of the validation queue
+
+### pvt-patch-validation-regenerate-all `[PATCH] /pvt/validation/regenerate/all`
+
+-   Body - none
+
+-   Flags ALL documents (that already have an associated validation report), for regeneration of a validation report
 
 ### pvt-get-guidance-links: `[GET] /pvt/guidance-links/{version}`
 
@@ -127,7 +147,7 @@ Push the new tag and commit to gitHub
 
 ```bash
 git push origin main
-git push —-tags origin main
+git push —-tags
 ```
 
 Create a new Release in GitHub based on the latest tag. Publishing that release deploys the application.

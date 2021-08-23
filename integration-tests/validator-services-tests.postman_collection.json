@@ -67,11 +67,11 @@
 									"});",
 									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'publisher', 'validation_created','valid', 'summary', 'modified']);",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified']);",
 									"});",
 									"pm.test(\"Set document id for tests\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.collectionVariables.set(\"document_id\", jsonData[0].id);",
+									"    pm.collectionVariables.set(\"document_id\", jsonData.filter(doc => doc.validation !== null)[0].id);",
 									"})"
 								],
 								"type": "text/javascript"
@@ -82,14 +82,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/pvt/publishers/{{publisher_id}}/documents",
+							"raw": "{{baseURL}}/pvt/publishers/0b88bce7-7062-47be-8704-43137c441c2c/documents",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"pvt",
 								"publishers",
-								"{{publisher_id}}",
+								"0b88bce7-7062-47be-8704-43137c441c2c",
 								"documents"
 							]
 						}
@@ -209,14 +209,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/pvt/publishers/{{publisher_name}}?lookupKey=name",
+							"raw": "{{baseURL}}/pvt/publishers/afdb?lookupKey=name",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"pvt",
 								"publishers",
-								"{{publisher_name}}"
+								"afdb"
 							],
 							"query": [
 								{
@@ -242,7 +242,7 @@
 									"});",
 									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'publisher', 'validation_created','valid', 'summary',  'modified']);",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified']);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -261,6 +261,78 @@
 								"pvt",
 								"documents",
 								"{{document_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pvt-validation-regenerate PATCH /pvt/validation/regenerate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"ids\": [\"{{document_id}}\"]}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pvt/validation/regenerate",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"validation",
+								"regenerate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pvt-validation-regenerate-all PATCH /pvt/validation/regenerate/all",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pvt/validation/regenerate/all",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"validation",
+								"regenerate",
+								"all"
 							]
 						}
 					},
@@ -360,6 +432,40 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "pub-get-version GET /pub/version",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.be.a('string').with.length.greaterThan(4);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/pub/version",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"pub",
+						"version"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"auth": {

@@ -1,6 +1,6 @@
 {
     "name": "azure-function-node-microservice-template",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "",
     "scripts": {
         "start": "func start --javascript",

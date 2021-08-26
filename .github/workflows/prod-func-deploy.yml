@@ -16,8 +16,11 @@ env:
   PGDATABASE: ${{ secrets.PROD_PGDATABASE }}
   PGPORT: ${{ secrets.PROD_PGPORT }}
   STORAGECONNECTOR: ${{ secrets.PROD_STORAGECONNECTOR }}
+  ADHOC_CONTAINER: ${{ secrets.PROD_ADHOC_CONTAINER }}
+  VALIDATOR_API_URL: ${{ secrets.PROD_VALIDATOR_API_URL }}
+  VALIDATOR_FUNC_KEY: ${{ secrets.PROD_VALIDATOR_FUNC_KEY }}
+  API_KEY: ${{ secrets.PROD_DEFAULT_KEY }}
   KV_NAME: ${{ secrets.PROD_KEY_VAULT_NAME }}
-  #API_KEY: ${{ secrets.PROD_DEFAULT_KEY }}
 
 jobs:
   build-and-deploy:
@@ -90,6 +93,21 @@ jobs:
                 {
                   "name": "STORAGECONNECTOR",
                   "value": "${{ env.STORAGECONNECTOR }}",
+                  "slotSetting": false
+                },
+                {
+                  "name": "ADHOC_CONTAINER",
+                  "value": "${{ env.ADHOC_CONTAINER }}",
+                  "slotSetting": false
+                },
+                {
+                  "name": "VALIDATOR_API_URL",
+                  "value": "${{ env.VALIDATOR_API_URL }}",
+                  "slotSetting": false
+                },
+                {
+                  "name": "VALIDATOR_FUNC_KEY",
+                  "value": "${{ env.VALIDATOR_FUNC_KEY }}",
                   "slotSetting": false
                 },
                 {

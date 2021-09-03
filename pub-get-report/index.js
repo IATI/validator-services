@@ -45,6 +45,21 @@ module.exports = async (context, req) => {
             return;
         }
 
+        if (result.report === null) {
+            const message = {
+                client_error:
+                    'The requested report has not yet been generated - please try again later.',
+            };
+
+            context.res = {
+                status: 404,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(message),
+            };
+
+            return;
+        }
+
         context.res = {
             status: 200,
             headers: { 'Content-Type': 'application/json' },

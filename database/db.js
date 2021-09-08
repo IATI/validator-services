@@ -23,9 +23,10 @@ module.exports = {
 
     getReportForUrl: async (url) => {
         const sql = `
-            SELECT document_hash as registry_hash, document_id as registry_id, document_url, valid, report
-            FROM validation
-            WHERE document_url = $1
+            SELECT val.document_hash as registry_hash, val.document_id as registry_id, val.document_url, val.valid, val.report
+            FROM public.document as doc 
+            LEFT JOIN validation as val ON doc.hash=val.document_hash 
+            WHERE doc.url = $1;
         `;
 
         return module.exports.getFirstRow(sql, [url]);
@@ -52,9 +53,10 @@ module.exports = {
 
     getReportForId: async (id) => {
         const sql = `
-            SELECT document_hash as registry_hash, document_id as registry_id, document_url, valid, report
-            FROM validation
-            WHERE document_id = $1
+            SELECT val.document_hash as registry_hash, val.document_id as registry_id, val.document_url, val.valid, val.report
+            FROM public.document as doc 
+            LEFT JOIN validation as val ON doc.hash=val.document_hash 
+            WHERE doc.id = $1;
         `;
         return module.exports.getFirstRow(sql, [id]);
     },

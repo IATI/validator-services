@@ -12,8 +12,9 @@ on:
       - develop
 
 env:
-  STAGE: dev # postfix to indicate environment stage
   NAME: func-validator-services
+  STAGE: dev # postfix to indicate environment stage
+  TAG: ${{ github.sha }}
   PGUSER: ${{ secrets.PGUSER }}
   PGPASSWORD: ${{ secrets.PGPASSWORD }}
   PGHOST: ${{ secrets.PGHOST }}

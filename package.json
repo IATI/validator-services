@@ -1,7 +1,7 @@
 {
-    "name": "azure-function-node-microservice-template",
+    "name": "validator-services",
     "version": "2.0.0",
-    "description": "",
+    "description": "Backend microservice provider for the IATI Validator on the Unified Platform",
     "scripts": {
         "start": "func start --javascript",
         "start:verbose": "func start --javascript --verbose",

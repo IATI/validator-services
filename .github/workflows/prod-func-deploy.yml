@@ -6,10 +6,9 @@ on:
     types: [published]
 
 env:
-  STAGE: prod # prefix to indicate environment stage
   NAME: func-validator-services
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
-  NODE_VERSION: '14.x' # set this to the node version to use (supports 8.x, 10.x, 12.x)
+  STAGE: prod # prefix to indicate environment stage
+  TAG: ${{ github.sha }}  
   PGUSER: ${{ secrets.PROD_PGUSER }}
   PGPASSWORD: ${{ secrets.PROD_PGPASSWORD }}
   PGHOST: ${{ secrets.PROD_PGHOST }}
@@ -21,6 +20,10 @@ env:
   VALIDATOR_FUNC_KEY: ${{ secrets.PROD_VALIDATOR_FUNC_KEY }}
   API_KEY: ${{ secrets.PROD_DEFAULT_KEY }}
   KV_NAME: ${{ secrets.PROD_KEY_VAULT_NAME }}
+  ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+  ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
+  ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
+  AZURE_CREDENTIALS: ${{ secrets.PROD_AZURE_CREDENTIALS }}
 
 jobs:
   build-and-deploy:
@@ -29,35 +32,27 @@ jobs:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v2
 
-      - name: 'Setup Node ${{ env.NODE_VERSION }} Environment'
-        uses: actions/setup-node@v2.4.0
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
       - name: 'Login via Azure CLI'
-        uses: azure/login@v1
+        uses: azure/login@v1.3.0
         with:
-          creds: ${{ secrets.PROD_AZURE_CREDENTIALS }} # Service Principal credentials saved in GitHub Secrets
+          creds: ${{ env.AZURE_CREDENTIALS }} # Service Principal credentials saved in GitHub Secrets
 
-      - name: 'Resolve Project Dependencies Using Npm'
-        shell: bash
+      - name: 'Docker Login'
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.ACR_LOGIN_SERVER }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
+
+      - name: 'Compose Customized Docker Image'
         run: |
-          npm i -g npm
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          npm install
-          popd
+          docker build . -t ${{ env.ACR_LOGIN_SERVER }}/$NAME-$STAGE:$TAG
+          docker push ${{ env.ACR_LOGIN_SERVER }}/$NAME-$STAGE:$TAG
 
-      - name: 'Run Azure Functions Action'
-        uses: Azure/functions-action@v1
+      - name: Set Env variables on app service
+        uses: Azure/appservice-settings@v1.1.1
         with:
-          app-name: ${{ env.NAME }}-${{ env.STAGE }}
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-
-      - name: Set Env variables for connecting to Postgres and Redis instances
-        uses: Azure/appservice-settings@v1
-        with:
-          app-name: '${{ env.NAME }}-${{ env.STAGE }}'
+          app-name: '${{env.NAME}}-${{env.STAGE}}'
           app-settings-json: |
             [
                 {
@@ -86,14 +81,14 @@ jobs:
                     "slotSetting": false
                 },
                 {
-                  "name": "PGSSL",
-                  "value": "true",
-                  "slotSetting": false
+                    "name": "PGSSL",
+                    "value": "true",
+                    "slotSetting": false
                 },
                 {
-                  "name": "STORAGECONNECTOR",
-                  "value": "${{ env.STORAGECONNECTOR }}",
-                  "slotSetting": false
+                    "name": "STORAGECONNECTOR",
+                    "value": "${{ env.STORAGECONNECTOR }}",
+                    "slotSetting": false
                 },
                 {
                   "name": "ADHOC_CONTAINER",
@@ -110,7 +105,7 @@ jobs:
                   "value": "${{ env.VALIDATOR_FUNC_KEY }}",
                   "slotSetting": false
                 },
-                {
+                { 
                     "name": "AzureWebJobsSecretStorageType",
                     "value": "keyvault",
                     "slotSetting": false
@@ -119,8 +114,34 @@ jobs:
                     "name": "AzureWebJobsSecretStorageKeyVaultName",
                     "value": "${{ env.KV_NAME }}",
                     "slotSetting": false
+                },
+                {
+                    "name": "FUNCTIONS_WORKER_RUNTIME",
+                    "value": "node",
+                    "slotSetting": false
+                },
+                {
+                    "name": "DOCKER_REGISTRY_SERVER_URL",
+                    "value": "${{ env.ACR_LOGIN_SERVER }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                    "value": "${{ env.ACR_PASSWORD }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                    "value": "${{ env.ACR_USERNAME }}",
+                    "slotSetting": false
                 }
             ]
+
+      - name: 'Run Azure Functions Container Action'
+        uses: Azure/functions-container-action@v1
+        with:
+          app-name: ${{ env.NAME }}-${{ env.STAGE }}
+          image: ${{ env.ACR_LOGIN_SERVER }}/${{ env.NAME}}-${{ env.STAGE }}:${{ env.TAG }}
 
   # integration-test:
   #  needs: build-and-deploy

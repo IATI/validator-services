@@ -1,0 +1,20 @@
+# vscode
+.vscode
+
+# tests
+integration-tests
+
+# github
+.github
+
+# documentation
+docs
+
+# linting/utils
+.eslintrc.json
+.prettierignore
+.prettierrc.json
+.husky
+
+# env file
+.env.example

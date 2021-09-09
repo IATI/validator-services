@@ -1,0 +1,25 @@
+# dependencies
+node_modules
+
+# vscode
+.vscode
+
+# tests
+integration-tests
+
+# github
+.github
+
+# documentation
+docs
+
+# linting/utils
+.eslintrc.json
+.prettierignore
+.prettierrc.json
+.husky
+
+# env files
+.env
+.env.example
+local.settings.json

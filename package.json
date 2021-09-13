@@ -5,14 +5,14 @@
     "scripts": {
         "start": "func start --javascript",
         "start:verbose": "func start --javascript --verbose",
-        "test": "newman run integration-tests/validator-services-tests.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment.json",
+        "test": "newman run integration-tests/validator-services-tests.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment.json --working-dir integration-tests/test-files",
         "prepare": "husky install"
     },
     "author": "IATI",
     "dependencies": {
         "applicationinsights": "^2.1.6",
         "dotenv": "^10.0.0",
-        "node-fetch": "^2.6.1",
+        "node-fetch": "^2.6.2",
         "parse-multipart": "^1.0.4",
         "pg": "^8.7.1",
         "pg-hstore": "^2.3.4"
@@ -25,7 +25,7 @@
         "eslint-plugin-import": "^2.24.2",
         "husky": "^7.0.2",
         "lint-staged": "^11.1.2",
-        "prettier": "^2.3.2"
+        "prettier": "^2.4.0"
     },
     "lint-staged": {
         "*.js": "eslint --cache --fix",

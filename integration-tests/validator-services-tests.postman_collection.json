@@ -265,78 +265,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "pvt-validation-regenerate PATCH /pvt/validation/regenerate",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"ids\": [\"{{document_id}}\"]}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseURL}}/pvt/validation/regenerate",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pvt",
-								"validation",
-								"regenerate"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pvt-validation-regenerate-all PATCH /pvt/validation/regenerate/all",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pvt/validation/regenerate/all",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pvt",
-								"validation",
-								"regenerate",
-								"all"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
@@ -434,6 +362,232 @@
 			]
 		},
 		{
+			"name": "Validation Regenerate",
+			"item": [
+				{
+					"name": "pvt-validation-regenerate PATCH /pvt/validation/regenerate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"ids\": [\"{{document_id}}\"]}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pvt/validation/regenerate",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"validation",
+								"regenerate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ad Hoc Validate",
+			"item": [
+				{
+					"name": "pvt-post-adhoc-file POST /pvt/adhoc/upload",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "iati-act-no-errors-vs-test.xml"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pvt/adhoc/upload?filename=iati-act-no-errors-vs-test.xml&sessionId={{sessionId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"adhoc",
+								"upload"
+							],
+							"query": [
+								{
+									"key": "filename",
+									"value": "iati-act-no-errors-vs-test.xml"
+								},
+								{
+									"key": "sessionId",
+									"value": "{{sessionId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pvt-post-adhoc-url POST /pvt/adhoc/url",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pvt/adhoc/url?url=https://raw.githubusercontent.com/IATI/js-validator-api/develop/integration-tests/test-files/iati-act-no-errors.xml&sessionId={{sessionId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"adhoc",
+								"url"
+							],
+							"query": [
+								{
+									"key": "url",
+									"value": "https://raw.githubusercontent.com/IATI/js-validator-api/develop/integration-tests/test-files/iati-act-no-errors.xml"
+								},
+								{
+									"key": "sessionId",
+									"value": "{{sessionId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pvt-get-adhoc-session URL",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Body contains same sessionId as request\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].session_id).to.eql(environment.sessionId);",
+									"});",
+									"pm.test(\"The body contains 2 ad-hoc report objects corresponding to the 2 POST requests\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.eql(2);",
+									"});",
+									"postman.setEnvironmentVariable(\"sessionId\", \"\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pvt/adhoc/session?sessionId={{sessionId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"adhoc",
+								"session"
+							],
+							"query": [
+								{
+									"key": "sessionId",
+									"value": "{{sessionId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const uuid = require('uuid');",
+							"if (!environment.sessionId) {",
+							"    postman.setEnvironmentVariable('sessionId', uuid.v4());",
+							"}"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
 			"name": "pub-get-version GET /pub/version",
 			"event": [
 				{
@@ -515,6 +669,10 @@
 		{
 			"key": "publisher_name",
 			"value": ""
+		},
+		{
+			"value": "",
+			"disabled": true
 		}
 	]
 }

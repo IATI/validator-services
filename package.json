@@ -10,7 +10,7 @@
     },
     "author": "IATI",
     "dependencies": {
-        "applicationinsights": "^2.1.7",
+        "applicationinsights": "^2.1.8",
         "dotenv": "^10.0.0",
         "node-fetch": "^2.6.5",
         "parse-multipart": "^1.0.4",

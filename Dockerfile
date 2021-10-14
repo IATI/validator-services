@@ -10,4 +10,5 @@ COPY . /home/site/wwwroot
 WORKDIR /home/site/wwwroot
 RUN \
     npm i -g npm && \
-    npm install
+    npm set-script prepare "" && \
+    npm install --production

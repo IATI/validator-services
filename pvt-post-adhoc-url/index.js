@@ -1,11 +1,13 @@
 const fetch = require('node-fetch');
 const db = require('../database/db');
+const { checkRespStatus } = require('../utils/utils');
 
-function endWithBadResponse(context, message = 'Bad Request', status = 400) {
-    context.log.error(message);
+function endWithBadResponse(context, body = { message: 'Bad Request' }, status = 400) {
+    context.log.error(body.message);
     context.bindings.response = {
+        headers: { 'Content-Type': 'application/json' },
         status,
-        body: message,
+        body,
     };
     context.done();
 }
@@ -13,14 +15,27 @@ function endWithBadResponse(context, message = 'Bad Request', status = 400) {
 module.exports = async (context, req) => {
     try {
         if (!req.query.url) {
-            return endWithBadResponse(context, `No filename apparent`);
+            return endWithBadResponse(context, { messge: `No filename apparent` });
         }
 
         if (!req.query.sessionId) {
-            return endWithBadResponse(context, `No sessionId apparent`);
+            return endWithBadResponse(context, { message: `No sessionId apparent` });
+        }
+        let result;
+        try {
+            result = await fetch(req.query.url);
+        } catch (err) {
+            const message = `Error fetching from provided URL: ${err.message}`;
+            endWithBadResponse(context, { message, url: req.query.url, code: err.code }, 422);
         }
 
-        const result = await fetch(req.query.url);
+        try {
+            checkRespStatus(result);
+        } catch (err) {
+            const message = `Error fetching from provided URL: ${err.message}`;
+            const errorBody = await err.response.text();
+            endWithBadResponse(context, { message, errorBody, url: req.query.url }, 422);
+        }
 
         context.bindings.storage = await result.text();
 

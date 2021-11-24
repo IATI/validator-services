@@ -91,6 +91,7 @@ module.exports = {
             doc.regenerate_validation_report,
             doc.publisher,
             doc.modified,
+            doc.solrize_end,
             val.created as validation_created, 
             val.valid,
             val.report

@@ -21,7 +21,7 @@ module.exports = async (context, req) => {
                     item.warning,
                 ]),
             ]
-                .map((e) => e.join(','))
+                .map((e) => e.map((c) => `"${  c  }"`).join(','))
                 .join('\n');
             context.res = {
                 status: 200,
@@ -29,10 +29,21 @@ module.exports = async (context, req) => {
                 body: csvString,
             };
         } else {
+            const parsedResults = {};
+
+            result.forEach((row) => {
+                const publisherName = row.publisher_name;
+                parsedResults[publisherName] = {
+                    critical: parseInt(row.critical, 10),
+                    error: parseInt(row.error, 10),
+                    warning: parseInt(row.warning, 10),
+                };
+            });
+
             context.res = {
                 status: 200,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(result),
+                body: JSON.stringify(parsedResults),
             };
         }
 

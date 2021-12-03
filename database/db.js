@@ -271,4 +271,103 @@ module.exports = {
 
         return result;
     },
+
+    getSummaryStats: async (start, end, publisher) => {
+        if (publisher) {
+            const sql = `
+            SELECT
+                publisher.name as publisher_name,
+                SUM( (T1.report -> 'summary' ->> 'critical') :: INTEGER) as critical,
+                SUM( (T1.report -> 'summary' ->> 'error') :: INTEGER) as error,
+                SUM( (T1.report -> 'summary' ->> 'warning') :: INTEGER) as warning
+            FROM validation AS T1
+            LEFT JOIN publisher
+                ON T1.publisher = publisher.org_id
+            WHERE T1.created >= $1
+            AND T1.created < $2
+            AND publisher.name = $3
+            AND NOT EXISTS(
+                SELECT * FROM validation AS T2
+                WHERE T2.created >= $1
+                AND T2.created < $2
+                AND T2.document_id = T1.document_id
+                AND T2.created > T1.created
+            )
+            GROUP BY publisher.name;
+            `;
+
+            const result = await module.exports.query(sql, [start, end, publisher]);
+            return result;
+        }
+        const sql = `
+            SELECT
+                publisher.name as publisher_name,
+                SUM( (T1.report -> 'summary' ->> 'critical') :: INTEGER) as critical,
+                SUM( (T1.report -> 'summary' ->> 'error') :: INTEGER) as error,
+                SUM( (T1.report -> 'summary' ->> 'warning') :: INTEGER) as warning
+            FROM validation AS T1
+            LEFT JOIN publisher
+                ON T1.publisher = publisher.org_id
+            WHERE T1.created >= $1
+            AND T1.created < $2
+            AND NOT EXISTS(
+                SELECT * FROM validation AS T2
+                WHERE T2.created >= $1
+                AND T2.created < $2
+                AND T2.document_id = T1.document_id
+                AND T2.created > T1.created
+            )
+            GROUP BY publisher.name;
+            `;
+
+        const result = await module.exports.query(sql, [start, end]);
+        return result;
+    },
+
+    getMessageDateStats: async (date) => {
+        const sql = `
+            SELECT
+                publisher.name as publisher_name,
+                T1.report -> 'errors' as report_errors
+            FROM validation AS T1
+            LEFT JOIN publisher
+                ON T1.publisher = publisher.org_id
+            WHERE DATE(T1.created) = $1
+            AND T1.report IS NOT NULL
+            AND NOT EXISTS(
+                SELECT * FROM validation AS T2
+                WHERE DATE(T2.created) = $1
+                AND T2.document_id = T1.document_id
+                AND T2.created > T1.created
+            );
+            `;
+
+        const result = await module.exports.query(sql, [date]);
+        return result;
+    },
+
+    getMessagePublisherStats: async (start, end, publisher) => {
+        const sql = `
+            SELECT
+                publisher.name as publisher_name,
+                T1.report -> 'errors' as report_errors
+            FROM validation AS T1
+            LEFT JOIN publisher
+                ON T1.publisher = publisher.org_id
+            WHERE T1.created >= $1
+            AND T1.created < $2
+            AND publisher.name = $3
+            AND T1.report IS NOT NULL
+            AND NOT EXISTS(
+                SELECT * FROM validation AS T2
+                WHERE T2.created >= $1
+                AND T2.created < $2
+                AND T2.document_id = T1.document_id
+                AND T2.created > T1.created
+            );
+                `;
+
+        const result = await module.exports.query(sql, [start, end, publisher]);
+        return result;
+    },
 };

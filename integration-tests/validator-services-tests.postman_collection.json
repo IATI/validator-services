@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d8b60cab-2d8b-40d1-91f2-9db05905c522",
+		"_postman_id": "bb669e24-cba9-4be2-9a65-c0d9e238888c",
 		"name": "validator-services-tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -750,6 +750,127 @@
 							""
 						]
 					}
+				}
+			]
+		},
+		{
+			"name": "Statistics",
+			"item": [
+				{
+					"name": "pub-get-stats-summary GET /pub/stats/summary",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Expect body to be an Object\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('object')",
+									"});",
+									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData['worldbank']).to.have.keys(['critical', 'error', 'warning']);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pub/stats/summary",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pub",
+								"stats",
+								"summary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pub-get-stats-all GET /pub/stats/all",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Expect body to be an Object\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('object')",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pub/stats/all?date=2021-09-12",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pub",
+								"stats",
+								"all"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2021-09-12"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pub-get-stats-publisher GET /pub/stats/{publisher}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Expect body to be an Object\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('object')",
+									"});",
+									"pm.test(\"Expect object to have certain keys\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.keys(['worldbank']);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pub/stats/worldbank",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pub",
+								"stats",
+								"worldbank"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

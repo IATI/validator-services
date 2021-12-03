@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "bb669e24-cba9-4be2-9a65-c0d9e238888c",
+		"_postman_id": "c2929710-2d10-4dad-a108-703d8855d1ba",
 		"name": "validator-services-tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -859,13 +859,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/pub/stats/worldbank",
+							"raw": "{{baseURL}}/pub/stats/publisher/worldbank",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"pub",
 								"stats",
+								"publisher",
 								"worldbank"
 							]
 						}

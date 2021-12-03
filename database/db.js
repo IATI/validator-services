@@ -272,7 +272,7 @@ module.exports = {
         return result;
     },
 
-    getSummaryStats: async (start, end, publisher) => {
+    getSummaryStats: async (date, publisher) => {
         if (publisher) {
             const sql = `
             SELECT
@@ -283,20 +283,18 @@ module.exports = {
             FROM validation AS T1
             LEFT JOIN publisher
                 ON T1.publisher = publisher.org_id
-            WHERE T1.created >= $1
-            AND T1.created < $2
-            AND publisher.name = $3
+            WHERE T1.created <= $1
+            AND publisher.name = $2
             AND NOT EXISTS(
                 SELECT * FROM validation AS T2
-                WHERE T2.created >= $1
-                AND T2.created < $2
+                WHERE T2.created <= $1
                 AND T2.document_id = T1.document_id
                 AND T2.created > T1.created
             )
             GROUP BY publisher.name;
             `;
 
-            const result = await module.exports.query(sql, [start, end, publisher]);
+            const result = await module.exports.query(sql, [date, publisher]);
             return result;
         }
         const sql = `
@@ -308,19 +306,17 @@ module.exports = {
             FROM validation AS T1
             LEFT JOIN publisher
                 ON T1.publisher = publisher.org_id
-            WHERE T1.created >= $1
-            AND T1.created < $2
+            WHERE T1.created <= $1
             AND NOT EXISTS(
                 SELECT * FROM validation AS T2
-                WHERE T2.created >= $1
-                AND T2.created < $2
+                WHERE T2.created <= $1
                 AND T2.document_id = T1.document_id
                 AND T2.created > T1.created
             )
             GROUP BY publisher.name;
             `;
 
-        const result = await module.exports.query(sql, [start, end]);
+        const result = await module.exports.query(sql, [date]);
         return result;
     },
 
@@ -332,11 +328,11 @@ module.exports = {
             FROM validation AS T1
             LEFT JOIN publisher
                 ON T1.publisher = publisher.org_id
-            WHERE DATE(T1.created) = $1
+            WHERE T1.created <= $1
             AND T1.report IS NOT NULL
             AND NOT EXISTS(
                 SELECT * FROM validation AS T2
-                WHERE DATE(T2.created) = $1
+                WHERE T2.created <= $1
                 AND T2.document_id = T1.document_id
                 AND T2.created > T1.created
             );
@@ -346,7 +342,7 @@ module.exports = {
         return result;
     },
 
-    getMessagePublisherStats: async (start, end, publisher) => {
+    getMessagePublisherStats: async (date, publisher) => {
         const sql = `
             SELECT
                 publisher.name as publisher_name,
@@ -354,20 +350,18 @@ module.exports = {
             FROM validation AS T1
             LEFT JOIN publisher
                 ON T1.publisher = publisher.org_id
-            WHERE T1.created >= $1
-            AND T1.created < $2
-            AND publisher.name = $3
+            WHERE T1.created <= $1
+            AND publisher.name = $2
             AND T1.report IS NOT NULL
             AND NOT EXISTS(
                 SELECT * FROM validation AS T2
-                WHERE T2.created >= $1
-                AND T2.created < $2
+                WHERE T2.created <= $1
                 AND T2.document_id = T1.document_id
                 AND T2.created > T1.created
             );
                 `;
 
-        const result = await module.exports.query(sql, [start, end, publisher]);
+        const result = await module.exports.query(sql, [date, publisher]);
         return result;
     },
 };

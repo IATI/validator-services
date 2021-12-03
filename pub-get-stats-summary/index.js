@@ -1,15 +1,14 @@
 const db = require('../database/db');
 
 module.exports = async (context, req) => {
-    const start = req.query.start ? req.query.start : '0001-01-01';
-    const end = req.query.end ? req.query.end : '9999-01-01';
+    const date = req.query.date ? req.query.date : '9999-01-01';
     const { publisher } = req.query;
     const { format } = req.query;
 
     try {
         let result = null;
 
-        result = await db.getSummaryStats(start, end, publisher);
+        result = await db.getSummaryStats(date, publisher);
 
         if (format === 'csv') {
             const csvString = [
@@ -21,7 +20,7 @@ module.exports = async (context, req) => {
                     item.warning,
                 ]),
             ]
-                .map((e) => e.map((c) => `"${  c  }"`).join(','))
+                .map((e) => e.map((c) => `"${c}"`).join(','))
                 .join('\n');
             context.res = {
                 status: 200,

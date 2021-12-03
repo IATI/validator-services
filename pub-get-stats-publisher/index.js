@@ -1,8 +1,7 @@
 const db = require('../database/db');
 
 module.exports = async (context, req) => {
-    const start = req.query.start ? req.query.start : '0001-01-01';
-    const end = req.query.end ? req.query.end : '9999-01-01';
+    const date = req.query.date ? req.query.date : '9999-01-01';
     const { publisher } = req.params;
     const { format } = req.query;
 
@@ -24,7 +23,7 @@ module.exports = async (context, req) => {
     try {
         let result = null;
 
-        result = await db.getMessagePublisherStats(start, end, publisher);
+        result = await db.getMessagePublisherStats(date, publisher);
 
         const parsedResults = {};
 

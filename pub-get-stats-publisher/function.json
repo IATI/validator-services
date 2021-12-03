@@ -8,7 +8,7 @@
             "methods": [
                 "get"
             ],
-            "route": "pub/stats/{publisher}"
+            "route": "pub/stats/publisher/{publisher}"
         },
         {
             "type": "http",

@@ -323,11 +323,17 @@ module.exports = {
     getMessageDateStats: async (date) => {
         const sql = `
             SELECT
-                publisher.name as publisher_name,
-                T1.report -> 'errors' as report_errors
+                publisher.name AS publisher_name,
+                arr3.item_object -> 'id' AS id,
+                arr3.item_object -> 'message' AS message,
+                arr3.item_object -> 'severity' AS severity,
+                SUM( JSONB_ARRAY_LENGTH(arr3.item_object -> 'context') ) AS count
             FROM validation AS T1
             LEFT JOIN publisher
-                ON T1.publisher = publisher.org_id
+                ON T1.publisher = publisher.org_id,
+            JSONB_ARRAY_ELEMENTS(T1.report -> 'errors') WITH ORDINALITY arr(item_object, position),
+            JSONB_ARRAY_ELEMENTS(arr.item_object -> 'errors') WITH ORDINALITY arr2(item_object, position),
+            JSONB_ARRAY_ELEMENTS(arr2.item_object -> 'errors') WITH ORDINALITY arr3(item_object, position)
             WHERE T1.created <= $1
             AND T1.report IS NOT NULL
             AND NOT EXISTS(
@@ -335,7 +341,7 @@ module.exports = {
                 WHERE T2.created <= $1
                 AND T2.document_id = T1.document_id
                 AND T2.created > T1.created
-            );
+            ) GROUP BY publisher.name, id, message, severity;
             `;
 
         const result = await module.exports.query(sql, [date]);
@@ -345,11 +351,17 @@ module.exports = {
     getMessagePublisherStats: async (date, publisher) => {
         const sql = `
             SELECT
-                publisher.name as publisher_name,
-                T1.report -> 'errors' as report_errors
+                publisher.name AS publisher_name,
+                arr3.item_object -> 'id' AS id,
+                arr3.item_object -> 'message' AS message,
+                arr3.item_object -> 'severity' AS severity,
+                SUM( JSONB_ARRAY_LENGTH(arr3.item_object -> 'context') ) AS count
             FROM validation AS T1
             LEFT JOIN publisher
-                ON T1.publisher = publisher.org_id
+                ON T1.publisher = publisher.org_id,
+            JSONB_ARRAY_ELEMENTS(T1.report -> 'errors') WITH ORDINALITY arr(item_object, position),
+            JSONB_ARRAY_ELEMENTS(arr.item_object -> 'errors') WITH ORDINALITY arr2(item_object, position),
+            JSONB_ARRAY_ELEMENTS(arr2.item_object -> 'errors') WITH ORDINALITY arr3(item_object, position)
             WHERE T1.created <= $1
             AND publisher.name = $2
             AND T1.report IS NOT NULL
@@ -358,8 +370,8 @@ module.exports = {
                 WHERE T2.created <= $1
                 AND T2.document_id = T1.document_id
                 AND T2.created > T1.created
-            );
-                `;
+            ) GROUP BY publisher.name, id, message, severity;
+        `;
 
         const result = await module.exports.query(sql, [date, publisher]);
         return result;

@@ -9,53 +9,10 @@ module.exports = async (context, req) => {
 
         result = await db.getMessageDateStats(date);
 
-        const parsedResults = {};
-
-        result.forEach((validationReport) => {
-            const publisherName = validationReport.publisher_name;
-            if (!Object.keys(parsedResults).includes(publisherName)) {
-                parsedResults[publisherName] = {};
-            }
-            if (validationReport.report_errors !== null) {
-                validationReport.report_errors.forEach((activity) => {
-                    activity.errors.forEach((errorCategory) => {
-                        errorCategory.errors.forEach((error) => {
-                            const { id } = error;
-                            const instances = error.context.length;
-                            const { message } = error;
-                            const { severity } = error;
-                            if (!Object.keys(parsedResults[publisherName]).includes(id)) {
-                                parsedResults[publisherName][id] = {};
-                                parsedResults[publisherName][id].count = instances;
-                                parsedResults[publisherName][id].message = message;
-                                parsedResults[publisherName][id].severity = severity;
-                            } else {
-                                parsedResults[publisherName][id].count += instances;
-                            }
-                        });
-                    });
-                });
-            }
-        });
-
         if (format === 'csv') {
-            const flatParsedResults = [];
-            Object.keys(parsedResults).forEach((publisherName) => {
-                const errors = parsedResults[publisherName];
-                Object.keys(errors).forEach((id) => {
-                    const error = errors[id];
-                    flatParsedResults.push({
-                        publisher_name: publisherName,
-                        id,
-                        message: error.message,
-                        severity: error.severity,
-                        count: error.count,
-                    });
-                });
-            });
             const csvString = [
                 ['publisher_name', 'id', 'message', 'severity', 'count'],
-                ...flatParsedResults.map((item) => [
+                ...result.map((item) => [
                     item.publisher_name,
                     item.id,
                     item.message,
@@ -71,6 +28,19 @@ module.exports = async (context, req) => {
                 body: csvString,
             };
         } else {
+            const parsedResults = {};
+
+            result.forEach((row) => {
+                const publisherName = row.publisher_name;
+                const { id, message, severity, count } = row;
+                if (!Object.keys(parsedResults).includes(publisherName)) {
+                    parsedResults[publisherName] = {};
+                }
+                parsedResults[publisherName][id] = {};
+                parsedResults[publisherName][id].count = count;
+                parsedResults[publisherName][id].message = message;
+                parsedResults[publisherName][id].severity = severity;
+            });
             context.res = {
                 status: 200,
                 headers: { 'Content-Type': 'application/json' },

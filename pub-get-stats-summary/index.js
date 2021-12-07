@@ -10,10 +10,40 @@ module.exports = async (context, req) => {
 
         result = await db.getSummaryStats(date, publisher);
 
+        const parsedResults = {};
+
+        result.forEach((row) => {
+            const publisherName = row.publisher_name;
+            if (!Object.keys(parsedResults).includes(publisherName)) {
+                parsedResults[publisherName] = {};
+            }
+            if (!Object.keys(parsedResults[publisherName]).includes('critical')) {
+                parsedResults[publisherName].critical = 0;
+            }
+            if (!Object.keys(parsedResults[publisherName]).includes('error')) {
+                parsedResults[publisherName].error = 0;
+            }
+            if (!Object.keys(parsedResults[publisherName]).includes('warning')) {
+                parsedResults[publisherName].warning = 0;
+            }
+            parsedResults[publisherName][row.severity] = parseInt(row.count, 10);
+        });
+
         if (format === 'csv') {
+            const flatParsedResults = [];
+            Object.keys(parsedResults).forEach((publisherName) => {
+                const summary = parsedResults[publisherName];
+                flatParsedResults.push({
+                    publisher_name: publisherName,
+                    critical: summary.critical,
+                    error: summary.error,
+                    warning: summary.warning,
+                });
+            });
+
             const csvString = [
                 ['publisher_name', 'critical', 'error', 'warning'],
-                ...result.map((item) => [
+                ...flatParsedResults.map((item) => [
                     item.publisher_name,
                     item.critical,
                     item.error,
@@ -28,17 +58,6 @@ module.exports = async (context, req) => {
                 body: csvString,
             };
         } else {
-            const parsedResults = {};
-
-            result.forEach((row) => {
-                const publisherName = row.publisher_name;
-                parsedResults[publisherName] = {
-                    critical: parseInt(row.critical, 10),
-                    error: parseInt(row.error, 10),
-                    warning: parseInt(row.warning, 10),
-                };
-            });
-
             context.res = {
                 status: 200,
                 headers: { 'Content-Type': 'application/json' },

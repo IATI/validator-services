@@ -11,12 +11,13 @@ module.exports = async (context, req) => {
 
         if (format === 'csv') {
             const csvString = [
-                ['publisher_name', 'id', 'message', 'severity', 'count'],
+                ['publisher_name', 'id', 'message', 'severity', 'category', 'count'],
                 ...result.map((item) => [
                     item.publisher_name,
                     item.id,
                     item.message,
                     item.severity,
+                    item.category,
                     item.count,
                 ]),
             ]
@@ -32,7 +33,7 @@ module.exports = async (context, req) => {
 
             result.forEach((row) => {
                 const publisherName = row.publisher_name;
-                const { id, message, severity, count } = row;
+                const { id, message, severity, count, category } = row;
                 if (!Object.keys(parsedResults).includes(publisherName)) {
                     parsedResults[publisherName] = {};
                 }
@@ -40,6 +41,7 @@ module.exports = async (context, req) => {
                 parsedResults[publisherName][id].count = count;
                 parsedResults[publisherName][id].message = message;
                 parsedResults[publisherName][id].severity = severity;
+                parsedResults[publisherName][id].category = category;
             });
             context.res = {
                 status: 200,

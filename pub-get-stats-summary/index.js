@@ -12,13 +12,8 @@ module.exports = async (context, req) => {
 
         if (format === 'csv') {
             const csvString = [
-                ['publisher_name', 'critical', 'error', 'warning'],
-                ...result.map((item) => [
-                    item.publisher_name,
-                    item.critical,
-                    item.error,
-                    item.warning,
-                ]),
+                ['publisher_name', 'severity', 'count'],
+                ...result.map((item) => [item.publisher_name, item.severity, item.count]),
             ]
                 .map((e) => e.map((c) => `"${c}"`).join(','))
                 .join('\n');
@@ -32,11 +27,19 @@ module.exports = async (context, req) => {
 
             result.forEach((row) => {
                 const publisherName = row.publisher_name;
-                parsedResults[publisherName] = {
-                    critical: parseInt(row.critical, 10),
-                    error: parseInt(row.error, 10),
-                    warning: parseInt(row.warning, 10),
-                };
+                if (!Object.keys(parsedResults).includes(publisherName)) {
+                    parsedResults[publisherName] = {};
+                }
+                if (!Object.keys(parsedResults[publisherName]).includes('critical')) {
+                    parsedResults[publisherName].critical = 0;
+                }
+                if (!Object.keys(parsedResults[publisherName]).includes('error')) {
+                    parsedResults[publisherName].error = 0;
+                }
+                if (!Object.keys(parsedResults[publisherName]).includes('warning')) {
+                    parsedResults[publisherName].warning = 0;
+                }
+                parsedResults[publisherName][row.severity] = parseInt(row.count, 10);
             });
 
             context.res = {

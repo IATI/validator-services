@@ -757,7 +757,7 @@
 			"name": "Statistics",
 			"item": [
 				{
-					"name": "pub-get-stats-summary GET /pub/stats/summary",
+					"name": "pub-get-stats-summary-aggregate GET /pub/stats/summary_aggregate",
 					"event": [
 						{
 							"listen": "test",
@@ -781,14 +781,52 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/pub/stats/summary",
+							"raw": "{{baseURL}}/pub/stats/summary_aggregate",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"pub",
 								"stats",
-								"summary"
+								"summary_aggregate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pub-get-stats-summary-precalc GET /pub/stats/summary_precalc",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Expect body to be an Object\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('object')",
+									"});",
+									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData['worldbank']).to.have.keys(['critical', 'error', 'warning']);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pub/stats/summary_precalc",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pub",
+								"stats",
+								"summary_precalc"
 							]
 						}
 					},

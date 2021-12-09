@@ -8,7 +8,7 @@ module.exports = async (context, req) => {
     try {
         let result = null;
 
-        result = await db.getSummaryStats(date, publisher);
+        result = await db.getSummaryAggregateStats(date, publisher);
 
         const parsedResults = {};
 

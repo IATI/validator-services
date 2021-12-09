@@ -272,7 +272,55 @@ module.exports = {
         return result;
     },
 
-    getSummaryStats: async (date, publisher) => {
+    getSummaryPrecalcStats: async (date, publisher) => {
+        if (publisher) {
+            const sql = `
+            SELECT
+                publisher.name as publisher_name,
+                SUM( (T1.report -> 'summary' ->> 'critical') :: INTEGER) as critical,
+                SUM( (T1.report -> 'summary' ->> 'error') :: INTEGER) as error,
+                SUM( (T1.report -> 'summary' ->> 'warning') :: INTEGER) as warning
+            FROM validation AS T1
+            LEFT JOIN publisher
+                ON T1.publisher = publisher.org_id
+            WHERE T1.created <= $1
+            AND publisher.name = $2
+            AND NOT EXISTS(
+                SELECT * FROM validation AS T2
+                WHERE T2.created <= $1
+                AND T2.document_id = T1.document_id
+                AND T2.created > T1.created
+            )
+            GROUP BY publisher.name;
+            `;
+
+            const result = await module.exports.query(sql, [date, publisher]);
+            return result;
+        }
+        const sql = `
+            SELECT
+                publisher.name as publisher_name,
+                SUM( (T1.report -> 'summary' ->> 'critical') :: INTEGER) as critical,
+                SUM( (T1.report -> 'summary' ->> 'error') :: INTEGER) as error,
+                SUM( (T1.report -> 'summary' ->> 'warning') :: INTEGER) as warning
+            FROM validation AS T1
+            LEFT JOIN publisher
+                ON T1.publisher = publisher.org_id
+            WHERE T1.created <= $1
+            AND NOT EXISTS(
+                SELECT * FROM validation AS T2
+                WHERE T2.created <= $1
+                AND T2.document_id = T1.document_id
+                AND T2.created > T1.created
+            )
+            GROUP BY publisher.name;
+            `;
+
+        const result = await module.exports.query(sql, [date]);
+        return result;
+    },
+
+    getSummaryAggregateStats: async (date, publisher) => {
         if (publisher) {
             const sql = `
                 SELECT

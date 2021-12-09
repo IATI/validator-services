@@ -8,7 +8,7 @@
             "methods": [
                 "get"
             ],
-            "route": "pub/stats/summary"
+            "route": "pub/stats/summary_precalc"
         },
         {
             "type": "http",

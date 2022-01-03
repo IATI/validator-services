@@ -11,7 +11,7 @@
     },
     "author": "IATI",
     "dependencies": {
-        "applicationinsights": "^2.1.9",
+        "applicationinsights": "^2.2.0",
         "dotenv": "^10.0.0",
         "node-fetch": "^2.6.6",
         "parse-multipart": "^1.0.4",
@@ -20,13 +20,13 @@
     },
     "devDependencies": {
         "@prettier/plugin-xml": "^1.1.0",
-        "eslint": "^8.2.0",
+        "eslint": "^8.4.1",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-import": "^2.25.3",
         "husky": "^7.0.4",
-        "lint-staged": "^12.0.2",
-        "prettier": "^2.4.1"
+        "lint-staged": "^12.1.2",
+        "prettier": "^2.5.1"
     },
     "lint-staged": {
         "*.js": "eslint --cache --fix",

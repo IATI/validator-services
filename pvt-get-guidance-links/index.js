@@ -20,7 +20,7 @@ module.exports = async (context, req) => {
             return;
         }
 
-        const rulesetBranch = `v${version}/validatorV2`;
+        const rulesetBranch = `version-${version}`;
 
         console.log({
             name: `Fetching ruleset for version: ${version}, repo: IATI-Rulesets, branch: ${rulesetBranch} `,

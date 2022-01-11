@@ -1,6 +1,6 @@
 {
     "name": "validator-services",
-    "version": "2.1.1",
+    "version": "2.2.1",
     "description": "Backend microservice provider for the IATI Validator on the Unified Platform",
     "scripts": {
         "start": "func start --javascript",

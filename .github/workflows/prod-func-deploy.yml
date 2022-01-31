@@ -19,7 +19,7 @@ env:
   VALIDATOR_API_URL: ${{ secrets.PROD_VALIDATOR_API_URL }}
   VALIDATOR_FUNC_KEY: ${{ secrets.PROD_VALIDATOR_FUNC_KEY }}
   API_KEY: ${{ secrets.PROD_DEFAULT_KEY }}
-  KV_NAME: ${{ secrets.PROD_KEY_VAULT_NAME }}
+  KV_URI: ${{ secrets.PROD_KV_URI }}
   ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
   ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
   ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
@@ -111,8 +111,8 @@ jobs:
                     "slotSetting": false
                 },
                 {
-                    "name": "AzureWebJobsSecretStorageKeyVaultName",
-                    "value": "${{ env.KV_NAME }}",
+                    "name": "AzureWebJobsSecretStorageKeyVaultUri",
+                    "value": "${{ env.KV_URI }}",
                     "slotSetting": false
                 },
                 {

@@ -24,8 +24,8 @@ module.exports = {
     getReportForUrl: async (url) => {
         const sql = `
             SELECT val.document_hash as registry_hash, val.document_id as registry_id, val.document_url, val.valid, val.report
-            FROM public.document as doc 
-            LEFT JOIN validation as val ON doc.hash=val.document_hash 
+            FROM public.document as doc
+            LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.url = $1;
         `;
 
@@ -47,6 +47,8 @@ module.exports = {
             SELECT document_hash as registry_hash, document_id as registry_id, document_url, valid, report
             FROM validation
             WHERE document_hash = $1
+            ORDER BY id DESC
+            LIMIT 1
         `;
         return module.exports.getFirstRow(sql, [hash]);
     },
@@ -54,8 +56,8 @@ module.exports = {
     getReportForId: async (id) => {
         const sql = `
             SELECT val.document_hash as registry_hash, val.document_id as registry_id, val.document_url, val.valid, val.report
-            FROM public.document as doc 
-            LEFT JOIN validation as val ON doc.hash=val.document_hash 
+            FROM public.document as doc
+            LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.id = $1;
         `;
         return module.exports.getFirstRow(sql, [id]);
@@ -96,7 +98,7 @@ module.exports = {
             val.valid,
             val.report
         FROM document as doc
-        LEFT JOIN validation AS val ON doc.validation = val.document_hash
+        LEFT JOIN validation AS val ON doc.validation = val.id
         WHERE doc.publisher = $1
         ORDER BY url ASC
         `;
@@ -156,7 +158,7 @@ module.exports = {
             val.valid,
             val.report -> 'summary' AS summary
         FROM document as doc
-        LEFT JOIN validation AS val ON doc.validation = val.document_hash
+        LEFT JOIN validation AS val ON doc.validation = val.id
         WHERE doc.id = $1
         `;
         return module.exports.query(sql, [id]);

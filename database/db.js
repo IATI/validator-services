@@ -372,7 +372,7 @@ module.exports = {
         const sql = `
             SELECT
                 T1.publisher_name,
-                arr3.item_object -> 'id' AS errorId,
+                arr3.item_object -> 'id' AS error_id,
                 arr3.item_object -> 'message' AS message,
                 arr3.item_object -> 'severity' AS severity,
                 arr2.item_object -> 'category' as category,
@@ -389,7 +389,7 @@ module.exports = {
                 WHERE T2.created <= $1
                 AND T2.document_id = T1.document_id
                 AND T2.created > T1.created
-            ) GROUP BY T1.publisher_name, errorId, message, severity, category;
+            ) GROUP BY T1.publisher_name, error_id, message, severity, category;
         `;
 
         const result = await module.exports.query(sql, [date]);
@@ -400,7 +400,7 @@ module.exports = {
         const sql = `
             SELECT
                 T1.publisher_name,
-                arr3.item_object -> 'id' AS errorId,
+                arr3.item_object -> 'id' AS error_id,
                 arr3.item_object -> 'message' AS message,
                 arr3.item_object -> 'severity' AS severity,
                 arr2.item_object -> 'category' as category,
@@ -417,7 +417,7 @@ module.exports = {
                 WHERE T2.created <= $1
                 AND T2.document_id = T1.document_id
                 AND T2.created > T1.created
-            ) GROUP BY T1.publisher_name, errorId, message, severity, category;
+            ) GROUP BY T1.publisher_name, error_id, message, severity, category;
         `;
 
         const result = await module.exports.query(sql, [date, publisher]);

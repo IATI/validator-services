@@ -30,7 +30,7 @@ module.exports = async (context, req) => {
                 ['publisher_name', 'id', 'message', 'severity', 'category', 'count'],
                 ...result.map((item) => [
                     item.publisher_name,
-                    item.errorId,
+                    item.error_id,
                     item.message,
                     item.severity,
                     item.category,
@@ -49,7 +49,8 @@ module.exports = async (context, req) => {
 
             result.forEach((row) => {
                 const publisherName = row.publisher_name;
-                const { errorId, message, severity, count, category } = row;
+                const errorId = row.error_id;
+                const { message, severity, count, category } = row;
                 if (!Object.keys(parsedResults).includes(publisherName)) {
                     parsedResults[publisherName] = {};
                 }

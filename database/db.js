@@ -305,6 +305,7 @@ module.exports = {
                 SUM( (T1.report -> 'summary' ->> 'warning') :: INTEGER) as warning
             FROM validation AS T1
             WHERE T1.created <= $1
+            AND T1.publisher_name IS NOT NULL
             AND NOT EXISTS(
                 SELECT * FROM validation AS T2
                 WHERE T2.created <= $1
@@ -354,6 +355,7 @@ module.exports = {
             JSONB_ARRAY_ELEMENTS(arr2.item_object -> 'errors') WITH ORDINALITY arr3(item_object, position)
             WHERE T1.created <= $1
             AND T1.report IS NOT NULL
+            AND T1.publisher_name IS NOT NULL
             AND NOT EXISTS(
                 SELECT * FROM validation AS T2
                 WHERE T2.created <= $1
@@ -370,7 +372,7 @@ module.exports = {
         const sql = `
             SELECT
                 T1.publisher_name,
-                arr3.item_object -> 'id' AS id,
+                arr3.item_object -> 'id' AS errorId,
                 arr3.item_object -> 'message' AS message,
                 arr3.item_object -> 'severity' AS severity,
                 arr2.item_object -> 'category' as category,
@@ -381,12 +383,13 @@ module.exports = {
             JSONB_ARRAY_ELEMENTS(arr2.item_object -> 'errors') WITH ORDINALITY arr3(item_object, position)
             WHERE T1.created <= $1
             AND T1.report IS NOT NULL
+            AND T1.publisher_name IS NOT NULL
             AND NOT EXISTS(
                 SELECT * FROM validation AS T2
                 WHERE T2.created <= $1
                 AND T2.document_id = T1.document_id
                 AND T2.created > T1.created
-            ) GROUP BY T1.publisher_name, id, message, severity, category;
+            ) GROUP BY T1.publisher_name, errorId, message, severity, category;
         `;
 
         const result = await module.exports.query(sql, [date]);
@@ -397,7 +400,7 @@ module.exports = {
         const sql = `
             SELECT
                 T1.publisher_name,
-                arr3.item_object -> 'id' AS id,
+                arr3.item_object -> 'id' AS errorId,
                 arr3.item_object -> 'message' AS message,
                 arr3.item_object -> 'severity' AS severity,
                 arr2.item_object -> 'category' as category,
@@ -414,7 +417,7 @@ module.exports = {
                 WHERE T2.created <= $1
                 AND T2.document_id = T1.document_id
                 AND T2.created > T1.created
-            ) GROUP BY T1.publisher_name, id, message, severity, category;
+            ) GROUP BY T1.publisher_name, errorId, message, severity, category;
         `;
 
         const result = await module.exports.query(sql, [date, publisher]);

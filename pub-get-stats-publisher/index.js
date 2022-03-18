@@ -30,7 +30,7 @@ module.exports = async (context, req) => {
                 ['publisher_name', 'id', 'message', 'severity', 'category', 'count'],
                 ...result.map((item) => [
                     item.publisher_name,
-                    item.id,
+                    item.error_id,
                     item.message,
                     item.severity,
                     item.category,
@@ -49,15 +49,16 @@ module.exports = async (context, req) => {
 
             result.forEach((row) => {
                 const publisherName = row.publisher_name;
-                const { id, message, severity, count, category } = row;
+                const errorId = row.error_id;
+                const { message, severity, count, category } = row;
                 if (!Object.keys(parsedResults).includes(publisherName)) {
                     parsedResults[publisherName] = {};
                 }
-                parsedResults[publisherName][id] = {};
-                parsedResults[publisherName][id].count = count;
-                parsedResults[publisherName][id].message = message;
-                parsedResults[publisherName][id].severity = severity;
-                parsedResults[publisherName][id].category = category;
+                parsedResults[publisherName][errorId] = {};
+                parsedResults[publisherName][errorId].count = count;
+                parsedResults[publisherName][errorId].message = message;
+                parsedResults[publisherName][errorId].severity = severity;
+                parsedResults[publisherName][errorId].category = category;
             });
             context.res = {
                 status: 200,

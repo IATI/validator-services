@@ -21,32 +21,15 @@ module.exports = {
         return null;
     },
 
-    getMigration: async () => {
-        const sql = `SELECT migration FROM version LIMIT 1;`;
-        return module.exports.getFirstRow(sql);
-    },
-
     getReportForUrl: async (url) => {
-        const migration = await module.exports.getMigration();
-        if (migration.migration < 16) {
-            const sql = `
-                SELECT val.document_hash as registry_hash, val.document_id as registry_id, val.document_url, val.valid, val.report
-                FROM public.document as doc 
-                LEFT JOIN validation as val ON doc.hash=val.document_hash 
-                WHERE doc.url = $1;
-            `;
+        const sql = `
+            SELECT val.document_hash as registry_hash, val.document_id as registry_id, val.document_url, val.valid, val.report
+            FROM public.document as doc
+            LEFT JOIN validation as val ON doc.validation=val.id
+            WHERE doc.url = $1;
+        `;
 
-            return module.exports.getFirstRow(sql, [url]);
-        } 
-            const sql = `
-                SELECT val.document_hash as registry_hash, val.document_id as registry_id, val.document_url, val.valid, val.report
-                FROM public.document as doc
-                LEFT JOIN validation as val ON doc.validation=val.id
-                WHERE doc.url = $1;
-            `;
-
-            return module.exports.getFirstRow(sql, [url]);
-        
+        return module.exports.getFirstRow(sql, [url]);
     },
 
     getReportForTestfile: async (guid) => {
@@ -60,46 +43,24 @@ module.exports = {
     },
 
     getReportForHash: async (hash) => {
-        const migration = await module.exports.getMigration();
-        if (migration.migration < 16) {
-            const sql = `
-                SELECT document_hash as registry_hash, document_id as registry_id, document_url, valid, report
-                FROM validation
-                WHERE document_hash = $1
-            `;
-            return module.exports.getFirstRow(sql, [hash]);
-        } 
-            const sql = `
-                SELECT document_hash as registry_hash, document_id as registry_id, document_url, valid, report
-                FROM validation
-                WHERE document_hash = $1
-                ORDER BY id DESC
-                LIMIT 1
-            `;
-            return module.exports.getFirstRow(sql, [hash]);
-        
+        const sql = `
+            SELECT document_hash as registry_hash, document_id as registry_id, document_url, valid, report
+            FROM validation
+            WHERE document_hash = $1
+            ORDER BY id DESC
+            LIMIT 1
+        `;
+        return module.exports.getFirstRow(sql, [hash]);
     },
 
     getReportForId: async (id) => {
-        const migration = await module.exports.getMigration();
-        if (migration.migration < 16) {
-            const sql = `
-                SELECT val.document_hash as registry_hash, val.document_id as registry_id, val.document_url, val.valid, val.report
-                FROM public.document as doc 
-                LEFT JOIN validation as val ON doc.hash=val.document_hash 
-                WHERE doc.id = $1;
-            `;
-            return module.exports.getFirstRow(sql, [id]);
-        } 
-            const sql = `
-                SELECT val.document_hash as registry_hash, val.document_id as registry_id, val.document_url, val.valid, val.report
-                FROM public.document as doc
-                LEFT JOIN validation as val ON doc.validation=val.id
-                WHERE doc.id = $1;
-            `;
-            return module.exports.getFirstRow(sql, [id]);
-        
-
+        const sql = `
+            SELECT val.document_hash as registry_hash, val.document_id as registry_id, val.document_url, val.valid, val.report
+            FROM public.document as doc
+            LEFT JOIN validation as val ON doc.validation=val.id
+            WHERE doc.id = $1;
+        `;
+        return module.exports.getFirstRow(sql, [id]);
     },
 
     getPublishersWithDocuments: async () => {
@@ -120,54 +81,28 @@ module.exports = {
     },
 
     getDocumentsForPublisher: async (id) => {
-        const migration = await module.exports.getMigration();
-        if (migration.migration < 16) {
-            const sql = `
-            SELECT 
-                doc.id, 
-                doc.hash, 
-                doc.url, 
-                doc.first_seen, 
-                doc.downloaded,
-                doc.download_error,
-                doc.validation,
-                doc.regenerate_validation_report,
-                doc.publisher,
-                doc.modified,
-                doc.solrize_end,
-                val.created as validation_created, 
-                val.valid,
-                val.report
-            FROM document as doc
-            LEFT JOIN validation AS val ON doc.validation = val.document_hash
-            WHERE doc.publisher = $1
-            ORDER BY url ASC
-            `;
-            return module.exports.query(sql, [id]);
-        } 
-            const sql = `
-            SELECT 
-                doc.id, 
-                doc.hash, 
-                doc.url, 
-                doc.first_seen, 
-                doc.downloaded,
-                doc.download_error,
-                doc.validation,
-                doc.regenerate_validation_report,
-                doc.publisher,
-                doc.modified,
-                doc.solrize_end,
-                val.created as validation_created, 
-                val.valid,
-                val.report
-            FROM document as doc
-            LEFT JOIN validation AS val ON doc.validation = val.id
-            WHERE doc.publisher = $1
-            ORDER BY url ASC
-            `;
-            return module.exports.query(sql, [id]);
-        
+        const sql = `
+        SELECT 
+            doc.id, 
+            doc.hash, 
+            doc.url, 
+            doc.first_seen, 
+            doc.downloaded,
+            doc.download_error,
+            doc.validation,
+            doc.regenerate_validation_report,
+            doc.publisher,
+            doc.modified,
+            doc.solrize_end,
+            val.created as validation_created, 
+            val.valid,
+            val.report
+        FROM document as doc
+        LEFT JOIN validation AS val ON doc.validation = val.id
+        WHERE doc.publisher = $1
+        ORDER BY url ASC
+        `;
+        return module.exports.query(sql, [id]);
     },
 
     getSinglePublisherById: async (id) => {
@@ -207,50 +142,26 @@ module.exports = {
     },
 
     getSingleDocument: async (id) => {
-        const migration = await module.exports.getMigration();
-        if (migration.migration < 16) {
-            const sql = `
-            SELECT
-                doc.id,
-                doc.hash,
-                doc.url,
-                doc.first_seen,
-                doc.downloaded,
-                doc.download_error,
-                doc.validation,
-                doc.regenerate_validation_report,
-                doc.publisher,
-                doc.modified,
-                val.created as validation_created,
-                val.valid,
-                val.report -> 'summary' AS summary
-            FROM document as doc
-            LEFT JOIN validation AS val ON doc.validation = val.document_hash
-            WHERE doc.id = $1
-            `;
-            return module.exports.query(sql, [id]);
-        } 
-            const sql = `
-            SELECT
-                doc.id,
-                doc.hash,
-                doc.url,
-                doc.first_seen,
-                doc.downloaded,
-                doc.download_error,
-                doc.validation,
-                doc.regenerate_validation_report,
-                doc.publisher,
-                doc.modified,
-                val.created as validation_created,
-                val.valid,
-                val.report -> 'summary' AS summary
-            FROM document as doc
-            LEFT JOIN validation AS val ON doc.validation = val.id
-            WHERE doc.id = $1
-            `;
-            return module.exports.query(sql, [id]);
-        
+        const sql = `
+        SELECT
+            doc.id,
+            doc.hash,
+            doc.url,
+            doc.first_seen,
+            doc.downloaded,
+            doc.download_error,
+            doc.validation,
+            doc.regenerate_validation_report,
+            doc.publisher,
+            doc.modified,
+            val.created as validation_created,
+            val.valid,
+            val.report -> 'summary' AS summary
+        FROM document as doc
+        LEFT JOIN validation AS val ON doc.validation = val.id
+        WHERE doc.id = $1
+        `;
+        return module.exports.query(sql, [id]);
     },
 
     getDsStyleDocuments: async () => {

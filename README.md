@@ -107,6 +107,15 @@ let myEnvVariable = config.ENV_VAR
     -   `hash`
     -   `url`
 
+### pvt-slack-post-slack-interactive: `[POST] /pvt/slack-interactive`
+
+-   Takes a POST parameter `payload` from an [Interactive](https://api.slack.com/messaging/interactivity#components) Slack Message.
+-   To run locally, you need to expose a public endpoint using [ngrok](https://ngrok.com)
+    -   `ngrok http 7071`
+-   Then update the interactivity "Request URL" of the Slack App [here](https://api.slack.com/apps/A02ECNWB4RZ/interactive-messages?)
+    -   e.g. `https://xxxx-xxx-xxx-xxx-xxx.ngrok.io/api/pvt/slack-interactive`
+-   Then start the function app, `ngrok` will forward requests from that public endpoint to `http://localhost:7071`
+
 ## Creating a new route
 
 `func new --name <routename> --template "HTTP trigger" --authlevel "function"`

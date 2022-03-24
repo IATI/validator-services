@@ -72,14 +72,6 @@ module.exports = {
         return module.exports.query(sql);
     },
 
-    getAllPublishers: async () => {
-        const sql = `
-            SELECT org_id, name, description, title, state, image_url, country_code, package_count, iati_id
-            FROM publisher
-        `;
-        return module.exports.query(sql);
-    },
-
     getPublishersWithBlackFlag: async () => {
         const sql = `
             SELECT org_id, name, description, title, state, image_url, country_code, package_count, iati_id, black_flag, black_flag_notified

@@ -1,9 +1,9 @@
 {
     "name": "validator-services",
-    "version": "2.2.2",
+    "version": "2.3.0",
     "description": "Backend microservice provider for the IATI Validator on the Unified Platform",
     "scripts": {
-        "start": "func start --javascript",
+        "start": "func start --javascript --cors http://localhost:4200",
         "build": "DOCKER_BUILDKIT=1 docker build --tag local/validator-services:latest .",
         "start:verbose": "func start --javascript --verbose",
         "test": "newman run integration-tests/validator-services-tests.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment.json --working-dir integration-tests/test-files",
@@ -11,7 +11,7 @@
     },
     "author": "IATI",
     "dependencies": {
-        "applicationinsights": "^2.2.2",
+        "applicationinsights": "^2.3.1",
         "dotenv": "^16.0.0",
         "node-fetch": "^2.6.7",
         "parse-multipart": "^1.0.4",
@@ -20,13 +20,13 @@
     },
     "devDependencies": {
         "@prettier/plugin-xml": "^2.0.1",
-        "eslint": "^8.11.0",
+        "eslint": "^8.12.0",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-config-prettier": "^8.5.0",
-        "eslint-plugin-import": "^2.25.4",
+        "eslint-plugin-import": "^2.26.0",
         "husky": "^7.0.4",
         "lint-staged": "^12.3.7",
-        "prettier": "^2.6.0"
+        "prettier": "^2.6.2"
     },
     "lint-staged": {
         "*.js": "eslint --cache --fix",

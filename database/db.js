@@ -65,17 +65,18 @@ module.exports = {
 
     getPublishersWithDocuments: async () => {
         const sql = `
-            SELECT org_id, name, title, state, country_code, package_count, iati_id
+            SELECT org_id, name, title, state, country_code, package_count, iati_id, black_flag, black_flag_notified
             FROM publisher
             WHERE package_count > 0
         `;
         return module.exports.query(sql);
     },
 
-    getAllPublishers: async () => {
+    getPublishersWithBlackFlag: async () => {
         const sql = `
-            SELECT org_id, name, description, title, state, image_url, country_code, package_count, iati_id
+            SELECT org_id, name, description, title, state, image_url, country_code, package_count, iati_id, black_flag, black_flag_notified
             FROM publisher
+            WHERE black_flag is not Null
         `;
         return module.exports.query(sql);
     },
@@ -94,6 +95,7 @@ module.exports = {
             doc.publisher,
             doc.modified,
             doc.solrize_end,
+            doc.activity_level_validation,
             val.created as validation_created, 
             val.valid,
             val.report
@@ -154,6 +156,7 @@ module.exports = {
             doc.regenerate_validation_report,
             doc.publisher,
             doc.modified,
+            doc.activity_level_validation,
             val.created as validation_created,
             val.valid,
             val.report -> 'summary' AS summary

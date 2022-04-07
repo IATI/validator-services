@@ -69,6 +69,10 @@ let myEnvVariable = config.ENV_VAR
 
 ### pvt-get-publishers: `[GET] /pvt/publishers`
 
+### pvt-get-publishers-flagged: `[GET] /pvt/publishers/flagged`
+
+-   Returns publishers that have been black flagged by the validation by activity process.
+
 ### pvt-get-single-publisher: `[GET] /pvt/publishers/{lookupValue}?lookupKey={lookupKey}`
 
 -   Query Params:

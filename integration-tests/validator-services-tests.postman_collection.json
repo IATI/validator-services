@@ -67,7 +67,7 @@
 									"});",
 									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified', 'solrize_end', 'activity_level_validation']);",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified', 'solrize_end', 'alv_end']);",
 									"});",
 									"pm.test(\"Set document id for tests\", function () {",
 									"    var jsonData = pm.response.json();",
@@ -242,7 +242,7 @@
 									"});",
 									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'activity_level_validation']);",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'alv_end']);",
 									"});"
 								],
 								"type": "text/javascript"

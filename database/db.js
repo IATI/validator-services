@@ -95,7 +95,7 @@ module.exports = {
             doc.publisher,
             doc.modified,
             doc.solrize_end,
-            doc.activity_level_validation,
+            doc.alv_end,
             val.created as validation_created, 
             val.valid,
             val.report
@@ -156,7 +156,7 @@ module.exports = {
             doc.regenerate_validation_report,
             doc.publisher,
             doc.modified,
-            doc.activity_level_validation,
+            doc.alv_end,
             val.created as validation_created,
             val.valid,
             val.report -> 'summary' AS summary

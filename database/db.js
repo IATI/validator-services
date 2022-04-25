@@ -158,6 +158,7 @@ module.exports = {
             doc.regenerate_validation_report,
             doc.publisher,
             doc.modified,
+            doc.solrize_end,
             doc.alv_start,
             doc.alv_end,
             doc.alv_error,

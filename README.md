@@ -95,12 +95,14 @@ let myEnvVariable = config.ENV_VAR
 ```
 
 -   Documents flagged as needing a validation report regeneration are moved to the top of the validation queue
+-   REFRESHER ACI CONTAINERS SHOULD BE STOPPED BEFORE INVOKING THIS ENDPOINT FOR SAFETY
 
 ### pvt-patch-validation-regenerate-all `[PATCH] /pvt/validation/regenerate/all`
 
 -   Body - none
 
 -   Flags ALL documents (that already have an associated validation report), for regeneration of a validation report
+-   REFRESHER ACI CONTAINERS SHOULD BE STOPPED BEFORE INVOKING THIS ENDPOINT FOR SAFETY
 
 ### pvt-get-guidance-links: `[GET] /pvt/guidance-links/{version}`
 

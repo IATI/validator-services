@@ -65,17 +65,18 @@ module.exports = {
 
     getPublishersWithDocuments: async () => {
         const sql = `
-            SELECT org_id, name, title, state, country_code, package_count, iati_id
+            SELECT org_id, name, title, state, country_code, package_count, iati_id, black_flag, black_flag_notified
             FROM publisher
             WHERE package_count > 0
         `;
         return module.exports.query(sql);
     },
 
-    getAllPublishers: async () => {
+    getPublishersWithBlackFlag: async () => {
         const sql = `
-            SELECT org_id, name, description, title, state, image_url, country_code, package_count, iati_id
+            SELECT org_id, name, description, title, state, image_url, country_code, package_count, iati_id, black_flag, black_flag_notified
             FROM publisher
+            WHERE black_flag is not Null
         `;
         return module.exports.query(sql);
     },
@@ -94,6 +95,9 @@ module.exports = {
             doc.publisher,
             doc.modified,
             doc.solrize_end,
+            doc.alv_start,
+            doc.alv_end,
+            doc.alv_error,
             val.created as validation_created, 
             val.valid,
             val.report
@@ -154,6 +158,10 @@ module.exports = {
             doc.regenerate_validation_report,
             doc.publisher,
             doc.modified,
+            doc.solrize_end,
+            doc.alv_start,
+            doc.alv_end,
+            doc.alv_error,
             val.created as validation_created,
             val.valid,
             val.report -> 'summary' AS summary
@@ -248,30 +256,79 @@ module.exports = {
     },
 
     updateRegenerateValidationForIds: async (ids) => {
-        const sql = `
+        const sql1 = `
         UPDATE document
         SET 
             regenerate_validation_report = 't'
         WHERE
-            id = ANY($1);
+            id = ANY($1)
+            AND alv_end is null
+            AND alv_error is null;
+        `;
+        const sql2 = `
+        UPDATE document
+        SET 
+            regenerate_validation_report = 't',
+            solrize_start = null,
+            solrize_end = null,
+            solr_api_error = null,
+            lakify_start = null,
+            lakify_end = null,
+            lakify_error = null,
+            flatten_end = null,
+            flatten_start = null,
+            flattened_activities = null,
+            flatten_api_error = null,
+            alv_start = null,
+            alv_end = null,
+            alv_error = null,
+            downloaded = null,
+            download_error = null
+        WHERE
+            id = ANY($1)
+            AND (alv_end is not null OR alv_error is not null);
         `;
 
-        const result = await module.exports.query(sql, [ids]);
-
-        return result;
+        await module.exports.query(sql1, [ids]);
+        await module.exports.query(sql2, [ids]);
     },
 
     updateRegenerateValidationForAll: async () => {
-        const sql = `
+        const sql1 = `
         UPDATE document
         SET 
             regenerate_validation_report = 't'
-        WHERE validation is not Null
+        WHERE
+            validation is not Null
+            AND alv_end is null
+            AND alv_error is null;
+        `;
+        const sql2 = `
+        UPDATE document
+        SET 
+            regenerate_validation_report = 't',
+            solrize_start = null,
+            solrize_end = null,
+            solr_api_error = null,
+            lakify_start = null,
+            lakify_end = null,
+            lakify_error = null,
+            flatten_end = null,
+            flatten_start = null,
+            flattened_activities = null,
+            flatten_api_error = null,
+            alv_start = null,
+            alv_end = null,
+            alv_error = null,
+            downloaded = null,
+            download_error = null
+        WHERE
+            validation is not Null
+            AND (alv_end is not null OR alv_error is not null);
         `;
 
-        const result = await module.exports.query(sql);
-
-        return result;
+        await module.exports.query(sql1);
+        await module.exports.query(sql2);
     },
 
     getSummaryPrecalcStats: async (date, publisher) => {

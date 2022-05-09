@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c2929710-2d10-4dad-a108-703d8855d1ba",
+		"_postman_id": "365cbaa7-0640-47b1-bed3-bbfef55ab04e",
 		"name": "validator-services-tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -22,7 +22,7 @@
 									"});",
 									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'title', 'state', 'country_code', 'package_count', 'iati_id']);",
+									"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'title', 'state', 'country_code', 'package_count', 'iati_id', 'black_flag', 'black_flag_notified']);",
 									"});",
 									"pm.test(\"Set publisher id for tests\", function () {",
 									"    var jsonData = pm.response.json();",
@@ -67,7 +67,7 @@
 									"});",
 									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified', 'solrize_end']);",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified', 'solrize_end', 'alv_start', 'alv_end', 'alv_error']);",
 									"});",
 									"pm.test(\"Set document id for tests\", function () {",
 									"    var jsonData = pm.response.json();",
@@ -242,7 +242,7 @@
 									"});",
 									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified']);",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'alv_start', 'alv_end', 'alv_error', 'solrize_end']);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -442,12 +442,7 @@
 									"type": "file",
 									"src": "iati-act-no-errors-vs-test.xml"
 								}
-							],
-							"options": {
-								"raw": {
-									"language": "xml"
-								}
-							}
+							]
 						},
 						"url": {
 							"raw": "{{baseURL}}/pvt/adhoc/upload?filename=iati-act-no-errors-vs-test.xml&sessionId={{sessionId}}",
@@ -750,6 +745,49 @@
 							""
 						]
 					}
+				}
+			]
+		},
+		{
+			"name": "Flagged Pulishers",
+			"item": [
+				{
+					"name": "GET Black Flagged Publishers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"API responds with an Array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(typeof jsonData).to.eql('object');",
+									"    pm.expect(typeof jsonData.length).to.eql('number');",
+									"    console.log(typeof jsonData.length)",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pvt/publishers/flagged",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"publishers",
+								"flagged"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

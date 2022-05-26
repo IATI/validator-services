@@ -256,6 +256,7 @@ module.exports = {
     },
 
     updateRegenerateValidationForIds: async (ids) => {
+        // Non ALV Docs
         const sql1 = `
         UPDATE document
         SET 
@@ -265,13 +266,13 @@ module.exports = {
             AND alv_end is null
             AND alv_error is null;
         `;
+
+        // ALV Docs
         const sql2 = `
         UPDATE document
         SET 
             regenerate_validation_report = 't',
-            solrize_start = null,
-            solrize_end = null,
-            solr_api_error = null,
+            solrize_reindex = 't',
             lakify_start = null,
             lakify_end = null,
             lakify_error = null,
@@ -279,9 +280,7 @@ module.exports = {
             flatten_start = null,
             flattened_activities = null,
             flatten_api_error = null,
-            alv_start = null,
-            alv_end = null,
-            alv_error = null,
+            alv_revalidate = 't',
             downloaded = null,
             download_error = null
         WHERE
@@ -294,6 +293,7 @@ module.exports = {
     },
 
     updateRegenerateValidationForAll: async () => {
+        // Non ALV Docs
         const sql1 = `
         UPDATE document
         SET 
@@ -303,13 +303,13 @@ module.exports = {
             AND alv_end is null
             AND alv_error is null;
         `;
+
+        // ALV Docs
         const sql2 = `
         UPDATE document
         SET 
             regenerate_validation_report = 't',
-            solrize_start = null,
-            solrize_end = null,
-            solr_api_error = null,
+            solrize_reindex = 't',
             lakify_start = null,
             lakify_end = null,
             lakify_error = null,
@@ -317,9 +317,7 @@ module.exports = {
             flatten_start = null,
             flattened_activities = null,
             flatten_api_error = null,
-            alv_start = null,
-            alv_end = null,
-            alv_error = null,
+            alv_revalidate = 't',
             downloaded = null,
             download_error = null
         WHERE

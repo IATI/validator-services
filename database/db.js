@@ -285,11 +285,26 @@ module.exports = {
             download_error = null
         WHERE
             id = ANY($1)
-            AND (alv_end is not null OR alv_error is not null);
+            AND alv_end is not null;
+        `;
+
+        // ALV Docs (errored so not in DS)
+        const sql3 = `
+        UPDATE document
+        SET 
+            regenerate_validation_report = 't',
+            alv_revalidate = 't',
+            downloaded = null,
+            download_error = null
+        WHERE
+            id = ANY($1)
+            AND alv_end is null 
+            AND alv_error is not null;
         `;
 
         await module.exports.query(sql1, [ids]);
         await module.exports.query(sql2, [ids]);
+        await module.exports.query(sql3, [ids]);
     },
 
     updateRegenerateValidationForAll: async () => {
@@ -322,11 +337,26 @@ module.exports = {
             download_error = null
         WHERE
             validation is not Null
-            AND (alv_end is not null OR alv_error is not null);
+            AND alv_end is not null;
+        `;
+
+        // ALV Docs (errored so not in DS)
+        const sql3 = `
+        UPDATE document
+        SET 
+            regenerate_validation_report = 't',
+            alv_revalidate = 't',
+            downloaded = null,
+            download_error = null
+        WHERE
+            validation is not Null
+            AND alv_end is null 
+            AND alv_error is not null;
         `;
 
         await module.exports.query(sql1);
         await module.exports.query(sql2);
+        await module.exports.query(sql3);
     },
 
     getSummaryPrecalcStats: async (date, publisher) => {

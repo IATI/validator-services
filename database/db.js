@@ -100,7 +100,12 @@ module.exports = {
             doc.alv_error,
             val.created as validation_created, 
             val.valid,
-            val.report
+            (SELECT case when val.report is null then null else jsonb_build_object(
+                'valid',val.report->'valid',
+                'summary',val.report->'summary',
+                'fileType',val.report->'fileType',
+                'iatiVersion',val.report->'iatiVersion'
+            ) end as report)
         FROM document as doc
         LEFT JOIN validation AS val ON doc.validation = val.id
         WHERE doc.publisher = $1

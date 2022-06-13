@@ -11,21 +11,21 @@
     },
     "author": "IATI",
     "dependencies": {
-        "applicationinsights": "^2.3.2",
-        "dotenv": "^16.0.0",
+        "applicationinsights": "^2.3.3",
+        "dotenv": "^16.0.1",
         "node-fetch": "^2.6.7",
         "parse-multipart": "^1.0.4",
         "pg": "^8.7.3",
         "pg-hstore": "^2.3.4"
     },
     "devDependencies": {
-        "@prettier/plugin-xml": "^2.1.0",
-        "eslint": "^8.15.0",
+        "@prettier/plugin-xml": "^2.2.0",
+        "eslint": "^8.17.0",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-import": "^2.26.0",
-        "husky": "^8.0.0",
-        "lint-staged": "^12.4.1",
+        "husky": "^8.0.1",
+        "lint-staged": "^13.0.1",
         "prettier": "^2.6.2"
     },
     "lint-staged": {

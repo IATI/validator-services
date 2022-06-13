@@ -256,6 +256,7 @@ module.exports = {
     },
 
     updateRegenerateValidationForIds: async (ids) => {
+        // Non ALV Docs
         const sql1 = `
         UPDATE document
         SET 
@@ -265,13 +266,13 @@ module.exports = {
             AND alv_end is null
             AND alv_error is null;
         `;
+
+        // ALV Docs
         const sql2 = `
         UPDATE document
         SET 
             regenerate_validation_report = 't',
-            solrize_start = null,
-            solrize_end = null,
-            solr_api_error = null,
+            solrize_reindex = 't',
             lakify_start = null,
             lakify_end = null,
             lakify_error = null,
@@ -279,21 +280,35 @@ module.exports = {
             flatten_start = null,
             flattened_activities = null,
             flatten_api_error = null,
-            alv_start = null,
-            alv_end = null,
-            alv_error = null,
+            alv_revalidate = 't',
             downloaded = null,
             download_error = null
         WHERE
             id = ANY($1)
-            AND (alv_end is not null OR alv_error is not null);
+            AND alv_end is not null;
+        `;
+
+        // ALV Docs (errored so not in DS)
+        const sql3 = `
+        UPDATE document
+        SET 
+            regenerate_validation_report = 't',
+            alv_revalidate = 't',
+            downloaded = null,
+            download_error = null
+        WHERE
+            id = ANY($1)
+            AND alv_end is null 
+            AND alv_error is not null;
         `;
 
         await module.exports.query(sql1, [ids]);
         await module.exports.query(sql2, [ids]);
+        await module.exports.query(sql3, [ids]);
     },
 
     updateRegenerateValidationForAll: async () => {
+        // Non ALV Docs
         const sql1 = `
         UPDATE document
         SET 
@@ -303,13 +318,13 @@ module.exports = {
             AND alv_end is null
             AND alv_error is null;
         `;
+
+        // ALV Docs
         const sql2 = `
         UPDATE document
         SET 
             regenerate_validation_report = 't',
-            solrize_start = null,
-            solrize_end = null,
-            solr_api_error = null,
+            solrize_reindex = 't',
             lakify_start = null,
             lakify_end = null,
             lakify_error = null,
@@ -317,18 +332,31 @@ module.exports = {
             flatten_start = null,
             flattened_activities = null,
             flatten_api_error = null,
-            alv_start = null,
-            alv_end = null,
-            alv_error = null,
+            alv_revalidate = 't',
             downloaded = null,
             download_error = null
         WHERE
             validation is not Null
-            AND (alv_end is not null OR alv_error is not null);
+            AND alv_end is not null;
+        `;
+
+        // ALV Docs (errored so not in DS)
+        const sql3 = `
+        UPDATE document
+        SET 
+            regenerate_validation_report = 't',
+            alv_revalidate = 't',
+            downloaded = null,
+            download_error = null
+        WHERE
+            validation is not Null
+            AND alv_end is null 
+            AND alv_error is not null;
         `;
 
         await module.exports.query(sql1);
         await module.exports.query(sql2);
+        await module.exports.query(sql3);
     },
 
     getSummaryPrecalcStats: async (date, publisher) => {

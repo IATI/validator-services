@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/azure-functions/node:4.4.1-node14
+FROM mcr.microsoft.com/azure-functions/node:4.6.1-node14
 
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
     AzureFunctionsJobHost__Logging__Console__IsEnabled=true

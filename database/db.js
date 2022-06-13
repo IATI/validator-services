@@ -199,7 +199,13 @@ module.exports = {
         SELECT 
             guid,
             filename, 
-            report, 
+            (SELECT case when report is null then null 
+                else jsonb_build_object(
+                    'valid',report->'valid',
+                    'summary',report->'summary',
+                    'fileType',report->'fileType',
+                    'iatiVersion',report->'iatiVersion'
+            ) end as report), 
             valid,
             session_id,
             created,

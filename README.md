@@ -80,6 +80,9 @@ let myEnvVariable = config.ENV_VAR
 
 ### pvt-get-publisher-documents: `[GET] /pvt/publishers/{id}/documents`
 
+-   Response
+    -   NOTE: Does not return `errors` object of the validation report to limit the size of the response, use `[GET] /pvt/documents/{id}` to get errors
+
 ### pvt-get-single-document: `[GET] /pvt/documents/{id}`
 
 ### pub-get-report: `[GET] /pub/validation/existing`
@@ -112,6 +115,15 @@ let myEnvVariable = config.ENV_VAR
     -   `id`
     -   `hash`
     -   `url`
+
+### pvt-get-adhoc-session `[GET] pvt/adhoc/session?sessionId={sessionId}`
+
+-   Query Params:
+
+    -   `sessionId` - session Id of user doing ad-hoc validation
+
+-   Response
+    -   NOTE: Does not return `errors` object of the validation report to limit the size of the response, use `[GET] /pvt/documents/{id}` to get errors
 
 ## Creating a new route
 

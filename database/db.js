@@ -177,28 +177,6 @@ module.exports = {
         return module.exports.query(sql, [id]);
     },
 
-    getDsStyleDocuments: async () => {
-        const sql = `
-        SELECT 
-            doc.hash, 
-            doc.url, 
-            doc.first_seen as date_created, 
-            doc.last_seen as date_updated,
-            pub.name as publisher_name
-        FROM document as doc
-        LEFT JOIN publisher as pub ON doc.publisher = pub.org_id
-        WHERE downloaded IS NOT NULL;
-        `;
-
-        const result = await module.exports.query(sql);
-
-        for (let i = 0; i < result.length; i += 1) {
-            result[i].name = result[i].url.split('/').pop();
-        }
-
-        return result;
-    },
-
     getAdhocValidationSession: async (sessionId) => {
         const sql = `
         SELECT 

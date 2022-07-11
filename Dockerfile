@@ -11,4 +11,4 @@ WORKDIR /home/site/wwwroot
 RUN \
     npm i -g npm && \
     npm set-script prepare "" && \
-    npm install --production
+    npm ci --production

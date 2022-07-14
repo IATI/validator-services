@@ -125,6 +125,44 @@ let myEnvVariable = config.ENV_VAR
 -   Response
     -   NOTE: Does not return `errors` object of the validation report to limit the size of the response, use `[GET] /pvt/documents/{id}` to get errors
 
+### pvt-post-adhoc-file: `[POST] /pvt/adhoc/upload?filename={filename}&sessionId={sessionId}&guid={guid}`
+
+-   Query Params:
+
+    -   `filename` - file name of file to be uploaded
+    -   `sessionId` - browser session id for the adhoc uploading session
+    -   `guid` - unique identifier for the file, since filename is not unique
+
+-   Response - 200
+
+-   Actions
+    -   Saves file to Blob storage with path/name `"%ADHOC_CONTAINER%/{sessionId}###{filename}###{guid}"`
+    -   Adds entry into `adhoc_validation` database table with `.session_id`, `.filename`, `.guid`
+
+### pvt-post-adhoc-url: `[POST] /pvt/adhoc/url?url={url}&sessionId={sessionId}&guid={guid}`
+
+-   Query Params:
+
+    -   `url` - url of the file to be uploaded
+    -   `sessionId` - browser session id for the adhoc uploading session
+    -   `guid` - unique identifier for the file, since filename is not unique
+
+-   Response - 200
+
+-   Actions
+    -   Saves file to Blob storage with path/name `"%ADHOC_CONTAINER%/{sessionId}###{url}###{guid}"`
+    -   Adds entry into `adhoc_validation` table with `.session_id`, `.filename`, `.guid`
+
+### blob-trigger-adhoc-file
+
+-   Blob Trigger
+
+    -   When file is added to blob storage container with name `ADHOC_CONTAINER`, this Function is triggered.
+
+-   Actions
+    -   Sends file to Validator API
+    -   Saves validation report and metadata to `adhoc_validation` table
+
 ## Creating a new route
 
 `func new --name <routename> --template "HTTP trigger" --authlevel "function"`

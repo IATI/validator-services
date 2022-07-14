@@ -6,9 +6,7 @@
             "name": "req",
             "direction": "in",
             "dataType": "binary",
-            "methods": [
-                "post"
-            ],
+            "methods": ["post"],
             "route": "pvt/adhoc/url"
         },
         {
@@ -19,7 +17,7 @@
         {
             "name": "storage",
             "type": "blob",
-            "path": "%ADHOC_CONTAINER%/{sessionId}###{url}###{rand-guid}",
+            "path": "%ADHOC_CONTAINER%/{sessionId}###{url}###{guid}",
             "direction": "out",
             "connection": "STORAGECONNECTOR"
         }

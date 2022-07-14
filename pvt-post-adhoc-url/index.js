@@ -12,6 +12,7 @@ function endWithBadResponse(context, body = { message: 'Bad Request' }, status =
     context.done();
 }
 
+// eslint-disable-next-line consistent-return
 module.exports = async (context, req) => {
     try {
         if (!req.query.url) {
@@ -21,6 +22,11 @@ module.exports = async (context, req) => {
         if (!req.query.sessionId) {
             return endWithBadResponse(context, { message: `No sessionId apparent` });
         }
+
+        if (!req.query.guid) {
+            return endWithBadResponse(context, `No guid apparent`);
+        }
+
         let result;
         try {
             result = await fetch(req.query.url);
@@ -39,8 +45,7 @@ module.exports = async (context, req) => {
 
         context.bindings.storage = await result.text();
 
-        await db.insertAdhocValidation(req.query.sessionId, req.query.url);
-        return context.done();
+        await db.insertAdhocValidation(req.query.sessionId, req.query.url, req.query.guid);
     } catch (err) {
         context.log.error(err.message);
         throw err;

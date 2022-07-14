@@ -38,7 +38,6 @@ module.exports = async (context) => {
     try {
         const ids = context.bindingData.name.split('###');
         const sessionId = ids[0];
-        const filename = ids[1];
         const guid = ids[2];
 
         report = await result.json();
@@ -57,19 +56,9 @@ module.exports = async (context) => {
 
         console.log('Blob Trigger: Making DB update');
 
-        await db.updateAdhocValidation(
-            guid,
-            sessionId,
-            filename,
-            valid,
-            report,
-            created,
-            errorStatus
-        );
+        await db.updateAdhocValidation(guid, sessionId, valid, report, created, errorStatus);
     } catch (err) {
         context.log.error(err.message);
         throw err;
     }
-
-    context.done();
 };

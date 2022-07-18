@@ -5,14 +5,14 @@
     "tasks": [
         {
             "type": "func",
-            "command": "host start --javascript --language-worker -- --inspect=5858",
+            "command": "host start --cors http://localhost:4200 --javascript --language-worker -- --inspect=5858",
             "label": "func: host start",
             "problemMatcher": "$func-watch",
             "isBackground": true
         },
         {
             "type": "func",
-            "command": "host start",
+            "command": "host start --cors http://localhost:4200",
             "problemMatcher": "$func-watch",
             "isBackground": true,
             "dependsOn": "npm install"

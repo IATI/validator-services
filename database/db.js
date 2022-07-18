@@ -203,42 +203,33 @@ module.exports = {
         return result;
     },
 
-    insertAdhocValidation: async (sessionId, filename) => {
+    insertAdhocValidation: async (sessionId, filename, guid) => {
         const sql = `
-        INSERT INTO adhoc_validation (session_id, filename) VALUES ($1, $2)
+        INSERT INTO adhoc_validation (session_id, filename, guid) VALUES ($1, $2, $3)
         `;
 
-        const result = await module.exports.query(sql, [sessionId, filename]);
+        const result = await module.exports.query(sql, [sessionId, filename, guid]);
 
         return result;
     },
 
-    updateAdhocValidation: async (
-        guid,
-        sessionId,
-        filename,
-        valid,
-        report,
-        created,
-        errorStatus
-    ) => {
+    updateAdhocValidation: async (guid, sessionId, valid, report, created, errorStatus) => {
         const sql = `
        UPDATE adhoc_validation 
-       SET guid=$1, valid=$2, report=$3, created=$4, validated=$5, validation_api_error=$6
-       WHERE session_id=$7 AND filename=$8
+       SET valid=$1, report=$2, created=$3, validated=$4, validation_api_error=$5
+       WHERE guid=$6 and session_id=$7
         `;
 
         const now = new Date();
 
         const result = await module.exports.query(sql, [
-            guid,
             valid,
             JSON.stringify(report),
             created,
             now.toISOString(),
             errorStatus,
+            guid,
             sessionId,
-            filename,
         ]);
 
         return result;

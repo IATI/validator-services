@@ -10,6 +10,7 @@ function endWithBadResponse(context, message = 'Bad Request', status = 400) {
     context.done();
 }
 
+// eslint-disable-next-line consistent-return
 module.exports = async (context, req) => {
     try {
         if (!req.body) {
@@ -24,11 +25,15 @@ module.exports = async (context, req) => {
             return endWithBadResponse(context, `No sessionId apparent`);
         }
 
-        const bodyBuffer = await Buffer.from(req.body);
+        if (!req.query.guid) {
+            return endWithBadResponse(context, `No guid apparent`);
+        }
 
-        const boundary = await multipart.getBoundary(req.headers['content-type']);
+        const bodyBuffer = Buffer.from(req.body);
 
-        const parts = await multipart.Parse(bodyBuffer, boundary);
+        const boundary = multipart.getBoundary(req.headers['content-type']);
+
+        const parts = multipart.Parse(bodyBuffer, boundary);
 
         if (parts.length < 1) {
             return endWithBadResponse(
@@ -39,10 +44,8 @@ module.exports = async (context, req) => {
 
         context.bindings.storage = parts[0].data;
 
-        await db.insertAdhocValidation(req.query.sessionId, req.query.filename);
-        return context.done();
+        await db.insertAdhocValidation(req.query.sessionId, req.query.filename, req.query.guid);
     } catch (err) {
-        // MONDAY log more error
         context.log.error(err.message);
         throw err;
     }

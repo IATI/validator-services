@@ -198,10 +198,6 @@ let myEnvVariable = config.ENV_VAR
 
 `func new --name <routename> --template "HTTP trigger" --authlevel "function"`
 
-## Filesystem
-
--   Provided in `config/fileSystem.js` which can be imported to get the promisified versions of common `fs` functions since we're stuck with Node v12 for now (these are standard in Node v14)
-
 ## Integration Tests
 
 ### Running
@@ -215,24 +211,6 @@ let myEnvVariable = config.ENV_VAR
 Integration tests are written in Postman v2.1 format and run with newman
 Import the `integrations-tests/azure-function-node-microservice-template.postman_collection.json` into Postman and write additional tests there
 
-## Deployment
-
--   Update relevant items in `.github/workflows/develop-func-deploy.yml` (see comments inline)
--   Create a [Service Principal](https://github.com/IATI/IATI-Internal-Wiki/blob/main/IATI-Unified-Infra/ServicePrincipals.md) and set the DEV_AZURE_CREDENTIALS GitHub Secret
-
 ## Release / Version Management
 
-Increment the version on `main` branch using npm:
-
-`npm version major | minor | patch`
-
-Push the new tag and commit to gitHub
-
-```bash
-git push origin main
-git push —-tags
-```
-
-Create a new Release in GitHub based on the latest tag. Publishing that release deploys the application.
-
-Once deployed successfully PR `main` back into `develop`.
+https://github.com/IATI/IATI-Internal-Wiki#detailed-workflow-steps

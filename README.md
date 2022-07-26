@@ -24,9 +24,40 @@
 
 ### Description
 
-APPINSIGHTS_INSTRUMENTATIONKEY=
+#### .env
 
--   Needs to be set for running locally, but will not actually report telemetry to the AppInsights instance in my experience
+```bash
+# DB connection
+PGDATABASE=<dbname>
+PGHOST=<host>
+PGPASSWORD=
+PGPORT=5432
+PGSSL=true
+PGUSER=<username>@<host>
+
+# name of adhoc azure blob container
+ADHOC_CONTAINER=
+
+# validator API url and api key
+VALIDATOR_API_URL=
+VALIDATOR_FUNC_KEY=
+```
+
+#### local.settings.json
+
+Required due to the storage binding used by this function
+
+```json
+{
+    "IsEncrypted": false,
+    "Values": {
+        "FUNCTIONS_WORKER_RUNTIME": "node",
+        "AzureWebJobsStorage": <storage_connection_string>,
+        "STORAGECONNECTOR": <storage_connection_string>,
+        "ADHOC_CONTAINER": <ADHOC_CONTAINER>
+    }
+}
+```
 
 ### Adding New
 
@@ -166,10 +197,6 @@ let myEnvVariable = config.ENV_VAR
 ## Creating a new route
 
 `func new --name <routename> --template "HTTP trigger" --authlevel "function"`
-
-## AppInsights SDK
-
--   An example of using the `config/appInsights.js` utility is available in the `pvt-get/index.js` where execution time of the function is measured and then logged in 2 ways to the AppInsights Telemetry.
 
 ## Filesystem
 

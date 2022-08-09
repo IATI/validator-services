@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "365cbaa7-0640-47b1-bed3-bbfef55ab04e",
+		"_postman_id": "546f1b12-5fb4-4bbf-8ee7-cd001e4a047e",
 		"name": "validator-services-tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "13097277"
@@ -68,7 +68,7 @@
 									"});",
 									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified', 'solrize_end', 'alv_start', 'alv_end', 'alv_error']);",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified', 'solrize_end', 'clean_start', 'clean_end', 'clean_error']);",
 									"});",
 									"pm.test(\"Set document id for tests\", function () {",
 									"    var jsonData = pm.response.json();",
@@ -243,7 +243,7 @@
 									"});",
 									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'alv_start', 'alv_end', 'alv_error', 'solrize_end']);",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'clean_start', 'clean_end', 'clean_error', 'solrize_end']);",
 									"});"
 								],
 								"type": "text/javascript"

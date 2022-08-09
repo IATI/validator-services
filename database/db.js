@@ -95,9 +95,9 @@ module.exports = {
             doc.publisher,
             doc.modified,
             doc.solrize_end,
-            doc.alv_start,
-            doc.alv_end,
-            doc.alv_error,
+            doc.clean_start,
+            doc.clean_end,
+            doc.clean_error,
             val.created as validation_created, 
             val.valid,
             (SELECT case when val.report is null then null else jsonb_build_object(
@@ -164,9 +164,9 @@ module.exports = {
             doc.publisher,
             doc.modified,
             doc.solrize_end,
-            doc.alv_start,
-            doc.alv_end,
-            doc.alv_error,
+            doc.clean_start,
+            doc.clean_end,
+            doc.clean_error,
             val.created as validation_created,
             val.valid,
             val.report -> 'summary' AS summary
@@ -236,107 +236,29 @@ module.exports = {
     },
 
     updateRegenerateValidationForIds: async (ids) => {
-        // Non ALV Docs
-        const sql1 = `
+        const sql = `
         UPDATE document
         SET 
             regenerate_validation_report = 't'
         WHERE
-            id = ANY($1)
-            AND alv_end is null
-            AND alv_error is null;
+            validation is not Null
+            AND id = ANY($1)
         `;
 
-        // ALV Docs
-        const sql2 = `
-        UPDATE document
-        SET 
-            regenerate_validation_report = 't',
-            solrize_reindex = 't',
-            lakify_start = null,
-            lakify_end = null,
-            lakify_error = null,
-            flatten_end = null,
-            flatten_start = null,
-            flattened_activities = null,
-            flatten_api_error = null,
-            alv_revalidate = 't',
-            downloaded = null,
-            download_error = null
-        WHERE
-            id = ANY($1)
-            AND alv_end is not null;
-        `;
-
-        // ALV Docs (errored so not in DS)
-        const sql3 = `
-        UPDATE document
-        SET 
-            regenerate_validation_report = 't',
-            alv_revalidate = 't',
-            downloaded = null,
-            download_error = null
-        WHERE
-            id = ANY($1)
-            AND alv_end is null 
-            AND alv_error is not null;
-        `;
-
-        await module.exports.query(sql1, [ids]);
-        await module.exports.query(sql2, [ids]);
-        await module.exports.query(sql3, [ids]);
+        await module.exports.query(sql, [ids]);
     },
 
     updateRegenerateValidationForAll: async () => {
-        // Non ALV Docs
-        const sql1 = `
+        const sql = `
         UPDATE document
         SET 
             regenerate_validation_report = 't'
-        WHERE
-            validation is not Null
-            AND alv_end is null
-            AND alv_error is null;
+        WHERE validation is not Null
         `;
 
-        // ALV Docs
-        const sql2 = `
-        UPDATE document
-        SET 
-            regenerate_validation_report = 't',
-            solrize_reindex = 't',
-            lakify_start = null,
-            lakify_end = null,
-            lakify_error = null,
-            flatten_end = null,
-            flatten_start = null,
-            flattened_activities = null,
-            flatten_api_error = null,
-            alv_revalidate = 't',
-            downloaded = null,
-            download_error = null
-        WHERE
-            validation is not Null
-            AND alv_end is not null;
-        `;
+        const result = await module.exports.query(sql);
 
-        // ALV Docs (errored so not in DS)
-        const sql3 = `
-        UPDATE document
-        SET 
-            regenerate_validation_report = 't',
-            alv_revalidate = 't',
-            downloaded = null,
-            download_error = null
-        WHERE
-            validation is not Null
-            AND alv_end is null 
-            AND alv_error is not null;
-        `;
-
-        await module.exports.query(sql1);
-        await module.exports.query(sql2);
-        await module.exports.query(sql3);
+        return result;
     },
 
     getSummaryPrecalcStats: async (date, publisher) => {

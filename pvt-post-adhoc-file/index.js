@@ -72,7 +72,12 @@ module.exports = async (context, req) => {
 
         const endIndex = body.indexOf(boundaryBuf);
 
-        context.bindings.storage = body.slice(contentTypeEnd + '\r\n\r\n'.length, endIndex);
+        const result = body.slice(contentTypeEnd + '\r\n\r\n'.length, endIndex);
+
+        if (result.length < 1) {
+            return endWithBadResponse(context, `File in request body is empty.`);
+        }
+        context.bindings.storage = result;
 
         await db.insertAdhocValidation(req.query.sessionId, req.query.filename, req.query.guid);
     } catch (err) {

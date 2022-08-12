@@ -6,7 +6,6 @@ function endWithBadResponse(context, message = 'Bad Request', status = 400) {
         status,
         body: message,
     };
-    context.done();
 }
 
 function getBoundary(header) {

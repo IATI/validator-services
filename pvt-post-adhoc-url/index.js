@@ -10,7 +10,6 @@ function endWithBadResponse(context, body = { message: 'Bad Request' }, status =
         status,
         body,
     };
-    context.done();
 }
 
 // eslint-disable-next-line consistent-return
@@ -35,7 +34,11 @@ module.exports = async (context, req) => {
             });
         } catch (err) {
             const message = `Error fetching from provided URL: ${err.message}`;
-            endWithBadResponse(context, { message, url: req.query.url, code: err.code }, 422);
+            return endWithBadResponse(
+                context,
+                { message, url: req.query.url, code: err.code },
+                422
+            );
         }
 
         try {
@@ -43,7 +46,7 @@ module.exports = async (context, req) => {
         } catch (err) {
             const message = `Error fetching from provided URL: ${err.message}`;
             const errorBody = await err.response.text();
-            endWithBadResponse(context, { message, errorBody, url: req.query.url }, 422);
+            return endWithBadResponse(context, { message, errorBody, url: req.query.url }, 422);
         }
 
         context.bindings.storage = await result.text();

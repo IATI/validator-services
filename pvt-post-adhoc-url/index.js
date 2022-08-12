@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const db = require('../database/db');
 const { checkRespStatus } = require('../utils/utils');
+const config = require('../config/config');
 
 function endWithBadResponse(context, body = { message: 'Bad Request' }, status = 400) {
     context.log.error(body.message);
@@ -16,7 +17,7 @@ function endWithBadResponse(context, body = { message: 'Bad Request' }, status =
 module.exports = async (context, req) => {
     try {
         if (!req.query.url) {
-            return endWithBadResponse(context, { messge: `No filename apparent` });
+            return endWithBadResponse(context, { message: `No filename apparent` });
         }
 
         if (!req.query.sessionId) {
@@ -29,7 +30,9 @@ module.exports = async (context, req) => {
 
         let result;
         try {
-            result = await fetch(req.query.url);
+            result = await fetch(req.query.url, {
+                headers: { 'User-Agent': `iati-validator-upload/${config.VERSION}` },
+            });
         } catch (err) {
             const message = `Error fetching from provided URL: ${err.message}`;
             endWithBadResponse(context, { message, url: req.query.url, code: err.code }, 422);

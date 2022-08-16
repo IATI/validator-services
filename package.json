@@ -4,7 +4,6 @@
     "description": "Backend microservice provider for the IATI Validator on the Unified Platform",
     "scripts": {
         "start": "func start --javascript --cors http://localhost:4200",
-        "build": "DOCKER_BUILDKIT=1 docker build --tag local/validator-services:latest .",
         "start:verbose": "func start --javascript --verbose",
         "test": "newman run integration-tests/validator-services-tests.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment.json --working-dir integration-tests/test-files",
         "prepare": "husky install"

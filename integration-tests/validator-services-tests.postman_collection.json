@@ -57,17 +57,17 @@
                             "script": {
                                 "exec": [
                                     "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "const jsonData = pm.response.json();",
                                     "pm.test(\"Expect body to be an Array\", function () {",
-                                    "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData).to.be.an('array')",
                                     "});",
                                     "pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-                                    "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified', 'solrize_end', 'alv_start', 'alv_end', 'alv_error']);",
                                     "});",
-                                    "pm.test(\"Set document id for tests\", function () {",
-                                    "    var jsonData = pm.response.json();",
+                                    "pm.test(\"Set document id, hash, url for tests\", function () {",
                                     "    pm.collectionVariables.set(\"document_id\", jsonData.filter(doc => doc.validation !== null)[0].id);",
+                                    "    pm.collectionVariables.set(\"document_hash\", jsonData.filter(doc => doc.validation !== null)[0].hash);",
+                                    "    pm.collectionVariables.set(\"document_url\", jsonData.filter(doc => doc.validation !== null)[0].url);",
                                     "})"
                                 ],
                                 "type": "text/javascript"
@@ -104,7 +104,7 @@
                                     "});",
                                     "pm.test(\"Expect object to have certain keys\", function () {",
                                     "    var jsonData = pm.response.json();",
-                                    "    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
+                                    "    pm.expect(jsonData).to.have.all.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
                                     "});"
                                 ],
                                 "type": "text/javascript"
@@ -122,6 +122,211 @@
                                 {
                                     "key": "id",
                                     "value": "{{document_id}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pub-get-report GET /pub/validation/existing?id=<document_id>&showerrors=false",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "const jsonData = pm.response.json();",
+                                    "pm.test(\"Expect body to be an object\", function () {",
+                                    "    pm.expect(jsonData).to.be.an('object')",
+                                    "});",
+                                    "pm.test(\"Expect report object to only have certain keys\", function () {",
+                                    "    pm.expect(jsonData.report).to.have.all.keys(['valid', 'summary', 'fileType', 'iatiVersion']);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pub/validation/existing?id={{document_id}}&showerrors=false",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pub", "validation", "existing"],
+                            "query": [
+                                {
+                                    "key": "id",
+                                    "value": "{{document_id}}"
+                                },
+                                {
+                                    "key": "showerrors",
+                                    "value": "false"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pub-get-report GET /pub/validation/existing?hash",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "pm.test(\"Expect body to be an object\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.be.an('object')",
+                                    "});",
+                                    "pm.test(\"Expect object to have certain keys\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pub/validation/existing?hash={{document_hash}}",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pub", "validation", "existing"],
+                            "query": [
+                                {
+                                    "key": "hash",
+                                    "value": "{{document_hash}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pub-get-report GET /pub/validation/existing?hash=<document_hash>&summaryonly=false",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "const jsonData = pm.response.json();",
+                                    "pm.test(\"Expect body to be an object\", function () {",
+                                    "    pm.expect(jsonData).to.be.an('object')",
+                                    "});",
+                                    "pm.test(\"Expect object to have certain keys\", function () {",
+                                    "    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
+                                    "});",
+                                    "pm.test(\"Expect report object to only have certain keys\", function () {",
+                                    "    pm.expect(jsonData.report).to.have.all.keys(['valid', 'summary', 'fileType', 'iatiVersion']);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pub/validation/existing?hash={{document_hash}}&showerrors=false",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pub", "validation", "existing"],
+                            "query": [
+                                {
+                                    "key": "hash",
+                                    "value": "{{document_hash}}"
+                                },
+                                {
+                                    "key": "showerrors",
+                                    "value": "false"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pub-get-report GET /pub/validation/existing?url",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "pm.test(\"Expect body to be an object\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.be.an('object')",
+                                    "});",
+                                    "pm.test(\"Expect object to have certain keys\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pub/validation/existing?url={{document_url}}",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pub", "validation", "existing"],
+                            "query": [
+                                {
+                                    "key": "url",
+                                    "value": "{{document_url}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pub-get-report GET /pub/validation/existing?url=<document_url>&showerrors=true",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "const jsonData = pm.response.json();",
+                                    "pm.test(\"Expect body to be an object\", function () {",
+                                    "    pm.expect(jsonData).to.be.an('object')",
+                                    "});",
+                                    "pm.test(\"Expect object to have certain keys\", function () {",
+                                    "    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
+                                    "});",
+                                    "pm.test(\"Expect report object to only have certain keys\", function () {",
+                                    "    pm.expect(jsonData.report).to.have.all.keys(['valid', 'summary', 'fileType', 'iatiVersion']);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pub/validation/existing?url={{document_url}}&showerrors=false",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pub", "validation", "existing"],
+                            "query": [
+                                {
+                                    "key": "url",
+                                    "value": "{{document_url}}"
+                                },
+                                {
+                                    "key": "showerrors",
+                                    "value": "false"
                                 }
                             ]
                         }
@@ -374,6 +579,18 @@
                                 ],
                                 "type": "text/javascript"
                             }
+                        },
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": [
+                                    "const uuid = require('uuid');",
+                                    "pm.environment.set(\"file_guid\", uuid.v4());",
+                                    "pm.environment.set(\"url_guid\", uuid.v4());",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
                         }
                     ],
                     "request": {
@@ -397,7 +614,7 @@
                             ]
                         },
                         "url": {
-                            "raw": "{{baseURL}}/pvt/adhoc/upload?filename=iati-act-no-errors-vs-test.xml&sessionId={{sessionId}}&guid={{$guid}}",
+                            "raw": "{{baseURL}}/pvt/adhoc/upload?filename=iati-act-no-errors-vs-test.xml&sessionId={{sessionId}}&guid={{file_guid}}",
                             "host": ["{{baseURL}}"],
                             "path": ["pvt", "adhoc", "upload"],
                             "query": [
@@ -411,7 +628,7 @@
                                 },
                                 {
                                     "key": "guid",
-                                    "value": "{{$guid}}"
+                                    "value": "{{file_guid}}"
                                 }
                             ]
                         }
@@ -431,13 +648,20 @@
                                 ],
                                 "type": "text/javascript"
                             }
+                        },
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": ["", ""],
+                                "type": "text/javascript"
+                            }
                         }
                     ],
                     "request": {
                         "method": "POST",
                         "header": [],
                         "url": {
-                            "raw": "{{baseURL}}/pvt/adhoc/url?url=https://raw.githubusercontent.com/IATI/js-validator-api/develop/integration-tests/test-files/iati-act-no-errors.xml&sessionId={{sessionId}}&guid={{$guid}}",
+                            "raw": "{{baseURL}}/pvt/adhoc/url?url=https://raw.githubusercontent.com/IATI/js-validator-api/develop/integration-tests/test-files/iati-act-no-errors.xml&sessionId={{sessionId}}&guid={{url_guid}}",
                             "host": ["{{baseURL}}"],
                             "path": ["pvt", "adhoc", "url"],
                             "query": [
@@ -451,7 +675,7 @@
                                 },
                                 {
                                     "key": "guid",
-                                    "value": "{{$guid}}"
+                                    "value": "{{url_guid}}"
                                 }
                             ]
                         }
@@ -484,7 +708,7 @@
                         {
                             "listen": "prerequest",
                             "script": {
-                                "exec": ["setTimeout(function(){}, 1000);"],
+                                "exec": ["setTimeout(function(){}, 10000);"],
                                 "type": "text/javascript"
                             }
                         }
@@ -505,6 +729,80 @@
                         }
                     },
                     "response": []
+                },
+                {
+                    "name": "pub-get-report GET /pub/validation/existing?testfile=<url_guid>",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "const jsonData = pm.response.json();",
+                                    "pm.test(\"Expect body to be an object\", function () {",
+                                    "    pm.expect(jsonData).to.be.an('object')",
+                                    "});",
+                                    "pm.test(\"Expect object to have certain keys\", function () {",
+                                    "    pm.expect(jsonData).to.have.keys(['session_id', 'guid', 'filename', 'valid', 'report']);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pub/validation/existing?testfile={{url_guid}}",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pub", "validation", "existing"],
+                            "query": [
+                                {
+                                    "key": "testfile",
+                                    "value": "{{url_guid}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pub-get-report GET /pub/validation/existing?testfile=<file_guid>",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "const jsonData = pm.response.json();",
+                                    "pm.test(\"Expect body to be an object\", function () {",
+                                    "    pm.expect(jsonData).to.be.an('object')",
+                                    "});",
+                                    "pm.test(\"Expect object to have certain keys\", function () {",
+                                    "    pm.expect(jsonData).to.have.keys(['session_id', 'guid', 'filename', 'valid', 'report']);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pub/validation/existing?testfile={{file_guid}}",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pub", "validation", "existing"],
+                            "query": [
+                                {
+                                    "key": "testfile",
+                                    "value": "{{file_guid}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
                 }
             ],
             "event": [
@@ -515,7 +813,7 @@
                         "exec": [
                             "const uuid = require('uuid');",
                             "if (!environment.sessionId) {",
-                            "    postman.setEnvironmentVariable('sessionId', uuid.v4());",
+                            "    pm.environment.set('sessionId', uuid.v4());",
                             "}",
                             ""
                         ]
@@ -1167,6 +1465,14 @@
         {
             "value": "",
             "disabled": true
+        },
+        {
+            "key": "document_hash",
+            "value": ""
+        },
+        {
+            "key": "document_url",
+            "value": ""
         }
     ]
 }

@@ -1,1064 +1,1172 @@
 {
-	"info": {
-		"_postman_id": "546f1b12-5fb4-4bbf-8ee7-cd001e4a047e",
-		"name": "validator-services-tests",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "13097277"
-	},
-	"item": [
-		{
-			"name": "Publishers and Documents",
-			"item": [
-				{
-					"name": "pvt-get-publishers GET /pvt/publishers",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-									"pm.test(\"Expect body to be an Array\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('array')",
-									"});",
-									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'title', 'state', 'country_code', 'package_count', 'iati_id', 'black_flag', 'black_flag_notified']);",
-									"});",
-									"pm.test(\"Set publisher id for tests\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.collectionVariables.set(\"publisher_id\", jsonData[0].org_id);",
-									"})",
-									"pm.test(\"Set publisher name for tests\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.collectionVariables.set(\"publisher_name\", jsonData[1].name);",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pvt/publishers",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pvt",
-								"publishers"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pvt-get-publishers-documents GET /pvt/publishers/{id}/documents",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-									"pm.test(\"Expect body to be an Array\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('array')",
-									"});",
-									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified', 'solrize_end', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid']);",
-									"});",
-									"pm.test(\"Set document id for tests\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.collectionVariables.set(\"document_id\", jsonData.filter(doc => doc.validation !== null)[0].id);",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pvt/publishers/0b88bce7-7062-47be-8704-43137c441c2c/documents",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pvt",
-								"publishers",
-								"0b88bce7-7062-47be-8704-43137c441c2c",
-								"documents"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pub-get-report GET /pub/validation/existing?id",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-									"pm.test(\"Expect body to be an object\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('object')",
-									"});",
-									"pm.test(\"Expect object to have certain keys\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pub/validation/existing?id={{document_id}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pub",
-								"validation",
-								"existing"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "{{document_id}}"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pvt-get-single-publisher GET /pvt/publishers/{id}?lookupKey=id",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-									"pm.test(\"Expect body to be an Array\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('array')",
-									"});",
-									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'description', 'title', 'state', 'image_url', 'country_code', 'package_count', 'iati_id']);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pvt/publishers/{{publisher_id}}?lookupKey=id",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pvt",
-								"publishers",
-								"{{publisher_id}}"
-							],
-							"query": [
-								{
-									"key": "lookupKey",
-									"value": "id"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pvt-get-single-publisher GET /pvt/publishers/{name}?lookupKey=name",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-									"pm.test(\"Expect body to be an Array\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('array')",
-									"});",
-									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'description', 'title', 'state', 'image_url', 'country_code', 'package_count', 'iati_id']);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pvt/publishers/afdb?lookupKey=name",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pvt",
-								"publishers",
-								"afdb"
-							],
-							"query": [
-								{
-									"key": "lookupKey",
-									"value": "name"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pvt-get-single-document GET /pvt/documents/{id}",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-									"pm.test(\"Expect body to be an Array\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('array')",
-									"});",
-									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'clean_start', 'clean_end', 'clean_error', 'solrize_end', 'file_schema_valid']);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pvt/documents/{{document_id}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pvt",
-								"documents",
-								"{{document_id}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Guidance Links",
-			"item": [
-				{
-					"name": "pvt-get-guidance-links - bad version",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 422\", function () {",
-									"    pm.response.to.have.status(422);",
-									"});",
-									"pm.test(\"Body contains error: true\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.error).to.eql(true);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pvt/guidance-links/1.02",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pvt",
-								"guidance-links",
-								"1.02"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pvt-get-guidance-links - good",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Body contains version: 2.03\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.version).to.eql(\"2.03\");",
-									"});",
-									"pm.test(\"commitSha is present\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.commitSha).to.be.a('string').with.length.greaterThan(0);",
-									"});",
-									"pm.test(\"content object is present\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.content).to.be.a('object');",
-									"});",
-									"pm.test(\"content object has a key 1.1.3\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(Object.keys(jsonData.content)).to.include('1.1.3');",
-									"});",
-									"pm.test(\"content object has sub-keys path and url\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(Object.keys(jsonData.content).reduce((acc, id) => [...acc].concat(Object.keys(jsonData.content[id])), [])).to.include.members(['path', 'url']);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pvt/guidance-links/2.03",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pvt",
-								"guidance-links",
-								"2.03"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Validation Regenerate",
-			"item": [
-				{
-					"name": "pvt-validation-regenerate PATCH /pvt/validation/regenerate",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"ids\": [\"{{document_id}}\"]}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseURL}}/pvt/validation/regenerate",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pvt",
-								"validation",
-								"regenerate"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Ad Hoc Validate",
-			"item": [
-				{
-					"name": "pvt-post-adhoc-file POST /pvt/adhoc/upload",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "multipart/form-data",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "file",
-									"type": "file",
-									"src": "iati-act-no-errors-vs-test.xml"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{baseURL}}/pvt/adhoc/upload?filename=iati-act-no-errors-vs-test.xml&sessionId={{sessionId}}&guid={{$guid}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pvt",
-								"adhoc",
-								"upload"
-							],
-							"query": [
-								{
-									"key": "filename",
-									"value": "iati-act-no-errors-vs-test.xml"
-								},
-								{
-									"key": "sessionId",
-									"value": "{{sessionId}}"
-								},
-								{
-									"key": "guid",
-									"value": "{{$guid}}"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pvt-post-adhoc-url POST /pvt/adhoc/url",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pvt/adhoc/url?url=https://raw.githubusercontent.com/IATI/js-validator-api/develop/integration-tests/test-files/iati-act-no-errors.xml&sessionId={{sessionId}}&guid={{$guid}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pvt",
-								"adhoc",
-								"url"
-							],
-							"query": [
-								{
-									"key": "url",
-									"value": "https://raw.githubusercontent.com/IATI/js-validator-api/develop/integration-tests/test-files/iati-act-no-errors.xml"
-								},
-								{
-									"key": "sessionId",
-									"value": "{{sessionId}}"
-								},
-								{
-									"key": "guid",
-									"value": "{{$guid}}"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pvt-get-adhoc-session URL",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Body contains same sessionId as request\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0].session_id).to.eql(environment.sessionId);",
-									"});",
-									"pm.test(\"The body contains 2 ad-hoc report objects corresponding to the 2 POST requests\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.length).to.eql(2);",
-									"});",
-									"postman.setEnvironmentVariable(\"sessionId\", \"\");"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pvt/adhoc/session?sessionId={{sessionId}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pvt",
-								"adhoc",
-								"session"
-							],
-							"query": [
-								{
-									"key": "sessionId",
-									"value": "{{sessionId}}"
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							"const uuid = require('uuid');",
-							"if (!environment.sessionId) {",
-							"    postman.setEnvironmentVariable('sessionId', uuid.v4());",
-							"}",
-							""
-						]
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				}
-			]
-		},
-		{
-			"name": "Ad Hoc Validate - Error Handling",
-			"item": [
-				{
-					"name": "pvt-post-adhoc-url POST /pvt/adhoc/url - URL has 400 Error",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 422\", function () {",
-									"    pm.response.to.have.status(422);",
-									"});",
-									"pm.test(\"Your test name\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.message).to.eql(\"Error fetching from provided URL: HTTP Error Response: 400 BAD REQUEST\");",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pvt/adhoc/url?url=https://httpbin.org/status/400&sessionId={{sessionId}}&guid={{$guid}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pvt",
-								"adhoc",
-								"url"
-							],
-							"query": [
-								{
-									"key": "url",
-									"value": "https://httpbin.org/status/400"
-								},
-								{
-									"key": "sessionId",
-									"value": "{{sessionId}}"
-								},
-								{
-									"key": "guid",
-									"value": "{{$guid}}"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pvt-post-adhoc-url POST /pvt/adhoc/url - URL has 500 Error",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 422\", function () {",
-									"    pm.response.to.have.status(422);",
-									"});",
-									"pm.test(\"Error message contains HTTP response from URL\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.message).to.eql(\"Error fetching from provided URL: HTTP Error Response: 500 INTERNAL SERVER ERROR\");",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pvt/adhoc/url?url=https://httpbin.org/status/500&sessionId={{sessionId}}&guid={{$guid}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pvt",
-								"adhoc",
-								"url"
-							],
-							"query": [
-								{
-									"key": "url",
-									"value": "https://httpbin.org/status/500"
-								},
-								{
-									"key": "sessionId",
-									"value": "{{sessionId}}"
-								},
-								{
-									"key": "guid",
-									"value": "{{$guid}}"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pvt-post-adhoc-url POST /pvt/adhoc/url - URL fetch Exception",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 422\", function () {",
-									"    pm.response.to.have.status(422);",
-									"});",
-									"pm.test(\"Error message contains error code\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.code).to.eql(\"CERT_HAS_EXPIRED\");",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pvt/adhoc/url?url=https://expired.badssl.com/&sessionId={{sessionId}}&guid={{$guid}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pvt",
-								"adhoc",
-								"url"
-							],
-							"query": [
-								{
-									"key": "url",
-									"value": "https://expired.badssl.com/"
-								},
-								{
-									"key": "sessionId",
-									"value": "{{sessionId}}"
-								},
-								{
-									"key": "guid",
-									"value": "{{$guid}}"
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							"const uuid = require('uuid');",
-							"if (!environment.sessionId) {",
-							"    postman.setEnvironmentVariable('sessionId', uuid.v4());",
-							"}"
-						]
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				}
-			]
-		},
-		{
-			"name": "Flagged Pulishers",
-			"item": [
-				{
-					"name": "GET Black Flagged Publishers",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"API responds with an Array\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(typeof jsonData).to.eql('object');",
-									"    pm.expect(typeof jsonData.length).to.eql('number');",
-									"    console.log(typeof jsonData.length)",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pvt/publishers/flagged",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pvt",
-								"publishers",
-								"flagged"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Statistics",
-			"item": [
-				{
-					"name": "pub-get-stats-summary-aggregate GET /pub/stats/summary_aggregate",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-									"pm.test(\"Expect body to be an Object\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('object')",
-									"});",
-									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData['worldbank']).to.have.keys(['critical', 'error', 'warning']);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pub/stats/summary_aggregate",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pub",
-								"stats",
-								"summary_aggregate"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pub-get-stats-summary-precalc GET /pub/stats/summary_precalc",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-									"pm.test(\"Expect body to be an Object\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('object')",
-									"});",
-									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData['worldbank']).to.have.keys(['critical', 'error', 'warning']);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pub/stats/summary_precalc",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pub",
-								"stats",
-								"summary_precalc"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pub-get-stats-all GET /pub/stats/all",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-									"pm.test(\"Expect body to be an Object\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('object')",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pub/stats/all?date=2021-09-12",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pub",
-								"stats",
-								"all"
-							],
-							"query": [
-								{
-									"key": "date",
-									"value": "2021-09-12"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pub-get-stats-publisher GET /pub/stats/{publisher}",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-									"pm.test(\"Expect body to be an Object\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('object')",
-									"});",
-									"pm.test(\"Expect object to have certain keys\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.keys(['worldbank']);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pub/stats/publisher/worldbank",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pub",
-								"stats",
-								"publisher",
-								"worldbank"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "pub-get-version GET /pub/version",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"pm.test(\"Body matches string\", function () {",
-							"    pm.expect(pm.response.text()).to.be.a('string').with.length.greaterThan(4);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{baseURL}}/pub/version",
-					"host": [
-						"{{baseURL}}"
-					],
-					"path": [
-						"pub",
-						"version"
-					]
-				}
-			},
-			"response": []
-		}
-	],
-	"auth": {
-		"type": "apikey",
-		"apikey": [
-			{
-				"key": "value",
-				"value": "{{keyValue}}",
-				"type": "string"
-			},
-			{
-				"key": "key",
-				"value": "{{keyName}}",
-				"type": "string"
-			}
-		]
-	},
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "publisher_id",
-			"value": "f402080b-72ee-4baf-a010-77f56a67ec71"
-		},
-		{
-			"key": "document_id",
-			"value": ""
-		},
-		{
-			"key": "publisher_name",
-			"value": ""
-		},
-		{
-			"value": "",
-			"disabled": true
-		}
-	]
+    "info": {
+        "_postman_id": "4619a088-a724-4705-af6d-b16acf5e6b04",
+        "name": "validator-services-tests",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "13097277"
+    },
+    "item": [
+        {
+            "name": "Publishers and Documents",
+            "item": [
+                {
+                    "name": "pvt-get-publishers GET /pvt/publishers",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "pm.test(\"Expect body to be an Array\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.be.an('array')",
+                                    "});",
+                                    "pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'title', 'state', 'country_code', 'package_count', 'iati_id', 'black_flag', 'black_flag_notified']);",
+                                    "});",
+                                    "pm.test(\"Set publisher id for tests\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.collectionVariables.set(\"publisher_id\", jsonData[0].org_id);",
+                                    "})",
+                                    "pm.test(\"Set publisher name for tests\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.collectionVariables.set(\"publisher_name\", jsonData[1].name);",
+                                    "})"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/publishers",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "publishers"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pvt-get-publishers-documents GET /pvt/publishers/{id}/documents",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "pm.test(\"Expect body to be an Array\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.be.an('array')",
+                                    "});",
+                                    "pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified', 'solrize_end', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid']);",
+                                    "});",
+                                    "pm.test(\"Set document id for tests\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.collectionVariables.set(\"document_id\", jsonData.filter(doc => doc.validation !== null)[0].id);",
+                                    "})"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/publishers/0b88bce7-7062-47be-8704-43137c441c2c/documents",
+                            "host": ["{{baseURL}}"],
+                            "path": [
+                                "pvt",
+                                "publishers",
+                                "0b88bce7-7062-47be-8704-43137c441c2c",
+                                "documents"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pub-get-report GET /pub/validation/existing?id",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "pm.test(\"Expect body to be an object\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.be.an('object')",
+                                    "});",
+                                    "pm.test(\"Expect object to have certain keys\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pub/validation/existing?id={{document_id}}",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pub", "validation", "existing"],
+                            "query": [
+                                {
+                                    "key": "id",
+                                    "value": "{{document_id}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pvt-get-single-publisher GET /pvt/publishers/{id}?lookupKey=id",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "pm.test(\"Expect body to be an Array\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.be.an('array')",
+                                    "});",
+                                    "pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'description', 'title', 'state', 'image_url', 'country_code', 'package_count', 'iati_id']);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/publishers/{{publisher_id}}?lookupKey=id",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "publishers", "{{publisher_id}}"],
+                            "query": [
+                                {
+                                    "key": "lookupKey",
+                                    "value": "id"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pvt-get-single-publisher GET /pvt/publishers/{name}?lookupKey=name",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "pm.test(\"Expect body to be an Array\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.be.an('array')",
+                                    "});",
+                                    "pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'description', 'title', 'state', 'image_url', 'country_code', 'package_count', 'iati_id']);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/publishers/afdb?lookupKey=name",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "publishers", "afdb"],
+                            "query": [
+                                {
+                                    "key": "lookupKey",
+                                    "value": "name"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pvt-get-single-document GET /pvt/documents/{id}",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "pm.test(\"Expect body to be an Array\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.be.an('array')",
+                                    "});",
+                                    "pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid', 'solrize_end']);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/documents/{{document_id}}",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "documents", "{{document_id}}"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Guidance Links",
+            "item": [
+                {
+                    "name": "pvt-get-guidance-links - bad version",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 422\", function () {",
+                                    "    pm.response.to.have.status(422);",
+                                    "});",
+                                    "pm.test(\"Body contains error: true\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.error).to.eql(true);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/guidance-links/1.02",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "guidance-links", "1.02"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pvt-get-guidance-links - good",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"Body contains version: 2.03\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.version).to.eql(\"2.03\");",
+                                    "});",
+                                    "pm.test(\"commitSha is present\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.commitSha).to.be.a('string').with.length.greaterThan(0);",
+                                    "});",
+                                    "pm.test(\"content object is present\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.content).to.be.a('object');",
+                                    "});",
+                                    "pm.test(\"content object has a key 1.1.3\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(Object.keys(jsonData.content)).to.include('1.1.3');",
+                                    "});",
+                                    "pm.test(\"content object has sub-keys path and url\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(Object.keys(jsonData.content).reduce((acc, id) => [...acc].concat(Object.keys(jsonData.content[id])), [])).to.include.members(['path', 'url']);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/guidance-links/2.03",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "guidance-links", "2.03"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Validation Regenerate",
+            "item": [
+                {
+                    "name": "pvt-validation-regenerate PATCH /pvt/validation/regenerate",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "PATCH",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"ids\": [\"{{document_id}}\"]}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/validation/regenerate",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "validation", "regenerate"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Ad Hoc Validate",
+            "item": [
+                {
+                    "name": "pvt-post-adhoc-file POST /pvt/adhoc/upload",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "multipart/form-data",
+                                "type": "text",
+                                "disabled": true
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "file",
+                                    "type": "file",
+                                    "src": "iati-act-no-errors-vs-test.xml"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/adhoc/upload?filename=iati-act-no-errors-vs-test.xml&sessionId={{sessionId}}&guid={{$guid}}",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "adhoc", "upload"],
+                            "query": [
+                                {
+                                    "key": "filename",
+                                    "value": "iati-act-no-errors-vs-test.xml"
+                                },
+                                {
+                                    "key": "sessionId",
+                                    "value": "{{sessionId}}"
+                                },
+                                {
+                                    "key": "guid",
+                                    "value": "{{$guid}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pvt-post-adhoc-url POST /pvt/adhoc/url",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/adhoc/url?url=https://raw.githubusercontent.com/IATI/js-validator-api/develop/integration-tests/test-files/iati-act-no-errors.xml&sessionId={{sessionId}}&guid={{$guid}}",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "adhoc", "url"],
+                            "query": [
+                                {
+                                    "key": "url",
+                                    "value": "https://raw.githubusercontent.com/IATI/js-validator-api/develop/integration-tests/test-files/iati-act-no-errors.xml"
+                                },
+                                {
+                                    "key": "sessionId",
+                                    "value": "{{sessionId}}"
+                                },
+                                {
+                                    "key": "guid",
+                                    "value": "{{$guid}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pvt-get-adhoc-session URL",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"Body contains same sessionId as request\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData[0].session_id).to.eql(environment.sessionId);",
+                                    "});",
+                                    "pm.test(\"The body contains 2 ad-hoc report objects corresponding to the 2 POST requests\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.length).to.eql(2);",
+                                    "});",
+                                    "postman.setEnvironmentVariable(\"sessionId\", \"\");"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": ["setTimeout(function(){}, 3000);"],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/adhoc/session?sessionId={{sessionId}}",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "adhoc", "session"],
+                            "query": [
+                                {
+                                    "key": "sessionId",
+                                    "value": "{{sessionId}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ],
+            "event": [
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "const uuid = require('uuid');",
+                            "if (!environment.sessionId) {",
+                            "    postman.setEnvironmentVariable('sessionId', uuid.v4());",
+                            "}",
+                            ""
+                        ]
+                    }
+                },
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [""]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Ad Hoc Validate - Error Handling",
+            "item": [
+                {
+                    "name": "pvt-post-adhoc-url POST /pvt/adhoc/url - URL has 400 Error",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 422\", function () {",
+                                    "    pm.response.to.have.status(422);",
+                                    "});",
+                                    "pm.test(\"Your test name\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.message).to.eql(\"Error fetching from provided URL: HTTP Error Response: 400 BAD REQUEST\");",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/adhoc/url?url=https://httpbin.org/status/400&sessionId={{sessionId}}&guid={{$guid}}",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "adhoc", "url"],
+                            "query": [
+                                {
+                                    "key": "url",
+                                    "value": "https://httpbin.org/status/400"
+                                },
+                                {
+                                    "key": "sessionId",
+                                    "value": "{{sessionId}}"
+                                },
+                                {
+                                    "key": "guid",
+                                    "value": "{{$guid}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pvt-post-adhoc-url POST /pvt/adhoc/url - URL has 500 Error",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 422\", function () {",
+                                    "    pm.response.to.have.status(422);",
+                                    "});",
+                                    "pm.test(\"Error message contains HTTP response from URL\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.message).to.eql(\"Error fetching from provided URL: HTTP Error Response: 500 INTERNAL SERVER ERROR\");",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/adhoc/url?url=https://httpbin.org/status/500&sessionId={{sessionId}}&guid={{$guid}}",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "adhoc", "url"],
+                            "query": [
+                                {
+                                    "key": "url",
+                                    "value": "https://httpbin.org/status/500"
+                                },
+                                {
+                                    "key": "sessionId",
+                                    "value": "{{sessionId}}"
+                                },
+                                {
+                                    "key": "guid",
+                                    "value": "{{$guid}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pvt-post-adhoc-url POST /pvt/adhoc/url - URL fetch Exception",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 422\", function () {",
+                                    "    pm.response.to.have.status(422);",
+                                    "});",
+                                    "pm.test(\"Error message contains error code\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.code).to.eql(\"CERT_HAS_EXPIRED\");",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/adhoc/url?url=https://expired.badssl.com/&sessionId={{sessionId}}&guid={{$guid}}",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "adhoc", "url"],
+                            "query": [
+                                {
+                                    "key": "url",
+                                    "value": "https://expired.badssl.com/"
+                                },
+                                {
+                                    "key": "sessionId",
+                                    "value": "{{sessionId}}"
+                                },
+                                {
+                                    "key": "guid",
+                                    "value": "{{$guid}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pvt-post-adhoc-file POST /pvt/adhoc/upload text in form",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 400\", function () {",
+                                    "    pm.response.to.have.status(400);",
+                                    "});",
+                                    "pm.test(\"Body is correct\", function () {",
+                                    "    pm.response.to.have.body(\"Expect form data Content-Type to be text/xml or application/xml\");",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "multipart/form-data",
+                                "type": "text",
+                                "disabled": true
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "file",
+                                    "value": "<iati></iati>",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/adhoc/upload?filename=iati-act-no-errors-vs-test.xml&sessionId={{sessionId}}&guid={{$guid}}",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "adhoc", "upload"],
+                            "query": [
+                                {
+                                    "key": "filename",
+                                    "value": "iati-act-no-errors-vs-test.xml"
+                                },
+                                {
+                                    "key": "sessionId",
+                                    "value": "{{sessionId}}"
+                                },
+                                {
+                                    "key": "guid",
+                                    "value": "{{$guid}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pvt-post-adhoc-file POST /pvt/adhoc/upload file in body",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 400\", function () {",
+                                    "    pm.response.to.have.status(400);",
+                                    "});",
+                                    "pm.test(\"Body is correct\", function () {",
+                                    "    pm.response.to.have.body(\"Expect Request Content-Type to be multipart/form-data\");",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "multipart/form-data",
+                                "type": "text",
+                                "disabled": true
+                            }
+                        ],
+                        "body": {
+                            "mode": "file",
+                            "file": {
+                                "src": "iati-act-no-errors-vs-test.xml"
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/adhoc/upload?filename=iati-act-no-errors-vs-test.xml&sessionId={{sessionId}}&guid={{$guid}}",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "adhoc", "upload"],
+                            "query": [
+                                {
+                                    "key": "filename",
+                                    "value": "iati-act-no-errors-vs-test.xml"
+                                },
+                                {
+                                    "key": "sessionId",
+                                    "value": "{{sessionId}}"
+                                },
+                                {
+                                    "key": "guid",
+                                    "value": "{{$guid}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pvt-post-adhoc-file POST /pvt/adhoc/upload text in body",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 400\", function () {",
+                                    "    pm.response.to.have.status(400);",
+                                    "});",
+                                    "pm.test(\"Body is correct\", function () {",
+                                    "    pm.response.to.have.body(\"Expect Request Content-Type to be multipart/form-data\");",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "multipart/form-data",
+                                "type": "text",
+                                "disabled": true
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "<iati></iati>"
+                        },
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/adhoc/upload?filename=iati-act-no-errors-vs-test.xml&sessionId={{sessionId}}&guid={{$guid}}",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "adhoc", "upload"],
+                            "query": [
+                                {
+                                    "key": "filename",
+                                    "value": "iati-act-no-errors-vs-test.xml"
+                                },
+                                {
+                                    "key": "sessionId",
+                                    "value": "{{sessionId}}"
+                                },
+                                {
+                                    "key": "guid",
+                                    "value": "{{$guid}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pvt-post-adhoc-file POST /pvt/adhoc/upload empty file",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 400\", function () {",
+                                    "    pm.response.to.have.status(400);",
+                                    "});",
+                                    "pm.test(\"Body is correct\", function () {",
+                                    "    pm.response.to.have.body(\"File in request body is empty.\");",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "multipart/form-data",
+                                "type": "text",
+                                "disabled": true
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "file",
+                                    "type": "file",
+                                    "src": "empty.xml"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/adhoc/upload?filename=iati-act-no-errors-vs-test.xml&sessionId={{sessionId}}&guid={{$guid}}",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "adhoc", "upload"],
+                            "query": [
+                                {
+                                    "key": "filename",
+                                    "value": "iati-act-no-errors-vs-test.xml"
+                                },
+                                {
+                                    "key": "sessionId",
+                                    "value": "{{sessionId}}"
+                                },
+                                {
+                                    "key": "guid",
+                                    "value": "{{$guid}}"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ],
+            "event": [
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "const uuid = require('uuid');",
+                            "if (!environment.sessionId) {",
+                            "    postman.setEnvironmentVariable('sessionId', uuid.v4());",
+                            "}"
+                        ]
+                    }
+                },
+                {
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [""]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Flagged Pulishers",
+            "item": [
+                {
+                    "name": "GET Black Flagged Publishers",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"API responds with an Array\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(typeof jsonData).to.eql('object');",
+                                    "    pm.expect(typeof jsonData.length).to.eql('number');",
+                                    "    console.log(typeof jsonData.length)",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pvt/publishers/flagged",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pvt", "publishers", "flagged"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Statistics",
+            "item": [
+                {
+                    "name": "pub-get-stats-summary-aggregate GET /pub/stats/summary_aggregate",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "pm.test(\"Expect body to be an Object\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.be.an('object')",
+                                    "});",
+                                    "pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData['worldbank']).to.have.keys(['critical', 'error', 'warning']);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pub/stats/summary_aggregate",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pub", "stats", "summary_aggregate"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pub-get-stats-summary-precalc GET /pub/stats/summary_precalc",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "pm.test(\"Expect body to be an Object\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.be.an('object')",
+                                    "});",
+                                    "pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData['worldbank']).to.have.keys(['critical', 'error', 'warning']);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pub/stats/summary_precalc",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pub", "stats", "summary_precalc"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pub-get-stats-all GET /pub/stats/all",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "pm.test(\"Expect body to be an Object\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.be.an('object')",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pub/stats/all?date=2021-09-12",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pub", "stats", "all"],
+                            "query": [
+                                {
+                                    "key": "date",
+                                    "value": "2021-09-12"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "pub-get-stats-publisher GET /pub/stats/{publisher}",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                                    "pm.test(\"Expect body to be an Object\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.be.an('object')",
+                                    "});",
+                                    "pm.test(\"Expect object to have certain keys\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.keys(['worldbank']);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseURL}}/pub/stats/publisher/worldbank",
+                            "host": ["{{baseURL}}"],
+                            "path": ["pub", "stats", "publisher", "worldbank"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "pub-get-version GET /pub/version",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Status code is 200\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});",
+                            "pm.test(\"Body matches string\", function () {",
+                            "    pm.expect(pm.response.text()).to.be.a('string').with.length.greaterThan(4);",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseURL}}/pub/version",
+                    "host": ["{{baseURL}}"],
+                    "path": ["pub", "version"]
+                }
+            },
+            "response": []
+        }
+    ],
+    "auth": {
+        "type": "apikey",
+        "apikey": [
+            {
+                "key": "value",
+                "value": "{{keyValue}}",
+                "type": "string"
+            },
+            {
+                "key": "key",
+                "value": "{{keyName}}",
+                "type": "string"
+            }
+        ]
+    },
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [""]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [""]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "publisher_id",
+            "value": "f402080b-72ee-4baf-a010-77f56a67ec71"
+        },
+        {
+            "key": "document_id",
+            "value": ""
+        },
+        {
+            "key": "publisher_name",
+            "value": ""
+        },
+        {
+            "value": "",
+            "disabled": true
+        }
+    ]
 }

@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const db = require('../database/db');
 const { checkRespStatus } = require('../utils/utils');
+const config = require('../config/config');
 
 function endWithBadResponse(context, body = { message: 'Bad Request' }, status = 400) {
     context.log.error(body.message);
@@ -9,14 +10,13 @@ function endWithBadResponse(context, body = { message: 'Bad Request' }, status =
         status,
         body,
     };
-    context.done();
 }
 
 // eslint-disable-next-line consistent-return
 module.exports = async (context, req) => {
     try {
         if (!req.query.url) {
-            return endWithBadResponse(context, { messge: `No filename apparent` });
+            return endWithBadResponse(context, { message: `No filename apparent` });
         }
 
         if (!req.query.sessionId) {
@@ -29,10 +29,16 @@ module.exports = async (context, req) => {
 
         let result;
         try {
-            result = await fetch(req.query.url);
+            result = await fetch(req.query.url, {
+                headers: { 'User-Agent': `iati-validator-upload/${config.VERSION}` },
+            });
         } catch (err) {
             const message = `Error fetching from provided URL: ${err.message}`;
-            endWithBadResponse(context, { message, url: req.query.url, code: err.code }, 422);
+            return endWithBadResponse(
+                context,
+                { message, url: req.query.url, code: err.code },
+                422
+            );
         }
 
         try {
@@ -40,7 +46,7 @@ module.exports = async (context, req) => {
         } catch (err) {
             const message = `Error fetching from provided URL: ${err.message}`;
             const errorBody = await err.response.text();
-            endWithBadResponse(context, { message, errorBody, url: req.query.url }, 422);
+            return endWithBadResponse(context, { message, errorBody, url: req.query.url }, 422);
         }
 
         context.bindings.storage = await result.text();

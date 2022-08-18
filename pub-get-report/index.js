@@ -5,7 +5,7 @@ module.exports = async (context, req) => {
 
     // showErrors - default - true
     // whether to return the whole errors object in the JSON report response
-    const showErrors = showerrors !== 'false' && showerrors !== 'False';
+    const showErrors = (showerrors ? showerrors.toLowerCase() : showerrors) !== 'false';
 
     if (!id && !url && !hash && !testfile) {
         const message = {

@@ -32,6 +32,26 @@ module.exports = {
         return module.exports.getFirstRow(sql, [url]);
     },
 
+    getReportWithoutErrorsForUrl: async (url) => {
+        const sql = `
+            SELECT val.document_hash as registry_hash,
+                   val.document_id as registry_id, 
+                   val.document_url,
+                   val.valid,
+                   (SELECT case when val.report is null then null else jsonb_build_object(
+                        'valid',val.report->'valid',
+                        'summary',val.report->'summary',
+                        'fileType',val.report->'fileType',
+                        'iatiVersion',val.report->'iatiVersion'
+                    ) end as report)
+            FROM public.document as doc
+            LEFT JOIN validation as val ON doc.validation=val.id
+            WHERE doc.url = $1;
+        `;
+
+        return module.exports.getFirstRow(sql, [url]);
+    },
+
     getReportForTestfile: async (guid) => {
         const sql = `
             SELECT valid, report, filename, guid, session_id
@@ -53,9 +73,45 @@ module.exports = {
         return module.exports.getFirstRow(sql, [hash]);
     },
 
+    getReportWithoutErrorsForHash: async (hash) => {
+        const sql = `
+            SELECT document_hash as registry_hash, document_id as registry_id, document_url, valid, 
+                (SELECT case when report is null then null else jsonb_build_object(
+                        'valid',report->'valid',
+                        'summary',report->'summary',
+                        'fileType',report->'fileType',
+                        'iatiVersion',report->'iatiVersion'
+                    ) end as report)
+            FROM validation
+            WHERE document_hash = $1
+            ORDER BY id DESC
+            LIMIT 1
+        `;
+        return module.exports.getFirstRow(sql, [hash]);
+    },
+
     getReportForId: async (id) => {
         const sql = `
             SELECT val.document_hash as registry_hash, val.document_id as registry_id, val.document_url, val.valid, val.report
+            FROM public.document as doc
+            LEFT JOIN validation as val ON doc.validation=val.id
+            WHERE doc.id = $1;
+        `;
+        return module.exports.getFirstRow(sql, [id]);
+    },
+
+    getReportWithoutErrorsForId: async (id) => {
+        const sql = `
+            SELECT val.document_hash as registry_hash,
+                   val.document_id as registry_id, 
+                   val.document_url,
+                   val.valid,
+                   (SELECT case when val.report is null then null else jsonb_build_object(
+                        'valid',val.report->'valid',
+                        'summary',val.report->'summary',
+                        'fileType',val.report->'fileType',
+                        'iatiVersion',val.report->'iatiVersion'
+                    ) end as report)
             FROM public.document as doc
             LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.id = $1;

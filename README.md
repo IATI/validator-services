@@ -3,7 +3,7 @@
 ## Prerequisities
 
 -   nvm - [nvm](https://github.com/nvm-sh/nvm) - Node version manager
--   Node v14 LTS (lts/fermium)
+-   Node LTS
     -   once you've installed nvm run `nvm use` which will look at `.nvmrc` for the node version, if it's not installed then it will prompt you to install it with `nvm install <version>`
 -   [Azure Functions Core Tools v3](https://github.com/Azure/azure-functions-core-tools)
 -   [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) version 2.4 or later.
@@ -24,9 +24,40 @@
 
 ### Description
 
-APPINSIGHTS_INSTRUMENTATIONKEY=
+#### .env
 
--   Needs to be set for running locally, but will not actually report telemetry to the AppInsights instance in my experience
+```bash
+# DB connection
+PGDATABASE=<dbname>
+PGHOST=<host>
+PGPASSWORD=
+PGPORT=5432
+PGSSL=true
+PGUSER=<username>@<host>
+
+# name of adhoc azure blob container
+ADHOC_CONTAINER=
+
+# validator API url and api key
+VALIDATOR_API_URL=
+VALIDATOR_FUNC_KEY=
+```
+
+#### local.settings.json
+
+Required due to the storage binding used by this function
+
+```json
+{
+    "IsEncrypted": false,
+    "Values": {
+        "FUNCTIONS_WORKER_RUNTIME": "node",
+        "AzureWebJobsStorage": <storage_connection_string>,
+        "STORAGECONNECTOR": <storage_connection_string>,
+        "ADHOC_CONTAINER": <ADHOC_CONTAINER>
+    }
+}
+```
 
 ### Adding New
 
@@ -167,14 +198,6 @@ let myEnvVariable = config.ENV_VAR
 
 `func new --name <routename> --template "HTTP trigger" --authlevel "function"`
 
-## AppInsights SDK
-
--   An example of using the `config/appInsights.js` utility is available in the `pvt-get/index.js` where execution time of the function is measured and then logged in 2 ways to the AppInsights Telemetry.
-
-## Filesystem
-
--   Provided in `config/fileSystem.js` which can be imported to get the promisified versions of common `fs` functions since we're stuck with Node v12 for now (these are standard in Node v14)
-
 ## Integration Tests
 
 ### Running
@@ -188,24 +211,6 @@ let myEnvVariable = config.ENV_VAR
 Integration tests are written in Postman v2.1 format and run with newman
 Import the `integrations-tests/azure-function-node-microservice-template.postman_collection.json` into Postman and write additional tests there
 
-## Deployment
-
--   Update relevant items in `.github/workflows/develop-func-deploy.yml` (see comments inline)
--   Create a [Service Principal](https://github.com/IATI/IATI-Internal-Wiki/blob/main/IATI-Unified-Infra/ServicePrincipals.md) and set the DEV_AZURE_CREDENTIALS GitHub Secret
-
 ## Release / Version Management
 
-Increment the version on `main` branch using npm:
-
-`npm version major | minor | patch`
-
-Push the new tag and commit to gitHub
-
-```bash
-git push origin main
-git push —-tags
-```
-
-Create a new Release in GitHub based on the latest tag. Publishing that release deploys the application.
-
-Once deployed successfully PR `main` back into `develop`.
+https://github.com/IATI/IATI-Internal-Wiki#detailed-workflow-steps

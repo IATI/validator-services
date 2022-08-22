@@ -4,23 +4,20 @@
     "description": "Backend microservice provider for the IATI Validator on the Unified Platform",
     "scripts": {
         "start": "func start --javascript --cors http://localhost:4200",
-        "build": "DOCKER_BUILDKIT=1 docker build --tag local/validator-services:latest .",
         "start:verbose": "func start --javascript --verbose",
         "test": "newman run integration-tests/validator-services-tests.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment.json --working-dir integration-tests/test-files",
         "prepare": "husky install"
     },
     "author": "IATI",
     "dependencies": {
-        "applicationinsights": "^2.3.3",
         "dotenv": "^16.0.1",
         "node-fetch": "^2.6.7",
-        "parse-multipart": "^1.0.4",
         "pg": "^8.7.3",
         "pg-hstore": "^2.3.4"
     },
     "devDependencies": {
         "@prettier/plugin-xml": "^2.2.0",
-        "eslint": "^8.20.0",
+        "eslint": "^8.22.0",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-import": "^2.26.0",

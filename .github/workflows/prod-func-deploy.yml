@@ -131,17 +131,6 @@ jobs:
           app-name: func-${{ env.NAME }}-${{ env.STAGE }}
           package: '.'
 
-      - name: 'Tag resource for Tech Climate Impact'
-        uses: 'azure/CLI@v1.0.6'
-        with:
-          azcliversion: 2.30.0
-          inlineScript: |
-            az resource tag \
-              --tags env=$STAGE avgCPU=true ACU=true ACUvalue=210 \
-              --resource-group "rg-${{ env.NAME }}-${{ env.STAGE }}" \
-              --name "func-${{ env.NAME }}-${{ env.STAGE }}" \
-              --resource-type "Microsoft.Web/sites"
-
   integration-test:
     needs: build-and-deploy
     runs-on: ubuntu-latest

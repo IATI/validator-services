@@ -129,6 +129,7 @@ let myEnvVariable = config.ENV_VAR
 ```
 
 -   Documents flagged as needing a validation report regeneration are moved to the top of the validation queue
+-   This will only retrigger a "Full" Validation for the file, not the initial Schema check which sets `document.file_schema_valid`. This is because the Schema shouldn't change for a specific file because the files are versioned with the standard. If something does change that would make a specific file change it's validity against the schema, a manual re-trigger should be performed.
 -   REFRESHER ACI CONTAINERS SHOULD BE STOPPED BEFORE INVOKING THIS ENDPOINT FOR SAFETY
 
 ### pvt-patch-validation-regenerate-all `[PATCH] /pvt/validation/regenerate/all`
@@ -136,6 +137,7 @@ let myEnvVariable = config.ENV_VAR
 -   Body - none
 
 -   Flags ALL documents (that already have an associated validation report), for regeneration of a validation report
+-   This will only retrigger a "Full" Validation for the file, not the initial Schema check which sets `document.file_schema_valid`. This is because the Schema shouldn't change for a specific file because the files are versioned with the standard. If something does change that would make a specific file change it's validity against the schema, a manual re-trigger should be performed.
 -   REFRESHER ACI CONTAINERS SHOULD BE STOPPED BEFORE INVOKING THIS ENDPOINT FOR SAFETY
 
 ### pvt-get-guidance-links: `[GET] /pvt/guidance-links/{version}`

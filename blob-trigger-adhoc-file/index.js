@@ -1,8 +1,8 @@
-const fetch = require('node-fetch');
-const db = require('../database/db');
-const config = require('../config/config');
+import fetch from 'node-fetch';
+import { updateAdhocValidation } from '../database/db.js';
+import config from '../config/config.js';
 
-module.exports = async (context) => {
+export default async function blobTriggerAdhocFile(context) {
     let errorStatus = null;
     let result = null;
     let valid = null;
@@ -56,9 +56,9 @@ module.exports = async (context) => {
 
         console.log('Blob Trigger: Making DB update');
 
-        await db.updateAdhocValidation(guid, sessionId, valid, report, created, errorStatus);
+        await updateAdhocValidation(guid, sessionId, valid, report, created, errorStatus);
     } catch (err) {
         context.log.error(err.message);
         throw err;
     }
-};
+}

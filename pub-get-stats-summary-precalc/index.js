@@ -1,6 +1,6 @@
-const db = require('../database/db');
+import { getSummaryPrecalcStats } from '../database/db.js';
 
-module.exports = async (context, req) => {
+export default async function pubGetStatsSummaryPrecalc(context, req) {
     const date = req.query.date ? req.query.date : '9999-01-01';
     const { publisher } = req.query;
     const { format } = req.query;
@@ -8,7 +8,7 @@ module.exports = async (context, req) => {
     try {
         let result = null;
 
-        result = await db.getSummaryPrecalcStats(date, publisher);
+        result = await getSummaryPrecalcStats(date, publisher);
 
         if (format === 'csv') {
             const csvString = [
@@ -54,4 +54,4 @@ module.exports = async (context, req) => {
             body: JSON.stringify(e),
         };
     }
-};
+}

@@ -1,8 +1,6 @@
-// const db = require('../database/db');
+import { updateRegenerateValidationForIds } from '../database/db.js';
 
-const db = require('../database/db');
-
-module.exports = async (context, req) => {
+export default async function pvtPatchValidationRegenerate(context, req) {
     try {
         const { body } = req;
 
@@ -39,7 +37,7 @@ module.exports = async (context, req) => {
             return;
         }
 
-        await db.updateRegenerateValidationForIds(body.ids);
+        await updateRegenerateValidationForIds(body.ids);
 
         context.res = {
             status: 204,
@@ -53,4 +51,4 @@ module.exports = async (context, req) => {
             body: JSON.stringify(e),
         };
     }
-};
+}

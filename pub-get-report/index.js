@@ -1,6 +1,14 @@
-const db = require('../database/db');
+import {
+    getReportForId,
+    getReportForHash,
+    getReportForUrl,
+    getReportForTestfile,
+    getReportWithoutErrorsForId,
+    getReportWithoutErrorsForHash,
+    getReportWithoutErrorsForUrl,
+} from '../database/db.js';
 
-module.exports = async (context, req) => {
+export default async function pubGetReport(context, req) {
     const { id, hash, url, testfile, showerrors } = req.query;
 
     // showErrors - default - true
@@ -26,20 +34,20 @@ module.exports = async (context, req) => {
 
         if (showErrors) {
             if (id) {
-                result = await db.getReportForId(id);
+                result = await getReportForId(id);
             } else if (hash) {
-                result = await db.getReportForHash(hash);
+                result = await getReportForHash(hash);
             } else if (url) {
-                result = await db.getReportForUrl(url);
+                result = await getReportForUrl(url);
             } else if (testfile) {
-                result = await db.getReportForTestfile(testfile);
+                result = await getReportForTestfile(testfile);
             }
         } else if (id) {
-            result = await db.getReportWithoutErrorsForId(id);
+            result = await getReportWithoutErrorsForId(id);
         } else if (hash) {
-            result = await db.getReportWithoutErrorsForHash(hash);
+            result = await getReportWithoutErrorsForHash(hash);
         } else if (url) {
-            result = await db.getReportWithoutErrorsForUrl(url);
+            result = await getReportWithoutErrorsForUrl(url);
         }
 
         if (result === null) {
@@ -83,4 +91,4 @@ module.exports = async (context, req) => {
             body: JSON.stringify(e),
         };
     }
-};
+}

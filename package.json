@@ -2,6 +2,7 @@
     "name": "validator-services",
     "version": "2.4.9",
     "description": "Backend microservice provider for the IATI Validator on the Unified Platform",
+    "type": "module",
     "scripts": {
         "start": "func start --javascript --cors http://localhost:4200",
         "start:verbose": "func start --javascript --verbose",
@@ -11,7 +12,7 @@
     "author": "IATI",
     "dependencies": {
         "dotenv": "^16.0.1",
-        "node-fetch": "^2.6.7",
+        "node-fetch": "^3.2.10",
         "pg": "^8.8.0",
         "pg-hstore": "^2.3.4"
     },

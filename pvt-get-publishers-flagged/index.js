@@ -1,8 +1,8 @@
-const db = require('../database/db');
+import { getPublishersWithBlackFlag } from '../database/db.js';
 
-module.exports = async (context) => {
+export default async function pvtGetPublishersFlagged(context) {
     try {
-        const result = await db.getPublishersWithBlackFlag();
+        const result = await getPublishersWithBlackFlag();
 
         context.res = {
             status: 200,
@@ -18,4 +18,4 @@ module.exports = async (context) => {
             body: JSON.stringify(e),
         };
     }
-};
+}

@@ -1,8 +1,7 @@
-const config = require('../config/config');
+import config from '../config/config.js';
+import { getFileCommitSha, getFileBySha } from '../utils/utils.js';
 
-const { getFileCommitSha, getFileBySha } = require('../utils/utils');
-
-module.exports = async (context, req) => {
+export default async function pvtGetGuidanceLinks(context, req) {
     try {
         const { version } = req.params;
 
@@ -75,4 +74,4 @@ module.exports = async (context, req) => {
             body: JSON.stringify(e),
         };
     }
-};
+}

@@ -1,39 +1,40 @@
-const { Pool } = require('pg');
-const config = require('../config/config');
+import pg from 'pg';
+import config from '../config/config.js';
 
-module.exports = {
-    query: async (sql, values = null) => {
-        const pool = new Pool(config.PGCONFIG);
-        const result = await pool.query(sql, values);
-        await pool.end();
+const { Pool } = pg;
 
-        return result.rows;
-    },
+const query = async (sql, values = null) => {
+    const pool = new Pool(config.PGCONFIG);
+    const result = await pool.query(sql, values);
+    await pool.end();
 
-    getFirstRow: async (sql, values = null) => {
-        const pool = new Pool(config.PGCONFIG);
-        const result = await pool.query(sql, values);
-        await pool.end();
+    return result.rows;
+};
 
-        if (result.rows.length > 0) {
-            return result.rows[0];
-        }
-        return null;
-    },
+const getFirstRow = async (sql, values = null) => {
+    const pool = new Pool(config.PGCONFIG);
+    const result = await pool.query(sql, values);
+    await pool.end();
 
-    getReportForUrl: async (url) => {
-        const sql = `
+    if (result.rows.length > 0) {
+        return result.rows[0];
+    }
+    return null;
+};
+
+const getReportForUrl = async (url) => {
+    const sql = `
             SELECT val.document_hash as registry_hash, val.document_id as registry_id, val.document_url, val.valid, val.report
             FROM public.document as doc
             LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.url = $1;
         `;
 
-        return module.exports.getFirstRow(sql, [url]);
-    },
+    return getFirstRow(sql, [url]);
+};
 
-    getReportWithoutErrorsForUrl: async (url) => {
-        const sql = `
+const getReportWithoutErrorsForUrl = async (url) => {
+    const sql = `
             SELECT val.document_hash as registry_hash,
                    val.document_id as registry_id, 
                    val.document_url,
@@ -49,32 +50,32 @@ module.exports = {
             WHERE doc.url = $1;
         `;
 
-        return module.exports.getFirstRow(sql, [url]);
-    },
+    return getFirstRow(sql, [url]);
+};
 
-    getReportForTestfile: async (guid) => {
-        const sql = `
+const getReportForTestfile = async (guid) => {
+    const sql = `
             SELECT valid, report, filename, guid, session_id
             FROM adhoc_validation
             WHERE guid = $1
         `;
 
-        return module.exports.getFirstRow(sql, [guid]);
-    },
+    return getFirstRow(sql, [guid]);
+};
 
-    getReportForHash: async (hash) => {
-        const sql = `
+const getReportForHash = async (hash) => {
+    const sql = `
             SELECT document_hash as registry_hash, document_id as registry_id, document_url, valid, report
             FROM validation
             WHERE document_hash = $1
             ORDER BY id DESC
             LIMIT 1
         `;
-        return module.exports.getFirstRow(sql, [hash]);
-    },
+    return getFirstRow(sql, [hash]);
+};
 
-    getReportWithoutErrorsForHash: async (hash) => {
-        const sql = `
+const getReportWithoutErrorsForHash = async (hash) => {
+    const sql = `
             SELECT document_hash as registry_hash, document_id as registry_id, document_url, valid, 
                 (SELECT case when report is null then null else jsonb_build_object(
                         'valid',report->'valid',
@@ -87,21 +88,21 @@ module.exports = {
             ORDER BY id DESC
             LIMIT 1
         `;
-        return module.exports.getFirstRow(sql, [hash]);
-    },
+    return getFirstRow(sql, [hash]);
+};
 
-    getReportForId: async (id) => {
-        const sql = `
+const getReportForId = async (id) => {
+    const sql = `
             SELECT val.document_hash as registry_hash, val.document_id as registry_id, val.document_url, val.valid, val.report
             FROM public.document as doc
             LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.id = $1;
         `;
-        return module.exports.getFirstRow(sql, [id]);
-    },
+    return getFirstRow(sql, [id]);
+};
 
-    getReportWithoutErrorsForId: async (id) => {
-        const sql = `
+const getReportWithoutErrorsForId = async (id) => {
+    const sql = `
             SELECT val.document_hash as registry_hash,
                    val.document_id as registry_id, 
                    val.document_url,
@@ -116,29 +117,29 @@ module.exports = {
             LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.id = $1;
         `;
-        return module.exports.getFirstRow(sql, [id]);
-    },
+    return getFirstRow(sql, [id]);
+};
 
-    getPublishersWithDocuments: async () => {
-        const sql = `
+const getPublishersWithDocuments = async () => {
+    const sql = `
             SELECT org_id, name, title, state, country_code, package_count, iati_id, black_flag, black_flag_notified
             FROM publisher
             WHERE package_count > 0
         `;
-        return module.exports.query(sql);
-    },
+    return query(sql);
+};
 
-    getPublishersWithBlackFlag: async () => {
-        const sql = `
+const getPublishersWithBlackFlag = async () => {
+    const sql = `
             SELECT org_id, name, description, title, state, image_url, country_code, package_count, iati_id, black_flag, black_flag_notified
             FROM publisher
             WHERE black_flag is not Null
         `;
-        return module.exports.query(sql);
-    },
+    return query(sql);
+};
 
-    getDocumentsForPublisher: async (id) => {
-        const sql = `
+const getDocumentsForPublisher = async (id) => {
+    const sql = `
         SELECT 
             doc.id, 
             doc.hash, 
@@ -168,11 +169,11 @@ module.exports = {
         WHERE doc.publisher = $1
         ORDER BY url ASC
         `;
-        return module.exports.query(sql, [id]);
-    },
+    return query(sql, [id]);
+};
 
-    getSinglePublisherById: async (id) => {
-        const sql = `
+const getSinglePublisherById = async (id) => {
+    const sql = `
         SELECT
             org_id,
             name,
@@ -186,11 +187,11 @@ module.exports = {
         FROM publisher
         WHERE org_id = $1
         `;
-        return module.exports.query(sql, [id]);
-    },
+    return query(sql, [id]);
+};
 
-    getSinglePublisherByName: async (name) => {
-        const sql = `
+const getSinglePublisherByName = async (name) => {
+    const sql = `
         SELECT
             org_id,
             name,
@@ -204,11 +205,11 @@ module.exports = {
         FROM publisher
         WHERE name = $1
         `;
-        return module.exports.query(sql, [name]);
-    },
+    return query(sql, [name]);
+};
 
-    getSingleDocument: async (id) => {
-        const sql = `
+const getSingleDocument = async (id) => {
+    const sql = `
         SELECT
             doc.id,
             doc.hash,
@@ -232,11 +233,11 @@ module.exports = {
         LEFT JOIN validation AS val ON doc.validation = val.id
         WHERE doc.id = $1
         `;
-        return module.exports.query(sql, [id]);
-    },
+    return query(sql, [id]);
+};
 
-    getAdhocValidationSession: async (sessionId) => {
-        const sql = `
+const getAdhocValidationSession = async (sessionId) => {
+    const sql = `
         SELECT 
             guid,
             filename, 
@@ -256,45 +257,45 @@ module.exports = {
         ORDER BY created desc
         `;
 
-        const result = await module.exports.query(sql, [sessionId]);
+    const result = await query(sql, [sessionId]);
 
-        return result;
-    },
+    return result;
+};
 
-    insertAdhocValidation: async (sessionId, filename, guid) => {
-        const sql = `
+const insertAdhocValidation = async (sessionId, filename, guid) => {
+    const sql = `
         INSERT INTO adhoc_validation (session_id, filename, guid) VALUES ($1, $2, $3)
         `;
 
-        const result = await module.exports.query(sql, [sessionId, filename, guid]);
+    const result = await query(sql, [sessionId, filename, guid]);
 
-        return result;
-    },
+    return result;
+};
 
-    updateAdhocValidation: async (guid, sessionId, valid, report, created, errorStatus) => {
-        const sql = `
+const updateAdhocValidation = async (guid, sessionId, valid, report, created, errorStatus) => {
+    const sql = `
        UPDATE adhoc_validation 
        SET valid=$1, report=$2, created=$3, validated=$4, validation_api_error=$5
        WHERE guid=$6 and session_id=$7
         `;
 
-        const now = new Date();
+    const now = new Date();
 
-        const result = await module.exports.query(sql, [
-            valid,
-            JSON.stringify(report),
-            created,
-            now.toISOString(),
-            errorStatus,
-            guid,
-            sessionId,
-        ]);
+    const result = await query(sql, [
+        valid,
+        JSON.stringify(report),
+        created,
+        now.toISOString(),
+        errorStatus,
+        guid,
+        sessionId,
+    ]);
 
-        return result;
-    },
+    return result;
+};
 
-    updateRegenerateValidationForIds: async (ids) => {
-        const sql = `
+const updateRegenerateValidationForIds = async (ids) => {
+    const sql = `
         UPDATE document
         SET 
             regenerate_validation_report = 't'
@@ -303,25 +304,25 @@ module.exports = {
             AND id = ANY($1)
         `;
 
-        await module.exports.query(sql, [ids]);
-    },
+    await query(sql, [ids]);
+};
 
-    updateRegenerateValidationForAll: async () => {
-        const sql = `
+const updateRegenerateValidationForAll = async () => {
+    const sql = `
         UPDATE document
         SET 
             regenerate_validation_report = 't'
         WHERE validation is not Null
         `;
 
-        const result = await module.exports.query(sql);
+    const result = await query(sql);
 
-        return result;
-    },
+    return result;
+};
 
-    getSummaryPrecalcStats: async (date, publisher) => {
-        if (publisher) {
-            const sql = `
+const getSummaryPrecalcStats = async (date, publisher) => {
+    if (publisher) {
+        const sql = `
             SELECT
                 T1.publisher_name,
                 SUM( (T1.report -> 'summary' ->> 'critical') :: INTEGER) as critical,
@@ -339,10 +340,10 @@ module.exports = {
             GROUP BY T1.publisher_name;
             `;
 
-            const result = await module.exports.query(sql, [date, publisher]);
-            return result;
-        }
-        const sql = `
+        const result = await query(sql, [date, publisher]);
+        return result;
+    }
+    const sql = `
             SELECT
                 T1.publisher_name,
                 SUM( (T1.report -> 'summary' ->> 'critical') :: INTEGER) as critical,
@@ -360,13 +361,13 @@ module.exports = {
             GROUP BY T1.publisher_name;
             `;
 
-        const result = await module.exports.query(sql, [date]);
-        return result;
-    },
+    const result = await query(sql, [date]);
+    return result;
+};
 
-    getSummaryAggregateStats: async (date, publisher) => {
-        if (publisher) {
-            const sql = `
+const getSummaryAggregateStats = async (date, publisher) => {
+    if (publisher) {
+        const sql = `
                 SELECT
                     T1.publisher_name,
                     arr3.item_object -> 'severity' AS severity,
@@ -386,10 +387,10 @@ module.exports = {
                 ) GROUP BY T1.publisher_name, severity;
             `;
 
-            const result = await module.exports.query(sql, [date, publisher]);
-            return result;
-        }
-        const sql = `
+        const result = await query(sql, [date, publisher]);
+        return result;
+    }
+    const sql = `
             SELECT
                 T1.publisher_name,
                 arr3.item_object -> 'severity' AS severity,
@@ -409,12 +410,12 @@ module.exports = {
             ) GROUP BY T1.publisher_name, severity;
         `;
 
-        const result = await module.exports.query(sql, [date]);
-        return result;
-    },
+    const result = await query(sql, [date]);
+    return result;
+};
 
-    getMessageDateStats: async (date) => {
-        const sql = `
+const getMessageDateStats = async (date) => {
+    const sql = `
             SELECT
                 T1.publisher_name,
                 arr3.item_object -> 'id' AS error_id,
@@ -437,12 +438,12 @@ module.exports = {
             ) GROUP BY T1.publisher_name, error_id, message, severity, category;
         `;
 
-        const result = await module.exports.query(sql, [date]);
-        return result;
-    },
+    const result = await query(sql, [date]);
+    return result;
+};
 
-    getMessagePublisherStats: async (date, publisher) => {
-        const sql = `
+const getMessagePublisherStats = async (date, publisher) => {
+    const sql = `
             SELECT
                 T1.publisher_name,
                 arr3.item_object -> 'id' AS error_id,
@@ -465,7 +466,33 @@ module.exports = {
             ) GROUP BY T1.publisher_name, error_id, message, severity, category;
         `;
 
-        const result = await module.exports.query(sql, [date, publisher]);
-        return result;
-    },
+    const result = await query(sql, [date, publisher]);
+    return result;
+};
+
+export {
+    query,
+    getFirstRow,
+    getReportForUrl,
+    getReportWithoutErrorsForUrl,
+    getReportForTestfile,
+    getReportForHash,
+    getReportWithoutErrorsForHash,
+    getReportForId,
+    getReportWithoutErrorsForId,
+    getPublishersWithDocuments,
+    getPublishersWithBlackFlag,
+    getDocumentsForPublisher,
+    getSinglePublisherById,
+    getSinglePublisherByName,
+    getSingleDocument,
+    getAdhocValidationSession,
+    insertAdhocValidation,
+    updateAdhocValidation,
+    updateRegenerateValidationForIds,
+    updateRegenerateValidationForAll,
+    getSummaryPrecalcStats,
+    getSummaryAggregateStats,
+    getMessageDateStats,
+    getMessagePublisherStats,
 };

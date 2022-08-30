@@ -1,8 +1,8 @@
-const db = require('../database/db');
+import { getSingleDocument } from '../database/db.js';
 
-module.exports = async (context, req) => {
+export default async function pvtGetSingleDocument(context, req) {
     try {
-        const result = await db.getSingleDocument(req.params.id);
+        const result = await getSingleDocument(req.params.id);
 
         context.res = {
             status: 200,
@@ -18,4 +18,4 @@ module.exports = async (context, req) => {
             body: JSON.stringify(e),
         };
     }
-};
+}

@@ -111,7 +111,7 @@
 									"});",
 									"pm.test(\"Expect object to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.all.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
+									"    pm.expect(jsonData).to.have.all.keys(['registry_hash', 'registry_id', 'registry_name', 'document_url', 'valid', 'report']);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -152,6 +152,10 @@
 									"const jsonData = pm.response.json();",
 									"pm.test(\"Expect body to be an object\", function () {",
 									"    pm.expect(jsonData).to.be.an('object')",
+									"});",
+									"pm.test(\"Expect object to have certain keys\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.all.keys(['registry_hash', 'registry_id', 'registry_name', 'document_url', 'valid', 'report']);",
 									"});",
 									"pm.test(\"Expect report object to only have certain keys\", function () {",
 									"    pm.expect(jsonData.report).to.have.all.keys(['valid', 'summary', 'fileType', 'iatiVersion']);",
@@ -202,7 +206,7 @@
 									"});",
 									"pm.test(\"Expect object to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
+									"    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'registry_name', 'document_url', 'valid', 'report']);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -245,7 +249,7 @@
 									"    pm.expect(jsonData).to.be.an('object')",
 									"});",
 									"pm.test(\"Expect object to have certain keys\", function () {",
-									"    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
+									"    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'registry_name', 'document_url', 'valid', 'report']);",
 									"});",
 									"pm.test(\"Expect report object to only have certain keys\", function () {",
 									"    pm.expect(jsonData.report).to.have.all.keys(['valid', 'summary', 'fileType', 'iatiVersion']);",
@@ -296,7 +300,7 @@
 									"});",
 									"pm.test(\"Expect object to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
+									"    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id','registry_name', 'document_url', 'valid', 'report']);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -339,7 +343,7 @@
 									"    pm.expect(jsonData).to.be.an('object')",
 									"});",
 									"pm.test(\"Expect object to have certain keys\", function () {",
-									"    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
+									"    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id','registry_name', 'document_url', 'valid', 'report']);",
 									"});",
 									"pm.test(\"Expect report object to only have certain keys\", function () {",
 									"    pm.expect(jsonData.report).to.have.all.keys(['valid', 'summary', 'fileType', 'iatiVersion']);",

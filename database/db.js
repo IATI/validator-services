@@ -24,7 +24,12 @@ const getFirstRow = async (sql, values = null) => {
 
 const getReportForUrl = async (url) => {
     const sql = `
-            SELECT val.document_hash as registry_hash, val.document_id as registry_id, val.document_url, val.valid, val.report
+            SELECT val.document_hash as registry_hash,
+                   val.document_id as registry_id,
+                   doc.name as registry_name,
+                   val.document_url,
+                   val.valid,
+                   val.report
             FROM public.document as doc
             LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.url = $1;
@@ -37,6 +42,7 @@ const getReportWithoutErrorsForUrl = async (url) => {
     const sql = `
             SELECT val.document_hash as registry_hash,
                    val.document_id as registry_id, 
+                   doc.name as registry_name, 
                    val.document_url,
                    val.valid,
                    (SELECT case when val.report is null then null else jsonb_build_object(
@@ -65,35 +71,51 @@ const getReportForTestfile = async (guid) => {
 
 const getReportForHash = async (hash) => {
     const sql = `
-            SELECT document_hash as registry_hash, document_id as registry_id, document_url, valid, report
-            FROM validation
-            WHERE document_hash = $1
-            ORDER BY id DESC
-            LIMIT 1
+            SELECT val.document_hash as registry_hash,
+                   val.document_id as registry_id,
+                   doc.name as registry_name,
+                   val.document_url,
+                   val.valid,
+                   val.report
+            FROM public.document as doc
+            LEFT JOIN validation as val ON doc.validation=val.id
+            WHERE doc.hash = $1
+            ORDER BY val.id DESC
+            LIMIT 1;
         `;
     return getFirstRow(sql, [hash]);
 };
 
 const getReportWithoutErrorsForHash = async (hash) => {
     const sql = `
-            SELECT document_hash as registry_hash, document_id as registry_id, document_url, valid, 
-                (SELECT case when report is null then null else jsonb_build_object(
+            SELECT val.document_hash as registry_hash, 
+                   val.document_id as registry_id, 
+                   doc.name as registry_name,
+                   val.document_url,
+                   val.valid, 
+                   (SELECT case when report is null then null else jsonb_build_object(
                         'valid',report->'valid',
                         'summary',report->'summary',
                         'fileType',report->'fileType',
                         'iatiVersion',report->'iatiVersion'
                     ) end as report)
-            FROM validation
-            WHERE document_hash = $1
-            ORDER BY id DESC
-            LIMIT 1
+            FROM public.document as doc
+            LEFT JOIN validation as val ON doc.validation=val.id
+            WHERE doc.hash = $1
+            ORDER BY val.id DESC
+            LIMIT 1;
         `;
     return getFirstRow(sql, [hash]);
 };
 
 const getReportForId = async (id) => {
     const sql = `
-            SELECT val.document_hash as registry_hash, val.document_id as registry_id, val.document_url, val.valid, val.report
+            SELECT val.document_hash as registry_hash, 
+                   val.document_id as registry_id,
+                   doc.name as registry_name,
+                   val.document_url,
+                   val.valid,
+                   val.report
             FROM public.document as doc
             LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.id = $1;
@@ -105,6 +127,7 @@ const getReportWithoutErrorsForId = async (id) => {
     const sql = `
             SELECT val.document_hash as registry_hash,
                    val.document_id as registry_id, 
+                   doc.name as registry_name,
                    val.document_url,
                    val.valid,
                    (SELECT case when val.report is null then null else jsonb_build_object(

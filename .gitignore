@@ -44,3 +44,9 @@ __pycache__/
 
 # eslint
 .eslintcache
+
+# other envs
+.env*
+
+# scratch notes
+scratch.md

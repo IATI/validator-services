@@ -144,6 +144,7 @@ const getDocumentsForPublisher = async (id) => {
             doc.id, 
             doc.hash, 
             doc.url, 
+            doc.name, 
             doc.first_seen, 
             doc.downloaded,
             doc.download_error,

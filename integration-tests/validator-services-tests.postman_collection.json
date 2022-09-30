@@ -67,7 +67,7 @@
 									"    pm.expect(jsonData).to.be.an('array')",
 									"});",
 									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified',  'solrize_end', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid']);",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified',  'solrize_end', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid']);",
 									"});",
 									"pm.test(\"Set document id, hash, url for tests\", function () {",
 									"    pm.collectionVariables.set(\"document_id\", jsonData.filter(doc => doc.validation !== null)[0].id);",

@@ -38,6 +38,13 @@ const getReportForUrl = async (url) => {
     return getFirstRow(sql, [url]);
 };
 
+const valReportSummaryOnly = `(SELECT case when val.report is null then null else jsonb_build_object(
+                                    'valid',val.report->'valid',
+                                    'summary',val.report->'summary',
+                                    'fileType',val.report->'fileType',
+                                    'iatiVersion',val.report->'iatiVersion'
+                                ) end as report)`;
+
 const getReportWithoutErrorsForUrl = async (url) => {
     const sql = `
             SELECT val.document_hash as registry_hash,
@@ -45,12 +52,7 @@ const getReportWithoutErrorsForUrl = async (url) => {
                    doc.name as registry_name, 
                    val.document_url,
                    val.valid,
-                   (SELECT case when val.report is null then null else jsonb_build_object(
-                        'valid',val.report->'valid',
-                        'summary',val.report->'summary',
-                        'fileType',val.report->'fileType',
-                        'iatiVersion',val.report->'iatiVersion'
-                    ) end as report)
+                   ${valReportSummaryOnly}
             FROM public.document as doc
             LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.url = $1;
@@ -93,12 +95,7 @@ const getReportWithoutErrorsForHash = async (hash) => {
                    doc.name as registry_name,
                    val.document_url,
                    val.valid, 
-                   (SELECT case when report is null then null else jsonb_build_object(
-                        'valid',report->'valid',
-                        'summary',report->'summary',
-                        'fileType',report->'fileType',
-                        'iatiVersion',report->'iatiVersion'
-                    ) end as report)
+                   ${valReportSummaryOnly}
             FROM public.document as doc
             LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.hash = $1
@@ -130,17 +127,42 @@ const getReportWithoutErrorsForId = async (id) => {
                    doc.name as registry_name,
                    val.document_url,
                    val.valid,
-                   (SELECT case when val.report is null then null else jsonb_build_object(
-                        'valid',val.report->'valid',
-                        'summary',val.report->'summary',
-                        'fileType',val.report->'fileType',
-                        'iatiVersion',val.report->'iatiVersion'
-                    ) end as report)
+                   ${valReportSummaryOnly}
             FROM public.document as doc
             LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.id = $1;
         `;
     return getFirstRow(sql, [id]);
+};
+
+const getReportForName = async (name) => {
+    const sql = `
+            SELECT val.document_hash as registry_hash, 
+                   val.document_id as registry_id,
+                   doc.name as registry_name,
+                   val.document_url,
+                   val.valid,
+                   val.report
+            FROM public.document as doc
+            LEFT JOIN validation as val ON doc.validation=val.id
+            WHERE doc.name = $1;
+        `;
+    return getFirstRow(sql, [name]);
+};
+
+const getReportWithoutErrorsForName = async (name) => {
+    const sql = `
+            SELECT val.document_hash as registry_hash, 
+                   val.document_id as registry_id,
+                   doc.name as registry_name,
+                   val.document_url,
+                   val.valid,
+                   ${valReportSummaryOnly}
+            FROM public.document as doc
+            LEFT JOIN validation as val ON doc.validation=val.id
+            WHERE doc.name = $1;
+        `;
+    return getFirstRow(sql, [name]);
 };
 
 const getPublishersWithDocuments = async () => {
@@ -505,6 +527,8 @@ export {
     getReportWithoutErrorsForHash,
     getReportForId,
     getReportWithoutErrorsForId,
+    getReportForName,
+    getReportWithoutErrorsForName,
     getPublishersWithDocuments,
     getPublishersWithBlackFlag,
     getDocumentsForPublisher,

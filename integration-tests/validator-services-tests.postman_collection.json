@@ -87,14 +87,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseURL}}/pvt/publishers/0b88bce7-7062-47be-8704-43137c441c2c/documents",
+									"raw": "{{baseURL}}/pvt/publishers/{{publisher_id}}/documents",
 									"host": [
 										"{{baseURL}}"
 									],
 									"path": [
 										"pvt",
 										"publishers",
-										"0b88bce7-7062-47be-8704-43137c441c2c",
+										"{{publisher_id}}",
 										"documents"
 									]
 								}

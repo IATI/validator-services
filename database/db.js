@@ -24,7 +24,12 @@ const getFirstRow = async (sql, values = null) => {
 
 const getReportForUrl = async (url) => {
     const sql = `
-            SELECT val.document_hash as registry_hash, val.document_id as registry_id, val.document_url, val.valid, val.report
+            SELECT val.document_hash as registry_hash,
+                   val.document_id as registry_id,
+                   doc.name as registry_name,
+                   val.document_url,
+                   val.valid,
+                   val.report
             FROM public.document as doc
             LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.url = $1;
@@ -33,18 +38,21 @@ const getReportForUrl = async (url) => {
     return getFirstRow(sql, [url]);
 };
 
+const valReportSummaryOnly = `(SELECT case when val.report is null then null else jsonb_build_object(
+                                    'valid',val.report->'valid',
+                                    'summary',val.report->'summary',
+                                    'fileType',val.report->'fileType',
+                                    'iatiVersion',val.report->'iatiVersion'
+                                ) end as report)`;
+
 const getReportWithoutErrorsForUrl = async (url) => {
     const sql = `
             SELECT val.document_hash as registry_hash,
                    val.document_id as registry_id, 
+                   doc.name as registry_name, 
                    val.document_url,
                    val.valid,
-                   (SELECT case when val.report is null then null else jsonb_build_object(
-                        'valid',val.report->'valid',
-                        'summary',val.report->'summary',
-                        'fileType',val.report->'fileType',
-                        'iatiVersion',val.report->'iatiVersion'
-                    ) end as report)
+                   ${valReportSummaryOnly}
             FROM public.document as doc
             LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.url = $1;
@@ -65,35 +73,46 @@ const getReportForTestfile = async (guid) => {
 
 const getReportForHash = async (hash) => {
     const sql = `
-            SELECT document_hash as registry_hash, document_id as registry_id, document_url, valid, report
-            FROM validation
-            WHERE document_hash = $1
-            ORDER BY id DESC
-            LIMIT 1
+            SELECT val.document_hash as registry_hash,
+                   val.document_id as registry_id,
+                   doc.name as registry_name,
+                   val.document_url,
+                   val.valid,
+                   val.report
+            FROM public.document as doc
+            LEFT JOIN validation as val ON doc.validation=val.id
+            WHERE doc.hash = $1
+            ORDER BY val.id DESC
+            LIMIT 1;
         `;
     return getFirstRow(sql, [hash]);
 };
 
 const getReportWithoutErrorsForHash = async (hash) => {
     const sql = `
-            SELECT document_hash as registry_hash, document_id as registry_id, document_url, valid, 
-                (SELECT case when report is null then null else jsonb_build_object(
-                        'valid',report->'valid',
-                        'summary',report->'summary',
-                        'fileType',report->'fileType',
-                        'iatiVersion',report->'iatiVersion'
-                    ) end as report)
-            FROM validation
-            WHERE document_hash = $1
-            ORDER BY id DESC
-            LIMIT 1
+            SELECT val.document_hash as registry_hash, 
+                   val.document_id as registry_id, 
+                   doc.name as registry_name,
+                   val.document_url,
+                   val.valid, 
+                   ${valReportSummaryOnly}
+            FROM public.document as doc
+            LEFT JOIN validation as val ON doc.validation=val.id
+            WHERE doc.hash = $1
+            ORDER BY val.id DESC
+            LIMIT 1;
         `;
     return getFirstRow(sql, [hash]);
 };
 
 const getReportForId = async (id) => {
     const sql = `
-            SELECT val.document_hash as registry_hash, val.document_id as registry_id, val.document_url, val.valid, val.report
+            SELECT val.document_hash as registry_hash, 
+                   val.document_id as registry_id,
+                   doc.name as registry_name,
+                   val.document_url,
+                   val.valid,
+                   val.report
             FROM public.document as doc
             LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.id = $1;
@@ -105,19 +124,45 @@ const getReportWithoutErrorsForId = async (id) => {
     const sql = `
             SELECT val.document_hash as registry_hash,
                    val.document_id as registry_id, 
+                   doc.name as registry_name,
                    val.document_url,
                    val.valid,
-                   (SELECT case when val.report is null then null else jsonb_build_object(
-                        'valid',val.report->'valid',
-                        'summary',val.report->'summary',
-                        'fileType',val.report->'fileType',
-                        'iatiVersion',val.report->'iatiVersion'
-                    ) end as report)
+                   ${valReportSummaryOnly}
             FROM public.document as doc
             LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.id = $1;
         `;
     return getFirstRow(sql, [id]);
+};
+
+const getReportForName = async (name) => {
+    const sql = `
+            SELECT val.document_hash as registry_hash, 
+                   val.document_id as registry_id,
+                   doc.name as registry_name,
+                   val.document_url,
+                   val.valid,
+                   val.report
+            FROM public.document as doc
+            LEFT JOIN validation as val ON doc.validation=val.id
+            WHERE doc.name = $1;
+        `;
+    return getFirstRow(sql, [name]);
+};
+
+const getReportWithoutErrorsForName = async (name) => {
+    const sql = `
+            SELECT val.document_hash as registry_hash, 
+                   val.document_id as registry_id,
+                   doc.name as registry_name,
+                   val.document_url,
+                   val.valid,
+                   ${valReportSummaryOnly}
+            FROM public.document as doc
+            LEFT JOIN validation as val ON doc.validation=val.id
+            WHERE doc.name = $1;
+        `;
+    return getFirstRow(sql, [name]);
 };
 
 const getPublishersWithDocuments = async () => {
@@ -144,6 +189,7 @@ const getDocumentsForPublisher = async (id) => {
             doc.id, 
             doc.hash, 
             doc.url, 
+            doc.name, 
             doc.first_seen, 
             doc.downloaded,
             doc.download_error,
@@ -214,6 +260,7 @@ const getSingleDocument = async (id) => {
             doc.id,
             doc.hash,
             doc.url,
+            doc.name,
             doc.first_seen,
             doc.downloaded,
             doc.download_error,
@@ -480,6 +527,8 @@ export {
     getReportWithoutErrorsForHash,
     getReportForId,
     getReportWithoutErrorsForId,
+    getReportForName,
+    getReportWithoutErrorsForName,
     getPublishersWithDocuments,
     getPublishersWithBlackFlag,
     getDocumentsForPublisher,

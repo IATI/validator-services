@@ -600,6 +600,94 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "pvt-get-single-document GET /pvt/documents/{id}?lookupKey=id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Expect body to be an Array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array')",
+									"});",
+									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid', 'solrize_end']);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pvt/documents/{{document_id}}?lookupKey=id",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"documents",
+								"{{document_id}}"
+							],
+							"query": [
+								{
+									"key": "lookupKey",
+									"value": "id"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pvt-get-single-document GET /pvt/documents/{name}?lookupKey=name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Expect body to be an Array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array')",
+									"});",
+									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid', 'solrize_end']);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pvt/documents/{{document_name}}?lookupKey=name",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"documents",
+								"{{document_name}}"
+							],
+							"query": [
+								{
+									"key": "lookupKey",
+									"value": "name"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

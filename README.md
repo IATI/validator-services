@@ -114,7 +114,10 @@ let myEnvVariable = config.ENV_VAR
 -   Response
     -   NOTE: Does not return `errors` object of the validation report to limit the size of the response, use `[GET] /pvt/documents/{id}` to get errors
 
-### pvt-get-single-document: `[GET] /pvt/documents/{id}`
+### pvt-get-single-document: `[GET] /pvt/documents/{lookupValue}?lookupKey={lookupKey}`
+
+-   Query Params:
+    -   `lookupKey` - REQ - `id` (default) or `name`
 
 ### pub-get-report: `[GET] /pub/validation/existing?id={id}&hash={hash}&url={url}&name={name}&showerrors={showerrors}`
 

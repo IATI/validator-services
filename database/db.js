@@ -254,7 +254,7 @@ const getSinglePublisherByName = async (name) => {
     return query(sql, [name]);
 };
 
-const getSingleDocument = async (id) => {
+const getSingleDocumentForId = async (id) => {
     const sql = `
         SELECT
             doc.id,
@@ -281,6 +281,34 @@ const getSingleDocument = async (id) => {
         WHERE doc.id = $1
         `;
     return query(sql, [id]);
+};
+const getSingleDocumentForName = async (name) => {
+    const sql = `
+        SELECT
+            doc.id,
+            doc.hash,
+            doc.url,
+            doc.name,
+            doc.first_seen,
+            doc.downloaded,
+            doc.download_error,
+            doc.file_schema_valid,
+            doc.validation,
+            doc.regenerate_validation_report,
+            doc.publisher,
+            doc.modified,
+            doc.solrize_end,
+            doc.clean_start,
+            doc.clean_end,
+            doc.clean_error,
+            val.created as validation_created,
+            val.valid,
+            val.report -> 'summary' AS summary
+        FROM document as doc
+        LEFT JOIN validation AS val ON doc.validation = val.id
+        WHERE doc.name = $1
+        `;
+    return query(sql, [name]);
 };
 
 const getAdhocValidationSession = async (sessionId) => {
@@ -534,7 +562,8 @@ export {
     getDocumentsForPublisher,
     getSinglePublisherById,
     getSinglePublisherByName,
-    getSingleDocument,
+    getSingleDocumentForId,
+    getSingleDocumentForName,
     getAdhocValidationSession,
     insertAdhocValidation,
     updateAdhocValidation,

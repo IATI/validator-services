@@ -10,6 +10,99 @@
 			"name": "Publishers and Documents",
 			"item": [
 				{
+					"name": "Error Handling",
+					"item": [
+						{
+							"name": "pvt-get-single-publisher GET /pvt/publishers/{id}?lookupKey=id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+											"const jsonData = pm.response.json();",
+											"pm.test(\"Expect body to have 'client_error' key\", function () {",
+											"     pm.expect(jsonData).to.have.key(\"client_error\")",
+											"});",
+											"pm.test(\"Expect error to contain certain message\", function () {",
+											"    pm.expect(jsonData.client_error).to.equal(\"Cannot find publisher with id: not-a-publisher-id\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/pvt/publishers/not-a-publisher-id?lookupKey=id",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pvt",
+										"publishers",
+										"not-a-publisher-id"
+									],
+									"query": [
+										{
+											"key": "lookupKey",
+											"value": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pvt-get-single-publisher GET /pvt/publishers/{id}?lookupKey=name 404",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+											"const jsonData = pm.response.json();",
+											"pm.test(\"Expect body to have 'client_error' key\", function () {",
+											"     pm.expect(jsonData).to.have.key(\"client_error\")",
+											"});",
+											"pm.test(\"Expect error to contain certain message\", function () {",
+											"    pm.expect(jsonData.client_error).to.equal(\"Cannot find publisher with name: not-a-publisher-id\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/pvt/publishers/not-a-publisher-id?lookupKey=name",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pvt",
+										"publishers",
+										"not-a-publisher-id"
+									],
+									"query": [
+										{
+											"key": "lookupKey",
+											"value": "name"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "Get Publishers and Publishers Docs",
 					"item": [
 						{

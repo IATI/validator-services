@@ -41,7 +41,7 @@ export default async function pvtGetSinglePublisher(context, req) {
             result = await getSinglePublisherByName(lookupValue);
         }
 
-        if (result === null) {
+        if (result.length === 0) {
             const message = {
                 client_error: `Cannot find publisher with ${lookupKey}: ${lookupValue}`,
             };

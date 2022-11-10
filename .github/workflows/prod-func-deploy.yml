@@ -26,26 +26,25 @@ env:
   AZURE_CREDENTIALS: ${{ secrets.PROD_AZURE_CREDENTIALS }}
 
 jobs:
-  build-and-deploy:
+  build_save:
+    uses: IATI/.github/.github/workflows/build_node_save.yaml@main
+    with:
+      save_artifact: true
+      artifact_name: build-artifact-prod
+
+  deploy:
+    needs: build_save
     runs-on: ubuntu-latest
     steps:
-      - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v3
-
-      - name: 'Setup Node Environment'
-        uses: actions/setup-node@v3
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
         with:
-          cache: 'npm'
-          node-version-file: '.nvmrc'
+          name: build-artifact-prod
 
-      - name: 'Resolve Project Dependencies Using Npm'
-        shell: bash
+      - name: Unzip build artifact
         run: |
-          npm i -g npm
-          pushd './.'
-          npm set-script prepare ""
-          npm ci --production
-          popd
+          unzip build-artifact-prod.zip
+          rm build-artifact-prod.zip
 
       - name: 'Login via Azure CLI'
         uses: azure/login@v1.4.6
@@ -129,10 +128,9 @@ jobs:
         uses: Azure/functions-action@v1.4.8
         with:
           app-name: func-${{ env.NAME }}-${{ env.STAGE }}
-          package: '.'
 
   integration-test:
-    needs: build-and-deploy
+    needs: deploy
     runs-on: ubuntu-latest
     steps:
       - name: 'Wait for 3 minutes'

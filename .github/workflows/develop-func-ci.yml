@@ -13,26 +13,13 @@ on:
       - main
 
 jobs:
-  build-node:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v3
-
-      - name: 'Setup Node Environment'
-        uses: actions/setup-node@v3
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
-
-      - name: 'Install Dependencies with Npm'
-        run: |
-          npm i -g npm
-          npm set-script prepare ""
-          npm ci --production
+  build:
+    uses: IATI/.github/.github/workflows/build_node_save.yaml@main
+    with:
+      save_artifact: false
 
   automerge:
-    needs: [build-node]
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write

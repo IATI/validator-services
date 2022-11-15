@@ -1,4 +1,4 @@
-const db = require('../database/db');
+import { getAdhocValidationSession } from '../database/db.js';
 
 function endWithBadResponse(context, message = 'Bad Request') {
     context.log.error(message);
@@ -9,13 +9,13 @@ function endWithBadResponse(context, message = 'Bad Request') {
     context.done();
 }
 
-module.exports = async (context, req) => {
+export default async function pvtGetAdhocSession(context, req) {
     try {
         if (!req.query.sessionId) {
             return endWithBadResponse(context, `No sessionId apparent`);
         }
 
-        const result = await db.getAdhocValidationSession(req.query.sessionId);
+        const result = await getAdhocValidationSession(req.query.sessionId);
 
         context.res = {
             status: 200,
@@ -33,4 +33,4 @@ module.exports = async (context, req) => {
 
         return true;
     }
-};
+}

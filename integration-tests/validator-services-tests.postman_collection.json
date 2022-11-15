@@ -10,99 +10,354 @@
 			"name": "Publishers and Documents",
 			"item": [
 				{
-					"name": "pvt-get-publishers GET /pvt/publishers",
-					"event": [
+					"name": "Error Handling",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-									"pm.test(\"Expect body to be an Array\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('array')",
-									"});",
-									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'title', 'state', 'country_code', 'package_count', 'iati_id', 'black_flag', 'black_flag_notified']);",
-									"});",
-									"pm.test(\"Set publisher id for tests\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.collectionVariables.set(\"publisher_id\", jsonData[0].org_id);",
-									"})",
-									"pm.test(\"Set publisher name for tests\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.collectionVariables.set(\"publisher_name\", jsonData[1].name);",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pvt/publishers",
-							"host": [
-								"{{baseURL}}"
+							"name": "pvt-get-single-publisher GET /pvt/publishers/{id}?lookupKey=id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+											"const jsonData = pm.response.json();",
+											"pm.test(\"Expect body to have 'client_error' key\", function () {",
+											"     pm.expect(jsonData).to.have.key(\"client_error\")",
+											"});",
+											"pm.test(\"Expect error to contain certain message\", function () {",
+											"    pm.expect(jsonData.client_error).to.equal(\"Cannot find publisher with id: not-a-publisher-id\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
 							],
-							"path": [
-								"pvt",
-								"publishers"
-							]
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/pvt/publishers/not-a-publisher-id?lookupKey=id",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pvt",
+										"publishers",
+										"not-a-publisher-id"
+									],
+									"query": [
+										{
+											"key": "lookupKey",
+											"value": "id"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pvt-get-single-publisher GET /pvt/publishers/{id}?lookupKey=name 404",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+											"const jsonData = pm.response.json();",
+											"pm.test(\"Expect body to have 'client_error' key\", function () {",
+											"     pm.expect(jsonData).to.have.key(\"client_error\")",
+											"});",
+											"pm.test(\"Expect error to contain certain message\", function () {",
+											"    pm.expect(jsonData.client_error).to.equal(\"Cannot find publisher with name: not-a-publisher-id\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/pvt/publishers/not-a-publisher-id?lookupKey=name",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pvt",
+										"publishers",
+										"not-a-publisher-id"
+									],
+									"query": [
+										{
+											"key": "lookupKey",
+											"value": "name"
+										}
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "pvt-get-publishers-documents GET /pvt/publishers/{id}/documents",
-					"event": [
+					"name": "Get Publishers and Publishers Docs",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-									"const jsonData = pm.response.json();",
-									"pm.test(\"Expect body to be an Array\", function () {",
-									"    pm.expect(jsonData).to.be.an('array')",
-									"});",
-									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified', 'solrize_end', 'alv_start', 'alv_end', 'alv_error']);",
-									"});",
-									"pm.test(\"Set document id, hash, url for tests\", function () {",
-									"    pm.collectionVariables.set(\"document_id\", jsonData.filter(doc => doc.validation !== null)[0].id);",
-									"    pm.collectionVariables.set(\"document_hash\", jsonData.filter(doc => doc.validation !== null)[0].hash);",
-									"    pm.collectionVariables.set(\"document_url\", jsonData.filter(doc => doc.validation !== null)[0].url);",
-									"})"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pvt/publishers/0b88bce7-7062-47be-8704-43137c441c2c/documents",
-							"host": [
-								"{{baseURL}}"
+							"name": "pvt-get-publishers GET /pvt/publishers",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+											"pm.test(\"Expect body to be an Array\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.be.an('array')",
+											"});",
+											"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData[0]).to.have.keys(['org_id', 'name', 'title', 'state', 'country_code', 'package_count', 'iati_id', 'black_flag', 'black_flag_notified']);",
+											"});",
+											"pm.test(\"Set publisher id for tests\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"publisher_id\", jsonData[0].org_id);",
+											"})",
+											"pm.test(\"Set publisher name for tests\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.collectionVariables.set(\"publisher_name\", jsonData[1].name);",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
 							],
-							"path": [
-								"pvt",
-								"publishers",
-								"0b88bce7-7062-47be-8704-43137c441c2c",
-								"documents"
-							]
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/pvt/publishers",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pvt",
+										"publishers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pvt-get-publishers-documents GET /pvt/publishers/{id}/documents",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+											"const jsonData = pm.response.json();",
+											"pm.test(\"Expect body to be an Array\", function () {",
+											"    pm.expect(jsonData).to.be.an('array')",
+											"});",
+											"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+											"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified',  'solrize_end', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid']);",
+											"});",
+											"pm.test(\"Set document id, hash, url for tests\", function () {",
+											"    pm.collectionVariables.set(\"document_id\", jsonData.filter(doc => doc.validation !== null)[0].id);",
+											"    pm.collectionVariables.set(\"document_hash\", jsonData.filter(doc => doc.validation !== null)[0].hash);",
+											"    pm.collectionVariables.set(\"document_name\", jsonData.filter(doc => doc.validation !== null)[0].name);",
+											"    pm.collectionVariables.set(\"document_url\", jsonData.filter(doc => doc.validation !== null)[0].url);",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/pvt/publishers/{{publisher_id}}/documents",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pvt",
+										"publishers",
+										"{{publisher_id}}",
+										"documents"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "pub-get-report GET /pub/validation/existing?id",
+					"name": "GET Report",
+					"item": [
+						{
+							"name": "pub-get-report GET /pub/validation/existing?id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/pub/validation/existing?id={{document_id}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validation",
+										"existing"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "{{document_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pub-get-report GET /pub/validation/existing?hash",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/pub/validation/existing?hash={{document_hash}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validation",
+										"existing"
+									],
+									"query": [
+										{
+											"key": "hash",
+											"value": "{{document_hash}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pub-get-report GET /pub/validation/existing?url",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/pub/validation/existing?url={{document_url}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validation",
+										"existing"
+									],
+									"query": [
+										{
+											"key": "url",
+											"value": "{{document_url}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pub-get-report GET /pub/validation/existing?name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/pub/validation/existing?name={{document_name}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validation",
+										"existing"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "{{document_name}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
 					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
 						{
 							"listen": "test",
 							"script": {
+								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
 									"pm.test(\"Expect body to be an object\", function () {",
@@ -111,270 +366,207 @@
 									"});",
 									"pm.test(\"Expect object to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.all.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
+									"    pm.expect(jsonData).to.have.all.keys(['registry_hash', 'registry_id', 'registry_name', 'document_url', 'valid', 'report']);",
 									"});"
-								],
-								"type": "text/javascript"
+								]
 							}
 						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pub/validation/existing?id={{document_id}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pub",
-								"validation",
-								"existing"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "{{document_id}}"
-								}
-							]
-						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "pub-get-report GET /pub/validation/existing?id=<document_id>&showerrors=false",
+					"name": "Get Report - showerrors=false",
+					"item": [
+						{
+							"name": "pub-get-report GET /pub/validation/existing?id=<document_id>&showerrors=false",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/pub/validation/existing?id={{document_id}}&showerrors=false",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validation",
+										"existing"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "{{document_id}}"
+										},
+										{
+											"key": "showerrors",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pub-get-report GET /pub/validation/existing?hash=<document_hash>&showerrors=false",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/pub/validation/existing?hash={{document_hash}}&showerrors=false",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validation",
+										"existing"
+									],
+									"query": [
+										{
+											"key": "hash",
+											"value": "{{document_hash}}"
+										},
+										{
+											"key": "showerrors",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pub-get-report GET /pub/validation/existing?url=<document_url>&showerrors=false",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/pub/validation/existing?url={{document_url}}&showerrors=false",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validation",
+										"existing"
+									],
+									"query": [
+										{
+											"key": "url",
+											"value": "{{document_url}}"
+										},
+										{
+											"key": "showerrors",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pub-get-report GET /pub/validation/existing?name=<document_name>&showerrors=false",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/pub/validation/existing?name={{document_name}}&showerrors=false",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pub",
+										"validation",
+										"existing"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "{{document_name}}"
+										},
+										{
+											"key": "showerrors",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
 					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
 						{
 							"listen": "test",
 							"script": {
+								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
 									"const jsonData = pm.response.json();",
 									"pm.test(\"Expect body to be an object\", function () {",
 									"    pm.expect(jsonData).to.be.an('object')",
+									"});",
+									"pm.test(\"Expect object to have certain keys\", function () {",
+									"    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'registry_name', 'document_url', 'valid', 'report']);",
 									"});",
 									"pm.test(\"Expect report object to only have certain keys\", function () {",
 									"    pm.expect(jsonData.report).to.have.all.keys(['valid', 'summary', 'fileType', 'iatiVersion']);",
 									"});"
-								],
-								"type": "text/javascript"
+								]
 							}
 						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pub/validation/existing?id={{document_id}}&showerrors=false",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pub",
-								"validation",
-								"existing"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "{{document_id}}"
-								},
-								{
-									"key": "showerrors",
-									"value": "false"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pub-get-report GET /pub/validation/existing?hash",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-									"pm.test(\"Expect body to be an object\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('object')",
-									"});",
-									"pm.test(\"Expect object to have certain keys\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pub/validation/existing?hash={{document_hash}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pub",
-								"validation",
-								"existing"
-							],
-							"query": [
-								{
-									"key": "hash",
-									"value": "{{document_hash}}"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pub-get-report GET /pub/validation/existing?hash=<document_hash>&summaryonly=false",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-									"const jsonData = pm.response.json();",
-									"pm.test(\"Expect body to be an object\", function () {",
-									"    pm.expect(jsonData).to.be.an('object')",
-									"});",
-									"pm.test(\"Expect object to have certain keys\", function () {",
-									"    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
-									"});",
-									"pm.test(\"Expect report object to only have certain keys\", function () {",
-									"    pm.expect(jsonData.report).to.have.all.keys(['valid', 'summary', 'fileType', 'iatiVersion']);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pub/validation/existing?hash={{document_hash}}&showerrors=false",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pub",
-								"validation",
-								"existing"
-							],
-							"query": [
-								{
-									"key": "hash",
-									"value": "{{document_hash}}"
-								},
-								{
-									"key": "showerrors",
-									"value": "false"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pub-get-report GET /pub/validation/existing?url",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-									"pm.test(\"Expect body to be an object\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('object')",
-									"});",
-									"pm.test(\"Expect object to have certain keys\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pub/validation/existing?url={{document_url}}",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pub",
-								"validation",
-								"existing"
-							],
-							"query": [
-								{
-									"key": "url",
-									"value": "{{document_url}}"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "pub-get-report GET /pub/validation/existing?url=<document_url>&showerrors=true",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-									"const jsonData = pm.response.json();",
-									"pm.test(\"Expect body to be an object\", function () {",
-									"    pm.expect(jsonData).to.be.an('object')",
-									"});",
-									"pm.test(\"Expect object to have certain keys\", function () {",
-									"    pm.expect(jsonData).to.have.keys(['registry_hash', 'registry_id', 'document_url', 'valid', 'report']);",
-									"});",
-									"pm.test(\"Expect report object to only have certain keys\", function () {",
-									"    pm.expect(jsonData.report).to.have.all.keys(['valid', 'summary', 'fileType', 'iatiVersion']);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseURL}}/pub/validation/existing?url={{document_url}}&showerrors=false",
-							"host": [
-								"{{baseURL}}"
-							],
-							"path": [
-								"pub",
-								"validation",
-								"existing"
-							],
-							"query": [
-								{
-									"key": "url",
-									"value": "{{document_url}}"
-								},
-								{
-									"key": "showerrors",
-									"value": "false"
-								}
-							]
-						}
-					},
-					"response": []
+					]
 				},
 				{
 					"name": "pvt-get-single-publisher GET /pvt/publishers/{id}?lookupKey=id",
@@ -478,7 +670,7 @@
 									"});",
 									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'alv_start', 'alv_end', 'alv_error', 'solrize_end']);",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid', 'solrize_end']);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -497,6 +689,94 @@
 								"pvt",
 								"documents",
 								"{{document_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pvt-get-single-document GET /pvt/documents/{id}?lookupKey=id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Expect body to be an Array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array')",
+									"});",
+									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid', 'solrize_end']);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pvt/documents/{{document_id}}?lookupKey=id",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"documents",
+								"{{document_id}}"
+							],
+							"query": [
+								{
+									"key": "lookupKey",
+									"value": "id"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pvt-get-single-document GET /pvt/documents/{name}?lookupKey=name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+									"pm.test(\"Expect body to be an Array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array')",
+									"});",
+									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid', 'solrize_end']);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/pvt/documents/{{document_name}}?lookupKey=name",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pvt",
+								"documents",
+								"{{document_name}}"
+							],
+							"query": [
+								{
+									"key": "lookupKey",
+									"value": "name"
+								}
 							]
 						}
 					},
@@ -1705,6 +1985,10 @@
 		},
 		{
 			"key": "document_url",
+			"value": ""
+		},
+		{
+			"key": "document_name",
 			"value": ""
 		}
 	]

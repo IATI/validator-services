@@ -1,7 +1,7 @@
-const fetch = require('node-fetch');
-const db = require('../database/db');
-const { checkRespStatus } = require('../utils/utils');
-const config = require('../config/config');
+import fetch from 'node-fetch';
+import { insertAdhocValidation } from '../database/db.js';
+import { checkRespStatus } from '../utils/utils.js';
+import config from '../config/config.js';
 
 function endWithBadResponse(context, body = { message: 'Bad Request' }, status = 400) {
     context.log.error(body.message);
@@ -13,7 +13,7 @@ function endWithBadResponse(context, body = { message: 'Bad Request' }, status =
 }
 
 // eslint-disable-next-line consistent-return
-module.exports = async (context, req) => {
+export default async function pvtPostAdhocUrl(context, req) {
     try {
         if (!req.query.url) {
             return endWithBadResponse(context, { message: `No filename apparent` });
@@ -51,9 +51,9 @@ module.exports = async (context, req) => {
 
         context.bindings.storage = await result.text();
 
-        await db.insertAdhocValidation(req.query.sessionId, req.query.url, req.query.guid);
+        await insertAdhocValidation(req.query.sessionId, req.query.url, req.query.guid);
     } catch (err) {
         context.log.error(err.message);
         throw err;
     }
-};
+}

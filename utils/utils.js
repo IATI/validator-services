@@ -1,11 +1,10 @@
-const fetch = require('node-fetch');
-
-const config = require('../config/config');
+import fetch from 'node-fetch';
+import config from '../config/config.js';
 
 const GITHUB_RAW = 'https://raw.githubusercontent.com';
 const GITHUB_API = 'https://api.github.com';
 
-exports.getFileBySha = async (owner, repo, sha, filePath) => {
+const getFileBySha = async (owner, repo, sha, filePath) => {
     // https://raw.githubusercontent.com/IATI/IATI-Codelists/34a421386d554ccefbb4067b8fc21493c562a793/codelist_rules.json
     const res = await fetch(`${GITHUB_RAW}/${owner}/${repo}/${sha}/${filePath}`, {
         method: 'GET',
@@ -22,7 +21,7 @@ exports.getFileBySha = async (owner, repo, sha, filePath) => {
     return body;
 };
 
-exports.getFileCommitSha = async (owner, repo, branch, filePath) => {
+const getFileCommitSha = async (owner, repo, branch, filePath) => {
     // https://api.github.com/repos/IATI/IATI-Codelists/branches/v2.03/validatorCodelist
     const branchRes = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/branches/${branch}`, {
         method: 'GET',
@@ -68,11 +67,12 @@ class HTTPResponseError extends Error {
     }
 }
 
-exports.checkRespStatus = (response) => {
+const checkRespStatus = (response) => {
     if (response.ok) {
         // response.status >= 200 && response.status < 300
         return response;
-    } 
-        throw new HTTPResponseError(response);
-    
+    }
+    throw new HTTPResponseError(response);
 };
+
+export { getFileBySha, getFileCommitSha, checkRespStatus };

@@ -1,16 +1,26 @@
-const db = require('../database/db');
+import {
+    getReportForId,
+    getReportForHash,
+    getReportForUrl,
+    getReportForName,
+    getReportForTestfile,
+    getReportWithoutErrorsForId,
+    getReportWithoutErrorsForHash,
+    getReportWithoutErrorsForUrl,
+    getReportWithoutErrorsForName,
+} from '../database/db.js';
 
-module.exports = async (context, req) => {
-    const { id, hash, url, testfile, showerrors } = req.query;
+export default async function pubGetReport(context, req) {
+    const { id, hash, url, name, testfile, showerrors } = req.query;
 
     // showErrors - default - true
     // whether to return the whole errors object in the JSON report response
     const showErrors = (showerrors ? showerrors.toLowerCase() : showerrors) !== 'false';
 
-    if (!id && !url && !hash && !testfile) {
+    if (!id && !url && !hash && !name && !testfile) {
         const message = {
             client_error:
-                'Either the id, url or hash of the document as obtained from the IATI Registry must be supplied as a GET parameter',
+                'Either the id, url, hash or name of the document as obtained from the IATI Registry must be supplied as a GET parameter',
         };
 
         context.res = {
@@ -26,20 +36,24 @@ module.exports = async (context, req) => {
 
         if (showErrors) {
             if (id) {
-                result = await db.getReportForId(id);
+                result = await getReportForId(id);
             } else if (hash) {
-                result = await db.getReportForHash(hash);
+                result = await getReportForHash(hash);
             } else if (url) {
-                result = await db.getReportForUrl(url);
+                result = await getReportForUrl(url);
+            } else if (name) {
+                result = await getReportForName(name);
             } else if (testfile) {
-                result = await db.getReportForTestfile(testfile);
+                result = await getReportForTestfile(testfile);
             }
         } else if (id) {
-            result = await db.getReportWithoutErrorsForId(id);
+            result = await getReportWithoutErrorsForId(id);
         } else if (hash) {
-            result = await db.getReportWithoutErrorsForHash(hash);
+            result = await getReportWithoutErrorsForHash(hash);
         } else if (url) {
-            result = await db.getReportWithoutErrorsForUrl(url);
+            result = await getReportWithoutErrorsForUrl(url);
+        } else if (name) {
+            result = await getReportWithoutErrorsForName(name);
         }
 
         if (result === null) {
@@ -83,4 +97,4 @@ module.exports = async (context, req) => {
             body: JSON.stringify(e),
         };
     }
-};
+}

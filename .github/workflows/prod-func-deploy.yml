@@ -26,29 +26,28 @@ env:
   AZURE_CREDENTIALS: ${{ secrets.PROD_AZURE_CREDENTIALS }}
 
 jobs:
-  build-and-deploy:
+  build_save:
+    uses: IATI/.github/.github/workflows/build_node_save.yaml@main
+    with:
+      save_artifact: true
+      artifact_name: build-artifact-prod
+
+  deploy:
+    needs: build_save
     runs-on: ubuntu-latest
     steps:
-      - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v3
-
-      - name: 'Setup Node Environment'
-        uses: actions/setup-node@v3
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
         with:
-          cache: 'npm'
-          node-version-file: '.nvmrc'
+          name: build-artifact-prod
 
-      - name: 'Resolve Project Dependencies Using Npm'
-        shell: bash
+      - name: Unzip build artifact
         run: |
-          npm i -g npm
-          pushd './.'
-          npm set-script prepare ""
-          npm ci --production
-          popd
+          unzip build-artifact-prod.zip
+          rm build-artifact-prod.zip
 
       - name: 'Login via Azure CLI'
-        uses: azure/login@v1.4.5
+        uses: azure/login@v1.4.6
         with:
           creds: ${{ env.AZURE_CREDENTIALS }} # Service Principal credentials saved in GitHub Secrets
 
@@ -126,26 +125,17 @@ jobs:
             ]
 
       - name: 'Run Azure Functions Action'
-        uses: Azure/functions-action@v1.4.7
+        uses: Azure/functions-action@v1.4.8
         with:
           app-name: func-${{ env.NAME }}-${{ env.STAGE }}
-          package: '.'
-
-      - name: 'Tag resource for Tech Climate Impact'
-        uses: 'azure/CLI@v1.0.6'
-        with:
-          azcliversion: 2.30.0
-          inlineScript: |
-            az resource tag \
-              --tags env=$STAGE avgCPU=true ACU=true ACUvalue=210 \
-              --resource-group "rg-${{ env.NAME }}-${{ env.STAGE }}" \
-              --name "func-${{ env.NAME }}-${{ env.STAGE }}" \
-              --resource-type "Microsoft.Web/sites"
 
   integration-test:
-    needs: build-and-deploy
+    needs: deploy
     runs-on: ubuntu-latest
     steps:
+      - name: 'Wait for 3 minutes'
+        run: sleep 180
+
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v3
 

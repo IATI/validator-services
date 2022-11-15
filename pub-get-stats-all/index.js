@@ -1,13 +1,13 @@
-const db = require('../database/db');
+import { getMessageDateStats } from '../database/db.js';
 
-module.exports = async (context, req) => {
+export default async function pubGetStatsAll(context, req) {
     const date = req.query.date ? req.query.date : '9999-01-01';
     const { format } = req.query;
 
     try {
         let result = null;
 
-        result = await db.getMessageDateStats(date);
+        result = await getMessageDateStats(date);
 
         if (format === 'csv') {
             const csvString = [
@@ -58,4 +58,4 @@ module.exports = async (context, req) => {
             body: JSON.stringify(e),
         };
     }
-};
+}

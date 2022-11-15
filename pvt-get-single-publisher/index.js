@@ -1,6 +1,6 @@
-const db = require('../database/db');
+import { getSinglePublisherById, getSinglePublisherByName } from '../database/db.js';
 
-module.exports = async (context, req) => {
+export default async function pvtGetSinglePublisher(context, req) {
     try {
         const { lookupKey } = req.query;
         const { lookupValue } = req.params;
@@ -36,12 +36,12 @@ module.exports = async (context, req) => {
         let result = null;
 
         if (lookupKey === 'id') {
-            result = await db.getSinglePublisherById(lookupValue);
+            result = await getSinglePublisherById(lookupValue);
         } else if (lookupKey === 'name') {
-            result = await db.getSinglePublisherByName(lookupValue);
+            result = await getSinglePublisherByName(lookupValue);
         }
 
-        if (result === null) {
+        if (result.length === 0) {
             const message = {
                 client_error: `Cannot find publisher with ${lookupKey}: ${lookupValue}`,
             };
@@ -69,4 +69,4 @@ module.exports = async (context, req) => {
             body: JSON.stringify(e),
         };
     }
-};
+}

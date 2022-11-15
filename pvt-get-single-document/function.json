@@ -5,10 +5,8 @@
             "type": "httpTrigger",
             "direction": "in",
             "name": "req",
-            "methods": [
-                "get"
-            ],
-            "route": "pvt/documents/{id}"
+            "methods": ["get"],
+            "route": "pvt/documents/{lookupValue}"
         },
         {
             "type": "http",

@@ -114,9 +114,20 @@ let myEnvVariable = config.ENV_VAR
 -   Response
     -   NOTE: Does not return `errors` object of the validation report to limit the size of the response, use `[GET] /pvt/documents/{id}` to get errors
 
-### pvt-get-single-document: `[GET] /pvt/documents/{id}`
+### pvt-get-single-document: `[GET] /pvt/documents/{lookupValue}?lookupKey={lookupKey}`
 
-### pub-get-report: `[GET] /pub/validation/existing`
+-   Query Params:
+    -   `lookupKey` - REQ - `id` (default) or `name`
+
+### pub-get-report: `[GET] /pub/validation/existing?id={id}&hash={hash}&url={url}&name={name}&showerrors={showerrors}`
+
+-   Query Params:
+
+    -   `id` - provide document id to retrieve validation report for this id
+    -   `hash` - provide document hash to retrieve validation report for this hash
+    -   `url`- provide document url to retrieve validation report for this url
+    -   `name` - provide document name to retrieve validation report for this name
+    -   `showerrors` - default true - if false only return summary object of validation report
 
 -   Response - JSON Schema Available `docs/validationReport.schema.json`
 
@@ -129,6 +140,7 @@ let myEnvVariable = config.ENV_VAR
 ```
 
 -   Documents flagged as needing a validation report regeneration are moved to the top of the validation queue
+-   This will only retrigger a "Full" Validation for the file, not the initial Schema check which sets `document.file_schema_valid`. This is because the Schema shouldn't change for a specific file because the files are versioned with the standard. If something does change that would make a specific file change it's validity against the schema, a manual re-trigger should be performed.
 -   REFRESHER ACI CONTAINERS SHOULD BE STOPPED BEFORE INVOKING THIS ENDPOINT FOR SAFETY
 
 ### pvt-patch-validation-regenerate-all `[PATCH] /pvt/validation/regenerate/all`
@@ -136,16 +148,12 @@ let myEnvVariable = config.ENV_VAR
 -   Body - none
 
 -   Flags ALL documents (that already have an associated validation report), for regeneration of a validation report
+-   This will only retrigger a "Full" Validation for the file, not the initial Schema check which sets `document.file_schema_valid`. This is because the Schema shouldn't change for a specific file because the files are versioned with the standard. If something does change that would make a specific file change it's validity against the schema, a manual re-trigger should be performed.
 -   REFRESHER ACI CONTAINERS SHOULD BE STOPPED BEFORE INVOKING THIS ENDPOINT FOR SAFETY
 
 ### pvt-get-guidance-links: `[GET] /pvt/guidance-links/{version}`
 
 -   `version` - IATI version e.g. `2.03`
-
--   Query Params:
-    -   `id`
-    -   `hash`
-    -   `url`
 
 ### pvt-get-adhoc-session `[GET] pvt/adhoc/session?sessionId={sessionId}`
 

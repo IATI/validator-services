@@ -1,4 +1,4 @@
-const db = require('../database/db');
+import { insertAdhocValidation } from '../database/db.js';
 
 function endWithBadResponse(context, message = 'Bad Request', status = 400) {
     context.log.error(message);
@@ -23,7 +23,7 @@ function getBoundary(header) {
 }
 
 // eslint-disable-next-line consistent-return
-module.exports = async (context, req) => {
+export default async function pvtPostAdhocFile(context, req) {
     try {
         const { body, query, headers } = req;
         if (!body) {
@@ -78,9 +78,9 @@ module.exports = async (context, req) => {
         }
         context.bindings.storage = result;
 
-        await db.insertAdhocValidation(req.query.sessionId, req.query.filename, req.query.guid);
+        await insertAdhocValidation(req.query.sessionId, req.query.filename, req.query.guid);
     } catch (err) {
         context.log.error(err.message);
         throw err;
     }
-};
+}

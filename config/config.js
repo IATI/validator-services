@@ -1,5 +1,7 @@
-require('dotenv').config();
-const { version } = require('../package.json');
+import 'dotenv/config';
+import { readFile } from 'fs/promises';
+
+const { version } = JSON.parse(await readFile(new URL('../package.json', import.meta.url)));
 
 let ssl = false;
 
@@ -7,11 +9,10 @@ if (process.env.PGSSL) {
     ssl = true;
 }
 
-module.exports = {
+const config = {
     APP_NAME: 'Validator Services',
     VERSION: version,
     NODE_ENV: process.env.NODE_ENV,
-    APPINSIGHTS_INSTRUMENTATIONKEY: process.env.APPINSIGHTS_INSTRUMENTATIONKEY,
     NS_PER_SEC: 1e9,
     STORAGECONNECTOR: process.env.STORAGECONNECTOR,
     ADHOC_CONTAINER: process.env.ADHOC_CONTAINER,
@@ -32,3 +33,5 @@ module.exports = {
         ssl,
     },
 };
+
+export default config;

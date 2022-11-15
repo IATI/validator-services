@@ -1,8 +1,8 @@
-const db = require('../database/db');
+import { getDocumentsForPublisher } from '../database/db.js';
 
-module.exports = async (context, req) => {
+export default async function pvtGetPublishersDocuments(context, req) {
     try {
-        const result = await db.getDocumentsForPublisher(req.params.id);
+        const result = await getDocumentsForPublisher(req.params.id);
 
         context.res = {
             status: 200,
@@ -18,4 +18,4 @@ module.exports = async (context, req) => {
             body: JSON.stringify(e),
         };
     }
-};
+}

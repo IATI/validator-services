@@ -217,7 +217,247 @@ paths:
                     application/json:
                         schema:
                             $ref: '#/components/schemas/Error'
-
+    /api/pvt/publishers/flagged:
+      get:
+        responses:
+            200:
+              description: list of publishers that have a black flag
+              content:
+                application/json::
+                  schema:
+                    $ref: '#/components/schemas/Publishers'
+            401:
+              $ref: '#/components/responses/UnauthorizedError'
+            500:
+                description: Unexpected error
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Error'
+    /api/pvt/documents/{lookupValue}:
+      get:
+          summary: Get a single document
+          parameters:
+            - in: query
+              name: lookupKey
+              required: true
+              description: key to lookup the document with
+              schema:
+                type: string
+                enum: 
+                 - 'id'
+                 - 'name'
+            - in: path
+              name: lookupValue
+              required: true
+              description: id or name of the document to return
+              schema:
+                type: string
+                example: 'fifty_eight-et'
+          responses:
+            200:
+              description: document metadata, one object in an array
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/Documents'
+            401:
+              $ref: '#/components/responses/UnauthorizedError'
+            404:
+              description: Document Not found
+              content:
+                  application/json:
+                      schema:
+                          $ref: '#/components/schemas/ClientError'
+                      examples:
+                          notFound:
+                              value:
+                                  client_error: 'Cannot find document with <lookupKey>: <lookupValue>'
+            422:
+              description: Bad Request
+              content:
+                  application/json:
+                      schema:
+                          $ref: '#/components/schemas/ClientError'
+                      examples:
+                          noLookupKeyParam:
+                              value:
+                                  client_error: 'Either id or name must be supplied as the lookupKey GET query parameter.'
+                          noLookupValue:
+                              value:
+                                  client_error: 'Either id or name of the document - as obtained from the IATI Registry - must be supplied in the URL'
+            500:
+                description: Unexpected error
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Error'
+    /api/pvt/adhoc/upload:
+      post:
+        summary: Upload an adhoc document from file to blob storage and store metadata in database
+        parameters:
+          - in: query
+            name: filename
+            description: name of file
+            schema:
+              type: string
+              example: iati-act-no-errors-vs-test.xml
+          - in: query
+            name: sessionId
+            description: sessionId of browser session
+            schema:
+              type: string
+              example: 'laqs9itibxpsk23sar7'
+          - in: query
+            name: guid
+            description: guid for file
+            schema:
+              type: string
+              example: '9b63a276-d315-4630-9d13-e3792d0e50be'
+        requestBody:
+          required: true
+          content:
+            multipart/form-data:
+              schema:
+                properties:
+                  file: 
+                    type: array
+                    items:
+                      type: string
+                      format: binary
+        responses:
+          200:
+              description: Success
+          400:
+              description: Bad Request
+              content:
+                  text/plain:
+                      schema:
+                          type: string
+                      examples:
+                          noFile:
+                              value: 'No IATI file attached'
+                          noFilename:
+                              value: 'No filename apparent'
+                          noSessionId:
+                              value: 'No sessionId apparent'
+                          noGuid:
+                              value: 'No guid apparent'
+                          badFormat:
+                              value: 'Expect Request Content-Type to be multipart/form-data'
+                          badFormFormat:
+                              value: 'Expect form data Content-Type to be text/xml or application/xml'
+                          parseError:
+                              value: 'Couldnt parse form data'
+                          fileEmpty:
+                              value: 'File in request body is empty.'
+          401:
+              $ref: '#/components/responses/UnauthorizedError'
+          500:
+              description: Unexpected error
+              content:
+                  application/json:
+                      schema:
+                          $ref: '#/components/schemas/Error'
+    /api/pvt/adhoc/url:
+      post:
+        summary: Upload an adhoc document from a URL to blob storage and store metadata in database
+        parameters:
+          - in: query
+            name: url
+            description: url of file to upload
+            schema:
+              type: string
+              example: 'https://raw.githubusercontent.com/IATI/js-validator-api/develop/integration-tests/test-files/iati-act-no-errors.xml'
+          - in: query
+            name: sessionId
+            description: sessionId of browser session
+            schema:
+              type: string
+              example: 'laqs9itibxpsk23sar7'
+          - in: query
+            name: guid
+            description: guid for file
+            schema:
+              type: string
+              example: '9b63a276-d315-4630-9d13-e3792d0e50be'
+        responses:
+          200:
+              description: Success
+          400:
+              description: Bad Request
+              content:
+                  application/json:
+                      schema:
+                          $ref: '#/components/schemas/ErrorMessage'
+                      examples:
+                          noFile:
+                              value:
+                                  message: 'No IATI file attached'
+                          noFilename:
+                              value:
+                                  message: 'No filename apparent'
+                          noSessionId:
+                              value:
+                                  message: 'No sessionId apparent'
+                          noGuid:
+                              value:
+                                  message: 'No guid apparent'
+                          badFormat:
+                              value:
+                                  message: 'Expect Request Content-Type to be multipart/form-data'
+                          badFormFormat:
+                              value:
+                                  message: 'Expect form data Content-Type to be text/xml or application/xml'
+                          parseError:
+                              value:
+                                  message: 'Couldnt parse form data'
+                          fileEmpty:
+                              value:
+                                  message: 'File in request body is empty.'
+          401:
+              $ref: '#/components/responses/UnauthorizedError'
+          500:
+              description: Unexpected error
+              content:
+                  application/json:
+                      schema:
+                          $ref: '#/components/schemas/Error'
+    /api/pvt/adhoc/session:
+      get:
+        summary: Get session information for provided sessionId
+        parameters:
+          - in: query
+            name: sessionId
+            description: sessionId of browser session
+            schema:
+              type: string
+              example: 'laqs9itibxpsk23sar7'
+        responses:
+          200:
+              description: Session information about adhoc validated documents
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/SessionInfo'
+          400:
+              description: Bad Request
+              content:
+                  application/json:
+                      schema:
+                          $ref: '#/components/schemas/ErrorMessage'
+                      examples:
+                          noSessionId:
+                              value:
+                                  message: 'No sessionId apparent'
+          401:
+              $ref: '#/components/responses/UnauthorizedError'
+          500:
+              description: Unexpected error
+              content:
+                  application/json:
+                      schema:
+                          $ref: '#/components/schemas/Error'
 
 components:
     responses:
@@ -253,6 +493,14 @@ components:
                 - error
             properties:
                 error:
+                    description: A human readable error message
+                    type: string
+        ErrorMessage:
+            type: object
+            required:
+                - message
+            properties:
+                message:
                     description: A human readable error message
                     type: string
         ClientError:
@@ -520,6 +768,52 @@ components:
               - validation_created
               - valid
               - report
+        SessionInfo:
+          type: array
+          items:
+            type: object
+            properties:
+              guid:
+                type: string
+              filename:
+                type: string
+              report:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                  summary:
+                    type: object
+                    properties:
+                      error:
+                        type: integer
+                      warning:
+                        type: integer
+                      critical:
+                        type: integer
+                    required:
+                      - error
+                      - warning
+                      - critical
+                    additionalProperties: false
+                  fileType:
+                    type: string
+                  iatiVersion:
+                    type: string
+                required:
+                  - valid
+                  - summary
+                  - fileType
+                  - iatiVersion
+                additionalProperties: false
+              valid:
+                type: boolean
+              session_id:
+                type: string
+              created:
+                type: string
+              validated:
+                type: string
     securitySchemes:
         ApiKeyHeader:
             type: apiKey

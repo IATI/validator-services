@@ -15,7 +15,7 @@ servers:
 paths:
     /api/pub/version:
         get:
-            summary: GET application version
+            summary: Returns application version.
             responses:
                 200:
                     description: Version of the application in semver format
@@ -27,14 +27,15 @@ paths:
                 401:
                     $ref: '#/components/responses/UnauthorizedError'
                 500:
-                    description: Unexpected error
+                    description: Unexpected server error
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Error'
     /api/pvt/validation/regenerate:
         patch:
-            summary: Trigger a validation report to be regenerated
+            summary: Flag a validation report to be regenerated.
+            description: Sets the `regenerate_validation_report` column in the database to `true` for a document, which makes it get picked up by the `validate` refresher process to generate a new validation report. Does so non destructively so users can still access the old report until the new is available. This will only retrigger a "Full" Validation for the file, not the initial Schema check which sets `document.file_schema_valid`. This is because the Schema shouldn't change for a specific file because the files are versioned with the standard. If something does change that would make a specific file change it's validity against the schema, a manual re-trigger should be performed.
             requestBody:
                 description: The list of document ids to regenerate validation reports for
                 required: true
@@ -64,28 +65,30 @@ paths:
                 401:
                     $ref: '#/components/responses/UnauthorizedError'
                 500:
-                    description: Unexpected error
+                    description: Unexpected server error
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Error'
     /api/pvt/validation/regenerate/all:
         patch:
-            summary: Trigger ALL validation reports to be regenerated
+            summary: Flag ALL validation reports to be regenerated.
+            description: Sets the `regenerate_validation_report` column in the database to `true` for ALL documents, which makes it get picked up by the `validate` refresher process to generate a new validation report. Does so non destructively so users can still access the old report until the new is available. This will only retrigger a "Full" Validation for the file, not the initial Schema check which sets `document.file_schema_valid`. This is because the Schema shouldn't change for a specific file because the files are versioned with the standard. If something does change that would make a specific file change it's validity against the schema, a manual re-trigger should be performed. REFRESHER ACI CONTAINERS SHOULD BE STOPPED BEFORE INVOKING THIS ENDPOINT FOR SAFETY.
             responses:
                 204:
                     description: Success
                 401:
                     $ref: '#/components/responses/UnauthorizedError'
                 500:
-                    description: Unexpected error
+                    description: Unexpected server error
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Error'
     /api/pub/validation/existing:
         get:
-          summary: Get an existing validation report
+          summary: Returns an existing validation report.
+          description: Returns a validation report for a published document when provided with an `id`, `hash`, `url`, or `name` of the document.
           parameters:
             - in: query
               name: id
@@ -103,6 +106,12 @@ paths:
               name: name
               schema:
                 $ref: '#/components/schemas/Name'
+            - in: query
+              name: showerrors
+              description: If false only return summary object of validation report, not full validation report.
+              schema:
+                type: boolean
+                default: true
           responses:
             404:
               description: Report not found for provided identifier
@@ -141,24 +150,27 @@ paths:
                     $ref: '#/components/schemas/ValidationReport'
     /api/pvt/publishers:
         get:
-          summary: Get publishers
+          summary: Returns a list of publishers.
+          description: Returns a list of all publishers that have published a document (`package_count` > 0). 
           responses:
             200:
               description: list of publishers metadata
               content:
-                application/json::
+                application/json:
                   schema:
                     $ref: '#/components/schemas/Publishers'
             401:
               $ref: '#/components/responses/UnauthorizedError'
             500:
-                description: Unexpected error
+                description: Unexpected server error
                 content:
                     application/json:
                         schema:
                             $ref: '#/components/schemas/Error'
     /api/pvt/publishers/{lookupValue}:
         get:
+          summary: Returns a single publisher.
+          description: Return a single publisher by providing the id or name.
           parameters:
             - in: query
               name: lookupKey
@@ -176,10 +188,9 @@ paths:
               schema:
                 type: string
                 example: 'jica'
-          summary: Get a single publisher
           responses:
             200:
-              description: list of publishers metadata
+              description: JSON array of publisher information, this endpoint only returns one value in the array.
               content:
                 application/json:
                   schema:
@@ -187,13 +198,17 @@ paths:
             401:
               $ref: '#/components/responses/UnauthorizedError'
             500:
-                description: Unexpected error
+                description: Unexpected server error
                 content:
                     application/json:
                         schema:
                             $ref: '#/components/schemas/Error'
     /api/pvt/publishers/{publisherId}/documents:
         get:
+          summary: Return list of documents for a publisher.
+          description: |
+            Provided with a publisher id, this endpoint returns all the documents associated with the publisher. \
+            Does not return `errors` object of the validation report to limit the size of the response, use `/api/pvt/documents/{lookupValue}` to get errors as well.
           parameters:
             - in: path
               name: publisherId
@@ -212,31 +227,34 @@ paths:
             401:
               $ref: '#/components/responses/UnauthorizedError'
             500:
-                description: Unexpected error
+                description: Unexpected server error
                 content:
                     application/json:
                         schema:
                             $ref: '#/components/schemas/Error'
     /api/pvt/publishers/flagged:
       get:
+        summary: Returns publishers with a black flag.
+        description: Publishers can be "black flagged" by the unified platform validation process if they publish over 100 critically invalid files in 2 hrs. 
         responses:
             200:
               description: list of publishers that have a black flag
               content:
-                application/json::
+                application/json:
                   schema:
                     $ref: '#/components/schemas/Publishers'
             401:
               $ref: '#/components/responses/UnauthorizedError'
             500:
-                description: Unexpected error
+                description: Unexpected server error
                 content:
                     application/json:
                         schema:
                             $ref: '#/components/schemas/Error'
     /api/pvt/documents/{lookupValue}:
       get:
-          summary: Get a single document
+          summary: Returns a single document.
+          description: Returns metadata about a single published document when provided with an `id` or `name` of the document.
           parameters:
             - in: query
               name: lookupKey
@@ -253,7 +271,11 @@ paths:
               description: id or name of the document to return
               schema:
                 type: string
-                example: 'fifty_eight-et'
+              examples: 
+                name:
+                  value: 'fifty_eight-et'
+                id: 
+                  value: '971828f5-d7ca-40b5-ae38-2fd4c11846e0'
           responses:
             200:
               description: document metadata, one object in an array
@@ -287,14 +309,19 @@ paths:
                               value:
                                   client_error: 'Either id or name of the document - as obtained from the IATI Registry - must be supplied in the URL'
             500:
-                description: Unexpected error
+                description: Unexpected server error
                 content:
                     application/json:
                         schema:
                             $ref: '#/components/schemas/Error'
     /api/pvt/adhoc/upload:
       post:
-        summary: Upload an adhoc document from file to blob storage and store metadata in database
+        summary: Upload a document from a file.
+        description: |
+          Post an IATI XML document in the body to be uploaded to blob storage and store metadata in the database.
+          ## Actions
+          - Saves file to Blob storage with path/name `"%ADHOC_CONTAINER%/{sessionId}###{filename}###{guid}"`
+          - Adds entry into `adhoc_validation` database table with `.session_id`, `.filename`, `.guid`
         parameters:
           - in: query
             name: filename
@@ -304,13 +331,12 @@ paths:
               example: iati-act-no-errors-vs-test.xml
           - in: query
             name: sessionId
-            description: sessionId of browser session
+            description: Unique sessionId of browser session, generated by the front end. 
             schema:
-              type: string
-              example: 'laqs9itibxpsk23sar7'
+              $ref: '#/components/schemas/SessionId'
           - in: query
             name: guid
-            description: guid for file
+            description: unique guid for file
             schema:
               type: string
               example: '9b63a276-d315-4630-9d13-e3792d0e50be'
@@ -354,14 +380,19 @@ paths:
           401:
               $ref: '#/components/responses/UnauthorizedError'
           500:
-              description: Unexpected error
+              description: Unexpected server error
               content:
                   application/json:
                       schema:
                           $ref: '#/components/schemas/Error'
     /api/pvt/adhoc/url:
       post:
-        summary: Upload an adhoc document from a URL to blob storage and store metadata in database
+        summary: Upload document from a URL.
+        description: |
+         Uploads IATI XML from the provided URL to blob storage and stores metadata in database.
+         ## Actions
+          - Saves file to Blob storage with path/name `"%ADHOC_CONTAINER%/{sessionId}###{url}###{guid}"`
+          - Adds entry into `adhoc_validation` database table with `.session_id`, `.filename`, `.guid`
         parameters:
           - in: query
             name: url
@@ -371,10 +402,9 @@ paths:
               example: 'https://raw.githubusercontent.com/IATI/js-validator-api/develop/integration-tests/test-files/iati-act-no-errors.xml'
           - in: query
             name: sessionId
-            description: sessionId of browser session
+            description: Unique sessionId of browser session, generated by the front end. 
             schema:
-              type: string
-              example: 'laqs9itibxpsk23sar7'
+              $ref: '#/components/schemas/SessionId'
           - in: query
             name: guid
             description: guid for file
@@ -418,21 +448,21 @@ paths:
           401:
               $ref: '#/components/responses/UnauthorizedError'
           500:
-              description: Unexpected error
+              description: Unexpected server error
               content:
                   application/json:
                       schema:
                           $ref: '#/components/schemas/Error'
     /api/pvt/adhoc/session:
       get:
-        summary: Get session information for provided sessionId
+        summary: Returns session information for provided sessionId.
+        description: Returns session information for documents that are validated ad-hoc by the validator. Does not return `errors` object of the validation report to limit the size of the response, use `/api/pvt/documents/{lookupValue}` to get errors.
         parameters:
           - in: query
             name: sessionId
-            description: sessionId of browser session
+            description: Unique sessionId of browser session, generated by the front end.
             schema:
-              type: string
-              example: 'laqs9itibxpsk23sar7'
+              $ref: '#/components/schemas/SessionId'
         responses:
           200:
               description: Session information about adhoc validated documents
@@ -453,11 +483,52 @@ paths:
           401:
               $ref: '#/components/responses/UnauthorizedError'
           500:
-              description: Unexpected error
+              description: Unexpected server error
               content:
                   application/json:
                       schema:
                           $ref: '#/components/schemas/Error'
+    /api/pvt/guidance-links/{version}:
+        get:
+            summary: Returns guidance links for an IATI version.
+            description: |
+              Returns guidance paths and links for the IATI Rulesets used by validator. \
+              These are pulled from the [IATI/IATI-Rulesets](https://github.com/IATI/IATI-Rulesets) repository.
+            parameters: 
+              - in: path
+                name: version
+                required: true
+                schema: 
+                  type: string
+                  enum:
+                    - '2.01'
+                    - '2.02'
+                    - '2.03'
+            responses:
+                200:
+                    description: OK
+                    content:
+                      application/json:
+                        schema:
+                          $ref: '#/components/schemas/GuidanceLinks'
+                422:
+                  description: Bad Request
+                  content:
+                      application/json:
+                          schema:
+                              $ref: '#/components/schemas/ErrorMessage'
+                          examples:
+                              badVersion:
+                                  value:
+                                      message: 'Version <version> of the IATI Standard is not supported. Supported versions: <versions>'
+                401:
+                    $ref: '#/components/responses/UnauthorizedError'
+                500:
+                    description: Unexpected server error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
 
 components:
     responses:
@@ -466,20 +537,24 @@ components:
     schemas:
         Id:
           type: string
-          description: document id in unified platform database
+          description: Document id in unified platform database.
           example: '971828f5-d7ca-40b5-ae38-2fd4c11846e0'
         Hash:
           type: string
-          description: document hash in unified platform database
+          description: Document hash in unified platform database.
           example: '404504c0df91c3d4ae07bb6135e349ad90be401a'
         Url:
           type: string
-          description: url of document in unified platform database
-          example: 'https://www.host.com/iatiactivities.xml'
+          description: Url of document in unified platform database.
+          example: 'https://raw.githubusercontent.com/IATI/js-validator-api/develop/integration-tests/test-files/iati-act-no-errors.xml'
         Name:
           type: string
-          description: name of document in iati registry and unified platform
+          description: Name of document in IATI registry and unified platform.
           example: 'fifty_eight-et'
+        SessionId:
+          type: string
+          description: Unique sessionId of browser session, generated by the front end. 
+          example: 'laqs9itibxpsk23sar7'
         DocumentIdsArray:
             type: object
             properties:
@@ -520,6 +595,9 @@ components:
                     description: A human readable response message
                     type: string
         ValidationReport:
+          description: Validation report with some report metadata.
+          externalDocs:
+            url: '../../docs/validationReport.schema.json'
           type: object
           properties:
             registry_hash:
@@ -814,6 +892,33 @@ components:
                 type: string
               validated:
                 type: string
+        GuidanceLinks:
+          type: object
+          properties:
+            version:
+              type: string
+              description: IATI version of the guidance links.
+            commitSha:
+              type: string
+              description: Git commit sha of the guidance links.
+            content:
+              type: object
+              description: Each key is a rule ID from the validator in X.X.X format.
+              properties:
+                X.X.X:
+                  type: object
+                  properties:
+                    path:
+                      description: Path to guidance information on IATI Standard website SSOT.
+                      type: string
+                    url:
+                      description: Full URL to guidance information, used for non-dynamic guidance.
+                      type: string
+                  additionalProperties: false
+          required:
+            - version
+            - commitSha
+            - content
     securitySchemes:
         ApiKeyHeader:
             type: apiKey

@@ -529,6 +529,168 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Error'
+    /api/pub/stats/all:
+      get:
+        summary: Returns all statistics
+        description: |
+          TBD
+        parameters: 
+          - in: query
+            name: date
+            description: Only return stats for specified date
+            required: false
+            schema:
+              $ref: '#/components/schemas/Date'
+          - in: query
+            name: format
+            description: Return stats in CSV format if set to 'csv', if left blank returns stats in JSON format.
+            required: false
+            schema:
+              $ref: '#/components/schemas/Format'
+        responses:
+          200:
+              description: Validator Statistics
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/StatsJSON'
+                text/csv:
+                  schema:
+                    $ref: '#/components/schemas/StatsCSV'
+          401:
+              $ref: '#/components/responses/UnauthorizedError'
+          500:
+              description: Unexpected server error
+              content:
+                  application/json:
+                      schema:
+                          $ref: '#/components/schemas/Error'
+    /api/pub/stats/publisher/{publisher}:
+      get:
+        summary: Returns statistics for a publisher
+        description: |
+          TBD
+        parameters: 
+          - in: path
+            name: publisher
+            description: Only return stats for specified publisher
+            required: true
+            schema:
+              $ref: '#/components/schemas/PublisherName'
+          - in: query
+            name: date
+            description: Only return stats for specified date
+            required: false
+            schema:
+              $ref: '#/components/schemas/Date'
+          - in: query
+            name: format
+            description: Return stats in CSV format if set to 'csv', if left blank returns stats in JSON format.
+            required: false
+            schema:
+              $ref: '#/components/schemas/Format'
+        responses:
+          200:
+              description: Validator Statistics
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/StatsJSON'
+                text/csv:
+                  schema:
+                    $ref: '#/components/schemas/StatsCSV'
+          401:
+              $ref: '#/components/responses/UnauthorizedError'
+          500:
+              description: Unexpected server error
+              content:
+                  application/json:
+                      schema:
+                          $ref: '#/components/schemas/Error'
+    /api/pub/stats/summary_aggregate:
+      get:
+        summary: Returns summary aggregate statistics
+        description: |
+          TBD
+        parameters: 
+          - in: query
+            name: date
+            description: Only return stats for specified date
+            required: false
+            schema:
+              $ref: '#/components/schemas/Date'
+          - in: query
+            name: publisher
+            description: Only return stats for specified publisher
+            required: false
+            schema:
+              $ref: '#/components/schemas/PublisherName'
+          - in: query
+            name: format
+            description: Return stats in CSV format if set to 'csv', if left blank returns stats in JSON format.
+            required: false
+            schema:
+              $ref: '#/components/schemas/Format'
+        responses:
+          200:
+              description: Validator Statistics
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/StatsSummaryJSON'
+                text/csv:
+                  schema:
+                    $ref: '#/components/schemas/StatsSummaryCSV'
+          401:
+              $ref: '#/components/responses/UnauthorizedError'
+          500:
+              description: Unexpected server error
+              content:
+                  application/json:
+                      schema:
+                          $ref: '#/components/schemas/Error'
+    /api/pub/stats/summary_precalc:
+      get:
+        summary: Returns summary precalculated statistics
+        description: |
+          TBD
+        parameters: 
+          - in: query
+            name: date
+            description: Only return stats for specified date
+            required: false
+            schema:
+              $ref: '#/components/schemas/Date'
+          - in: query
+            name: publisher
+            description: Only return stats for specified publisher
+            required: false
+            schema:
+              $ref: '#/components/schemas/PublisherName'
+          - in: query
+            name: format
+            description: Return stats in CSV format if set to 'csv', if left blank returns stats in JSON format.
+            required: false
+            schema:
+              $ref: '#/components/schemas/Format'
+        responses:
+          200:
+              description: Validator Statistics
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/StatsSummaryJSON'
+                text/csv:
+                  schema:
+                    $ref: '#/components/schemas/StatsSummaryCSV'
+          401:
+              $ref: '#/components/responses/UnauthorizedError'
+          500:
+              description: Unexpected server error
+              content:
+                  application/json:
+                      schema:
+                          $ref: '#/components/schemas/Error'
 
 components:
     responses:
@@ -555,6 +717,18 @@ components:
           type: string
           description: Unique sessionId of browser session, generated by the front end. 
           example: 'laqs9itibxpsk23sar7'
+        PublisherName:
+          type: string 
+          description: Name of publisher "slug" in unified platform/registry
+          example: 'finland_mfa'
+        Date:
+          type: string
+          description: Date string in YYYY-MM-DD format
+          example: '2022-01-31'
+        Format:
+          type: string
+          enum:
+            - 'csv'
         DocumentIdsArray:
             type: object
             properties:
@@ -919,6 +1093,66 @@ components:
             - version
             - commitSha
             - content
+        StatsSummaryJSON:
+          type: object
+          properties:
+            publisher_name:
+              type: object
+              description: publisher name for the stats
+              properties:
+                critical:
+                  type: integer
+                error:
+                  type: integer
+                warning:
+                  type: integer
+              required:
+                - critical
+                - error
+                - warning
+              additionalProperties: false
+          additionalProperties: true
+        StatsSummaryCSV:
+          type: string
+          description: csv with header row "publisher_name","critical","error","warning"
+          example: | 
+            "publisher_name","critical","error","warning"
+            "finland_mfa","146","1665","0"
+        StatsJSON:
+          type: object
+          properties:
+            publisher_name:
+              type: object
+              properties:
+                <X.X.X>:
+                  type: object
+                  description: Validator Error ID 
+                  properties:
+                    count:
+                      type: string
+                    message:
+                      type: string
+                    severity:
+                      type: string
+                    category:
+                      type: string
+                  required:
+                    - count
+                    - message
+                    - severity
+                    - category
+                  additionalProperties: false
+              additionalProperties: true
+          additionalProperties: true
+          required:
+            - publisher_name
+        StatsCSV:
+          type: string
+          description: csv with header row "publisher_name","id","message","severity","category","count"
+          example: | 
+            "publisher_name","id","message","severity","category","count"
+            "finland_mfa","0.6.1","Version 1.00 of the IATI Standard is no longer supported. Supported versions: 2.01, 2.02, 2.03","critical","documents","144"
+            "finland_mfa","1.1.2","The activity identifier must be unique for each activity.","error","identifiers","2"
     securitySchemes:
         ApiKeyHeader:
             type: apiKey

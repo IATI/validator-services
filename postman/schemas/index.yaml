@@ -532,18 +532,17 @@ paths:
     /api/pub/stats/all:
       get:
         summary: Returns all statistics
-        description: |
-          TBD
+        description: A count of the number of instances of al validation warnings, errors, and critical errors, grouped by publisher and error, for all publishers.
         parameters: 
           - in: query
             name: date
-            description: Only return stats for specified date
+            description: Filters statistics to Validation reports generated before or on the given date. In format YYYY-MM-DD, defaults to "9999-01-01".
             required: false
             schema:
               $ref: '#/components/schemas/Date'
           - in: query
             name: format
-            description: Return stats in CSV format if set to 'csv', if left blank returns stats in JSON format.
+            description: Changes the output format of the statistics. Default is "json", options include "json" and "csv".
             required: false
             schema:
               $ref: '#/components/schemas/Format'
@@ -568,8 +567,7 @@ paths:
     /api/pub/stats/publisher/{publisher}:
       get:
         summary: Returns statistics for a publisher
-        description: |
-          TBD
+        description: A count of the number of instances of all validation warnings, errors, and critical errors, grouped by error, for one publisher.
         parameters: 
           - in: path
             name: publisher
@@ -579,13 +577,13 @@ paths:
               $ref: '#/components/schemas/PublisherName'
           - in: query
             name: date
-            description: Only return stats for specified date
+            description: Filters statistics to Validation reports generated before or on the given date. In format YYYY-MM-DD, defaults to "9999-01-01".
             required: false
             schema:
               $ref: '#/components/schemas/Date'
           - in: query
             name: format
-            description: Return stats in CSV format if set to 'csv', if left blank returns stats in JSON format.
+            description: Changes the output format of the statistics. Default is "json", options include "json" and "csv".
             required: false
             schema:
               $ref: '#/components/schemas/Format'
@@ -610,24 +608,23 @@ paths:
     /api/pub/stats/summary_aggregate:
       get:
         summary: Returns summary aggregate statistics
-        description: |
-          TBD
+        description: A count of the number of instances of all validation warnings, errors, and critical errors, grouped by publisher and severity.
         parameters: 
           - in: query
             name: date
-            description: Only return stats for specified date
+            description: Filters statistics to Validation reports generated before or on the given date. In format YYYY-MM-DD, defaults to "9999-01-01".
             required: false
             schema:
               $ref: '#/components/schemas/Date'
           - in: query
             name: publisher
-            description: Only return stats for specified publisher
+            description: Filters statistics to a single publisher, defaults to all publishers.
             required: false
             schema:
               $ref: '#/components/schemas/PublisherName'
           - in: query
             name: format
-            description: Return stats in CSV format if set to 'csv', if left blank returns stats in JSON format.
+            description: Changes the output format of the statistics. Default is "json", options include "json" and "csv".
             required: false
             schema:
               $ref: '#/components/schemas/Format'
@@ -652,24 +649,23 @@ paths:
     /api/pub/stats/summary_precalc:
       get:
         summary: Returns summary precalculated statistics
-        description: |
-          TBD
+        description: Counts of warnings, errors, and critical errors as reported by the Validator API (may differ from count of instances for a number of errors, it is recommended users use the summary_aggregate instead) , grouped by publisher.
         parameters: 
           - in: query
             name: date
-            description: Only return stats for specified date
+            description: Filters statistics to Validation reports generated before or on the given date. In format YYYY-MM-DD, defaults to "9999-01-01".
             required: false
             schema:
               $ref: '#/components/schemas/Date'
           - in: query
             name: publisher
-            description: Only return stats for specified publisher
+            description: Filters statistics to a single publisher, defaults to all publishers.
             required: false
             schema:
               $ref: '#/components/schemas/PublisherName'
           - in: query
             name: format
-            description: Return stats in CSV format if set to 'csv', if left blank returns stats in JSON format.
+            description: Changes the output format of the statistics. Default is "json", options include "json" and "csv".
             required: false
             schema:
               $ref: '#/components/schemas/Format'

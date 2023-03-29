@@ -218,6 +218,23 @@ const getDocumentsForPublisher = async (id) => {
     return query(sql, [id]);
 };
 
+const getReportsForPublisher = async (id) => {
+    const sql = `
+        SELECT
+            doc.hash as registry_hash,
+            doc.id as registry_id,
+            doc.name as registry_name,
+            doc.url as document_url,
+            val.valid,
+            val.report
+        FROM document as doc
+        LEFT JOIN validation AS val ON doc.validation = val.id
+        WHERE doc.publisher = $1
+        ORDER BY url ASC
+        `;
+    return query(sql, [id]);
+};
+
 const getSinglePublisherById = async (id) => {
     const sql = `
         SELECT
@@ -560,6 +577,7 @@ export {
     getPublishersWithDocuments,
     getPublishersWithBlackFlag,
     getDocumentsForPublisher,
+    getReportsForPublisher,
     getSinglePublisherById,
     getSinglePublisherByName,
     getSingleDocumentForId,

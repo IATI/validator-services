@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import { stringify } from 'csv';
 import config from '../config/config.js';
 
 const GITHUB_RAW = 'https://raw.githubusercontent.com';
@@ -75,4 +76,93 @@ const checkRespStatus = (response) => {
     throw new HTTPResponseError(response);
 };
 
-export { getFileBySha, getFileCommitSha, checkRespStatus };
+const constructCSV = async (results) => {
+    const tabularData = [
+        [
+            'Registry name',
+            'URL',
+            'Validation Status',
+            'File Valid',
+            'Category',
+            'Severity',
+            'ID',
+            'Message',
+            'Contexts',
+        ],
+    ];
+    results.forEach((result) => {
+        const registryName = result.registry_name;
+        const documentUrl = result.document_url;
+        const documentValid = result.valid;
+        let fileValid = '';
+        let validationStatus = 'Validated';
+        if (documentValid === true) {
+            fileValid = 'True';
+        } else if (documentValid === false) {
+            fileValid = 'False';
+        } else {
+            fileValid = '';
+            validationStatus = 'Pending Validation';
+        }
+        if (result.report && result.report.errors) {
+            const activities = result.report.errors;
+            activities.forEach((activity) => {
+                const activityErrorCats = activity.errors;
+                activityErrorCats.forEach((activityErrorCat) => {
+                    const errorCategory = activityErrorCat.category;
+                    const { errors } = activityErrorCat;
+                    errors.forEach((error) => {
+                        const errorId = error.id;
+                        const errorSeverity = error.severity;
+                        const errorMessage = error.message;
+                        const errorContexts = error.context;
+                        let contextText = '';
+                        errorContexts.forEach((context) => {
+                            if (context.text) {
+                                contextText += context.text;
+                                contextText += ' ';
+                            }
+                        });
+                        const row = [
+                            registryName,
+                            documentUrl,
+                            validationStatus,
+                            fileValid,
+                            errorCategory,
+                            errorSeverity,
+                            errorId,
+                            errorMessage,
+                            contextText,
+                        ];
+                        tabularData.push(row);
+                    });
+                });
+            });
+        } else {
+            const row = [
+                registryName,
+                documentUrl,
+                validationStatus,
+                fileValid,
+                '',
+                '',
+                '',
+                '',
+                '',
+            ];
+            tabularData.push(row);
+        }
+    });
+    const csvText = await new Promise((resolve, reject) => {
+        stringify(tabularData, (err, output) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(output);
+            }
+        });
+    });
+    return csvText;
+};
+
+export { getFileBySha, getFileCommitSha, checkRespStatus, constructCSV };

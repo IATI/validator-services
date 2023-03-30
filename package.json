@@ -11,7 +11,6 @@
     },
     "author": "IATI",
     "dependencies": {
-        "csv": "^6.2.8",
         "dotenv": "^16.0.3",
         "node-fetch": "^3.2.10",
         "pg": "^8.10.0",

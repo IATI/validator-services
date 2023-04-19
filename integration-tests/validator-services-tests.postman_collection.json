@@ -3,7 +3,7 @@
 		"_postman_id": "670a6541-0509-4d79-8b62-550460c4a700",
 		"name": "validator-services-tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "13097277"
+		"_exporter_id": "19594102"
 	},
 	"item": [
 		{
@@ -152,6 +152,50 @@
 						},
 						{
 							"name": "pvt-get-publishers-documents GET /pvt/publishers/{id}/documents",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+											"const jsonData = pm.response.json();",
+											"pm.test(\"Expect body to be an Array\", function () {",
+											"    pm.expect(jsonData).to.be.an('array')",
+											"});",
+											"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
+											"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified',  'solrize_end', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid']);",
+											"});",
+											"pm.test(\"Set document id, hash, url for tests\", function () {",
+											"    pm.collectionVariables.set(\"document_id\", jsonData.filter(doc => doc.validation !== null)[0].id);",
+											"    pm.collectionVariables.set(\"document_hash\", jsonData.filter(doc => doc.validation !== null)[0].hash);",
+											"    pm.collectionVariables.set(\"document_name\", jsonData.filter(doc => doc.validation !== null)[0].name);",
+											"    pm.collectionVariables.set(\"document_url\", jsonData.filter(doc => doc.validation !== null)[0].url);",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/pvt/publishers/{{publisher_id}}/documents",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"pvt",
+										"publishers",
+										"{{publisher_id}}",
+										"documents"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pvt-get-publishers-documents GET /pvt/publishers/{id}/reports",
 							"event": [
 								{
 									"listen": "test",

@@ -3,7 +3,7 @@
 		"_postman_id": "670a6541-0509-4d79-8b62-550460c4a700",
 		"name": "validator-services-tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "19594102"
+		"_exporter_id": "28259772"
 	},
 	"item": [
 		{
@@ -163,7 +163,7 @@
 											"    pm.expect(jsonData).to.be.an('array')",
 											"});",
 											"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-											"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified',  'solrize_end', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid']);",
+											"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified',  'solrize_end', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid','last_solrize_end']);",
 											"});",
 											"pm.test(\"Set document id, hash, url for tests\", function () {",
 											"    pm.collectionVariables.set(\"document_id\", jsonData.filter(doc => doc.validation !== null)[0].id);",
@@ -207,7 +207,7 @@
 											"    pm.expect(jsonData).to.be.an('array')",
 											"});",
 											"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
-											"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified',  'solrize_end', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid']);",
+											"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation', 'regenerate_validation_report', 'publisher', 'validation_created','valid', 'report', 'modified',  'solrize_end', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid','last_solrize_end']);",
 											"});",
 											"pm.test(\"Set document id, hash, url for tests\", function () {",
 											"    pm.collectionVariables.set(\"document_id\", jsonData.filter(doc => doc.validation !== null)[0].id);",
@@ -714,7 +714,7 @@
 									"});",
 									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid', 'solrize_end']);",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid', 'solrize_end', 'last_solrize_end']);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -752,7 +752,7 @@
 									"});",
 									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid', 'solrize_end']);",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid', 'solrize_end', 'last_solrize_end']);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -796,7 +796,7 @@
 									"});",
 									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid', 'solrize_end']);",
+									"    pm.expect(jsonData[0]).to.have.keys(['id', 'hash', 'url', 'name', 'first_seen', 'downloaded', 'download_error', 'validation','regenerate_validation_report', 'publisher', 'validation_created','valid', 'summary',  'modified', 'clean_start', 'clean_end', 'clean_error', 'file_schema_valid', 'solrize_end', 'last_solrize_end']);",
 									"});"
 								],
 								"type": "text/javascript"

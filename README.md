@@ -1,3 +1,15 @@
+Summary
+=======
+
+Product  |  Validator API Services
+--- | ---
+Description | Node.JS app that provides private API end points for re-generating validation reports for existing datasets and for flagging publishers with too much bad data, and public API end points to fetch lists of existing validation reports and fetch some validation statistics.
+Website |  [https://developer.iatistandard.org/](https://developer.iatistandard.org/)
+Related | [js-validator-api](https://github.com/IATI/js-validator-api), [validator-web](https://github.com/IATI/validator-web)
+Documentation | [https://developer.iatistandard.org/](https://developer.iatistandard.org/)
+Technical Issues | https://github.com/IATI/validator-services/issues
+Support | https://iatistandard.org/en/guidance/get-support/
+
 # validator-services
 
 ## Endpoints

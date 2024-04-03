@@ -13,7 +13,7 @@
     "dependencies": {
         "dotenv": "^16.4.5",
         "node-fetch": "^3.2.10",
-        "pg": "^8.11.4",
+        "pg": "^8.11.5",
         "pg-hstore": "^2.3.4"
     },
     "devDependencies": {

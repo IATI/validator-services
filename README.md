@@ -1,3 +1,14 @@
+# Summary
+
+| Product          | Validator Services API           |
+| ---------------- | -------------------------------- |
+| Description      | Node.JS app that provides various API end points used by the IATI Validator API; also handles the validation for ad hoc data checks in user sessions on the Validator website. |
+| Website          | [https://validator.iatistandard.org](https://validator.iatistandard.org) |
+| Related          | [IATI/validator-web](https://github.com/IATI/validator-web), [IATI/js-validator-api](https://github.com/IATI/js-validator-api) |
+| Documentation    | [https://developer.iatistandard.org/](https://developer.iatistandard.org/) |
+| Technical Issues | https://github.com/IATI/validator-services/issues       |
+| Support          | https://iatistandard.org/en/guidance/get-support/       |
+
 # validator-services
 
 ## Endpoints
@@ -23,7 +34,7 @@ See OpenAPI specification `postman/schemas/index.yaml`. To view locally in Swagg
 -   nvm - [nvm](https://github.com/nvm-sh/nvm) - Node version manager
 -   Node LTS
     -   once you've installed nvm run `nvm use` which will look at `.nvmrc` for the node version, if it's not installed then it will prompt you to install it with `nvm install <version>`
--   [Azure Functions Core Tools v3](https://github.com/Azure/azure-functions-core-tools)
+-   [Azure Functions Core Tools v4](https://github.com/Azure/azure-functions-core-tools)
 -   [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) version 2.4 or later.
 
 ## Getting Started

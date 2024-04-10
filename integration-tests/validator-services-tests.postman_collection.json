@@ -3,7 +3,8 @@
 		"_postman_id": "670a6541-0509-4d79-8b62-550460c4a700",
 		"name": "validator-services-tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "28259772"
+		"_exporter_id": "29844336",
+		"_collection_link": "https://iatisecretariat.postman.co/workspace/IATI~c354ba4e-15bf-41ee-9d69-a5a5360da160/collection/13097277-670a6541-0509-4d79-8b62-550460c4a700?action=share&source=collection_link&creator=29844336"
 	},
 	"item": [
 		{
@@ -130,7 +131,8 @@
 											"    pm.collectionVariables.set(\"publisher_name\", jsonData[1].name);",
 											"})"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1793,10 +1795,14 @@
 									"});",
 									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData['worldbank']).to.have.keys(['critical', 'error', 'warning']);",
+									"    Object.values(jsonData).forEach((item) => {",
+									"        var keys = Object.keys(item).filter(k => ['critical', 'error', 'warning'].includes(k));",
+									"        pm.expect(keys).to.deep.equal(['critical', 'error', 'warning']);",
+									"    });",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -1824,17 +1830,27 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
-									"pm.test(\"Expect body to be an Object\", function () {",
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test('Expect body to be an Object', function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('object')",
-									"});",
+									"    pm.expect(jsonData).to.be.an('object');",
+									"})",
+									"",
 									"pm.test(\"Expect objects in the Array to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData['worldbank']).to.have.keys(['critical', 'error', 'warning']);",
-									"});"
+									"    Object.values(jsonData).forEach((item) => {",
+									"        var keys = Object.keys(item).filter(k => ['critical', 'error', 'warning'].includes(k));",
+									"        pm.expect(keys).to.deep.equal(['critical', 'error', 'warning']);",
+									"    });",
+									"});",
+									"",
+									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -1909,10 +1925,11 @@
 									"});",
 									"pm.test(\"Expect object to have certain keys\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.keys(['worldbank']);",
+									"    pm.expect(jsonData).to.have.keys(pm.collectionVariables.get(\"publisher_name\"));",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -1920,7 +1937,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/pub/stats/publisher/worldbank",
+							"raw": "{{baseURL}}/pub/stats/publisher/{{publisher_name}}",
 							"host": [
 								"{{baseURL}}"
 							],
@@ -1928,7 +1945,7 @@
 								"pub",
 								"stats",
 								"publisher",
-								"worldbank"
+								"{{publisher_name}}"
 							]
 						}
 					},

@@ -532,7 +532,7 @@ paths:
     /api/pub/stats/all:
       get:
         summary: Returns all statistics
-        description: A count of the number of instances of al validation warnings, errors, and critical errors, grouped by publisher and error, for all publishers.
+        description: A count of the number of instances of all validation advisories, warnings, errors, and critical errors, grouped by publisher and error, for all publishers.
         parameters: 
           - in: query
             name: date
@@ -567,7 +567,7 @@ paths:
     /api/pub/stats/publisher/{publisher}:
       get:
         summary: Returns statistics for a publisher
-        description: A count of the number of instances of all validation warnings, errors, and critical errors, grouped by error, for one publisher.
+        description: A count of the number of instances of all validation advisories, warnings, errors, and critical errors, grouped by error, for one publisher.
         parameters: 
           - in: path
             name: publisher
@@ -608,7 +608,7 @@ paths:
     /api/pub/stats/summary_aggregate:
       get:
         summary: Returns summary aggregate statistics
-        description: A count of the number of instances of all validation warnings, errors, and critical errors, grouped by publisher and severity.
+        description: A count of the number of instances of all validation advisories, warnings, errors, and critical errors, grouped by publisher and severity.
         parameters: 
           - in: query
             name: date

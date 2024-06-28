@@ -26,6 +26,9 @@ export default async function pubGetStatsSummaryAggregate(context, req) {
             if (!Object.keys(parsedResults[publisherName]).includes('warning')) {
                 parsedResults[publisherName].warning = 0;
             }
+            if (!Object.keys(parsedResults[publisherName]).includes('advisory')) {
+                parsedResults[publisherName].advisory = 0;
+            }             
             parsedResults[publisherName][row.severity] = parseInt(row.count, 10);
         });
 
@@ -38,16 +41,18 @@ export default async function pubGetStatsSummaryAggregate(context, req) {
                     critical: summary.critical,
                     error: summary.error,
                     warning: summary.warning,
+                    advisory: summary.advisory,                    
                 });
             });
 
             const csvString = [
-                ['publisher_name', 'critical', 'error', 'warning'],
+                ['publisher_name', 'critical', 'error', 'warning', 'advisory'],
                 ...flatParsedResults.map((item) => [
                     item.publisher_name,
                     item.critical,
                     item.error,
                     item.warning,
+                    item.advisory,
                 ]),
             ]
                 .map((e) => e.map((c) => `"${c}"`).join(','))

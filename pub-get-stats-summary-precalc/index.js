@@ -12,12 +12,13 @@ export default async function pubGetStatsSummaryPrecalc(context, req) {
 
         if (format === 'csv') {
             const csvString = [
-                ['publisher_name', 'critical', 'error', 'warning'],
+                ['publisher_name', 'critical', 'error', 'warning', 'advisory'],
                 ...result.map((item) => [
                     item.publisher_name,
                     item.critical,
                     item.error,
                     item.warning,
+                    item.advisory,
                 ]),
             ]
                 .map((e) => e.map((c) => `"${c}"`).join(','))
@@ -36,6 +37,7 @@ export default async function pubGetStatsSummaryPrecalc(context, req) {
                     critical: parseInt(row.critical, 10),
                     error: parseInt(row.error, 10),
                     warning: parseInt(row.warning, 10),
+                    advisory: parseInt(row.advisory, 10),                    
                 };
             });
 

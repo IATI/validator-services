@@ -1,29 +1,29 @@
-import pg from 'pg';
-import config from '../config/config.js';
+import pg from "pg";
+import config from "../config/config.js";
 
 const { Pool } = pg;
 
 const query = async (sql, values = null) => {
-    const pool = new Pool(config.PGCONFIG);
-    const result = await pool.query(sql, values);
-    await pool.end();
+  const pool = new Pool(config.PGCONFIG);
+  const result = await pool.query(sql, values);
+  await pool.end();
 
-    return result.rows;
+  return result.rows;
 };
 
 const getFirstRow = async (sql, values = null) => {
-    const pool = new Pool(config.PGCONFIG);
-    const result = await pool.query(sql, values);
-    await pool.end();
+  const pool = new Pool(config.PGCONFIG);
+  const result = await pool.query(sql, values);
+  await pool.end();
 
-    if (result.rows.length > 0) {
-        return result.rows[0];
-    }
-    return null;
+  if (result.rows.length > 0) {
+    return result.rows[0];
+  }
+  return null;
 };
 
 const getReportForUrl = async (url) => {
-    const sql = `
+  const sql = `
             SELECT val.document_hash as registry_hash,
                    val.document_id as registry_id,
                    doc.name as registry_name,
@@ -35,7 +35,7 @@ const getReportForUrl = async (url) => {
             WHERE doc.url = $1;
         `;
 
-    return getFirstRow(sql, [url]);
+  return getFirstRow(sql, [url]);
 };
 
 const valReportSummaryOnly = `(SELECT case when val.report is null then null else jsonb_build_object(
@@ -46,7 +46,7 @@ const valReportSummaryOnly = `(SELECT case when val.report is null then null els
                                 ) end as report)`;
 
 const getReportWithoutErrorsForUrl = async (url) => {
-    const sql = `
+  const sql = `
             SELECT val.document_hash as registry_hash,
                    val.document_id as registry_id, 
                    doc.name as registry_name, 
@@ -58,21 +58,21 @@ const getReportWithoutErrorsForUrl = async (url) => {
             WHERE doc.url = $1;
         `;
 
-    return getFirstRow(sql, [url]);
+  return getFirstRow(sql, [url]);
 };
 
 const getReportForTestfile = async (guid) => {
-    const sql = `
+  const sql = `
             SELECT valid, report, filename, guid, session_id
             FROM adhoc_validation
             WHERE guid = $1
         `;
 
-    return getFirstRow(sql, [guid]);
+  return getFirstRow(sql, [guid]);
 };
 
 const getReportForHash = async (hash) => {
-    const sql = `
+  const sql = `
             SELECT val.document_hash as registry_hash,
                    val.document_id as registry_id,
                    doc.name as registry_name,
@@ -85,11 +85,11 @@ const getReportForHash = async (hash) => {
             ORDER BY val.id DESC
             LIMIT 1;
         `;
-    return getFirstRow(sql, [hash]);
+  return getFirstRow(sql, [hash]);
 };
 
 const getReportWithoutErrorsForHash = async (hash) => {
-    const sql = `
+  const sql = `
             SELECT val.document_hash as registry_hash, 
                    val.document_id as registry_id, 
                    doc.name as registry_name,
@@ -102,11 +102,11 @@ const getReportWithoutErrorsForHash = async (hash) => {
             ORDER BY val.id DESC
             LIMIT 1;
         `;
-    return getFirstRow(sql, [hash]);
+  return getFirstRow(sql, [hash]);
 };
 
 const getReportForId = async (id) => {
-    const sql = `
+  const sql = `
             SELECT val.document_hash as registry_hash, 
                    val.document_id as registry_id,
                    doc.name as registry_name,
@@ -117,11 +117,11 @@ const getReportForId = async (id) => {
             LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.id = $1;
         `;
-    return getFirstRow(sql, [id]);
+  return getFirstRow(sql, [id]);
 };
 
 const getReportWithoutErrorsForId = async (id) => {
-    const sql = `
+  const sql = `
             SELECT val.document_hash as registry_hash,
                    val.document_id as registry_id, 
                    doc.name as registry_name,
@@ -132,11 +132,11 @@ const getReportWithoutErrorsForId = async (id) => {
             LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.id = $1;
         `;
-    return getFirstRow(sql, [id]);
+  return getFirstRow(sql, [id]);
 };
 
 const getReportForName = async (name) => {
-    const sql = `
+  const sql = `
             SELECT val.document_hash as registry_hash, 
                    val.document_id as registry_id,
                    doc.name as registry_name,
@@ -147,11 +147,11 @@ const getReportForName = async (name) => {
             LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.name = $1;
         `;
-    return getFirstRow(sql, [name]);
+  return getFirstRow(sql, [name]);
 };
 
 const getReportWithoutErrorsForName = async (name) => {
-    const sql = `
+  const sql = `
             SELECT val.document_hash as registry_hash, 
                    val.document_id as registry_id,
                    doc.name as registry_name,
@@ -162,29 +162,29 @@ const getReportWithoutErrorsForName = async (name) => {
             LEFT JOIN validation as val ON doc.validation=val.id
             WHERE doc.name = $1;
         `;
-    return getFirstRow(sql, [name]);
+  return getFirstRow(sql, [name]);
 };
 
 const getPublishersWithDocuments = async () => {
-    const sql = `
+  const sql = `
             SELECT org_id, name, title, state, country_code, package_count, iati_id, black_flag, black_flag_notified
             FROM publisher
             WHERE package_count > 0
         `;
-    return query(sql);
+  return query(sql);
 };
 
 const getPublishersWithBlackFlag = async () => {
-    const sql = `
+  const sql = `
             SELECT org_id, name, description, title, state, image_url, country_code, package_count, iati_id, black_flag, black_flag_notified
             FROM publisher
             WHERE black_flag is not Null
         `;
-    return query(sql);
+  return query(sql);
 };
 
 const getDocumentsForPublisher = async (id) => {
-    const sql = `
+  const sql = `
         SELECT 
             doc.id, 
             doc.hash, 
@@ -216,11 +216,11 @@ const getDocumentsForPublisher = async (id) => {
         WHERE doc.publisher = $1
         ORDER BY url ASC
         `;
-    return query(sql, [id]);
+  return query(sql, [id]);
 };
 
 const getReportsForPublisher = async (id) => {
-    const sql = `
+  const sql = `
         SELECT
             doc.hash as registry_hash,
             doc.id as registry_id,
@@ -233,11 +233,11 @@ const getReportsForPublisher = async (id) => {
         WHERE doc.publisher = $1
         ORDER BY url ASC
         `;
-    return query(sql, [id]);
+  return query(sql, [id]);
 };
 
 const getSinglePublisherById = async (id) => {
-    const sql = `
+  const sql = `
         SELECT
             org_id,
             name,
@@ -251,11 +251,11 @@ const getSinglePublisherById = async (id) => {
         FROM publisher
         WHERE org_id = $1
         `;
-    return query(sql, [id]);
+  return query(sql, [id]);
 };
 
 const getSinglePublisherByName = async (name) => {
-    const sql = `
+  const sql = `
         SELECT
             org_id,
             name,
@@ -269,11 +269,11 @@ const getSinglePublisherByName = async (name) => {
         FROM publisher
         WHERE name = $1
         `;
-    return query(sql, [name]);
+  return query(sql, [name]);
 };
 
 const getSingleDocumentForId = async (id) => {
-    const sql = `
+  const sql = `
         SELECT
             doc.id,
             doc.hash,
@@ -299,10 +299,10 @@ const getSingleDocumentForId = async (id) => {
         LEFT JOIN validation AS val ON doc.validation = val.id
         WHERE doc.id = $1
         `;
-    return query(sql, [id]);
+  return query(sql, [id]);
 };
 const getSingleDocumentForName = async (name) => {
-    const sql = `
+  const sql = `
         SELECT
             doc.id,
             doc.hash,
@@ -328,11 +328,11 @@ const getSingleDocumentForName = async (name) => {
         LEFT JOIN validation AS val ON doc.validation = val.id
         WHERE doc.name = $1
         `;
-    return query(sql, [name]);
+  return query(sql, [name]);
 };
 
 const getAdhocValidationSession = async (sessionId) => {
-    const sql = `
+  const sql = `
         SELECT 
             guid,
             filename, 
@@ -352,45 +352,52 @@ const getAdhocValidationSession = async (sessionId) => {
         ORDER BY created desc
         `;
 
-    const result = await query(sql, [sessionId]);
+  const result = await query(sql, [sessionId]);
 
-    return result;
+  return result;
 };
 
 const insertAdhocValidation = async (sessionId, filename, guid) => {
-    const sql = `
+  const sql = `
         INSERT INTO adhoc_validation (session_id, filename, guid) VALUES ($1, $2, $3)
         `;
 
-    const result = await query(sql, [sessionId, filename, guid]);
+  const result = await query(sql, [sessionId, filename, guid]);
 
-    return result;
+  return result;
 };
 
-const updateAdhocValidation = async (guid, sessionId, valid, report, created, errorStatus) => {
-    const sql = `
+const updateAdhocValidation = async (
+  guid,
+  sessionId,
+  valid,
+  report,
+  created,
+  errorStatus,
+) => {
+  const sql = `
        UPDATE adhoc_validation 
        SET valid=$1, report=$2, created=$3, validated=$4, validation_api_error=$5
        WHERE guid=$6 and session_id=$7
         `;
 
-    const now = new Date();
+  const now = new Date();
 
-    const result = await query(sql, [
-        valid,
-        JSON.stringify(report),
-        created,
-        now.toISOString(),
-        errorStatus,
-        guid,
-        sessionId,
-    ]);
+  const result = await query(sql, [
+    valid,
+    JSON.stringify(report),
+    created,
+    now.toISOString(),
+    errorStatus,
+    guid,
+    sessionId,
+  ]);
 
-    return result;
+  return result;
 };
 
 const updateRegenerateValidationForIds = async (ids) => {
-    const sql = `
+  const sql = `
         UPDATE document
         SET 
             regenerate_validation_report = 't'
@@ -399,25 +406,25 @@ const updateRegenerateValidationForIds = async (ids) => {
             AND id = ANY($1)
         `;
 
-    await query(sql, [ids]);
+  await query(sql, [ids]);
 };
 
 const updateRegenerateValidationForAll = async () => {
-    const sql = `
+  const sql = `
         UPDATE document
         SET 
             regenerate_validation_report = 't'
         WHERE validation is not Null
         `;
 
-    const result = await query(sql);
+  const result = await query(sql);
 
-    return result;
+  return result;
 };
 
 const getSummaryPrecalcStats = async (date, publisher) => {
-    if (publisher) {
-        const sql = `
+  if (publisher) {
+    const sql = `
             SELECT
                 T1.publisher_name,
                 SUM( (T1.report -> 'summary' ->> 'critical') :: INTEGER) as critical,
@@ -436,10 +443,10 @@ const getSummaryPrecalcStats = async (date, publisher) => {
             GROUP BY T1.publisher_name;
             `;
 
-        const result = await query(sql, [date, publisher]);
-        return result;
-    }
-    const sql = `
+    const result = await query(sql, [date, publisher]);
+    return result;
+  }
+  const sql = `
             SELECT
                 T1.publisher_name,
                 SUM( (T1.report -> 'summary' ->> 'critical') :: INTEGER) as critical,
@@ -458,13 +465,13 @@ const getSummaryPrecalcStats = async (date, publisher) => {
             GROUP BY T1.publisher_name;
             `;
 
-    const result = await query(sql, [date]);
-    return result;
+  const result = await query(sql, [date]);
+  return result;
 };
 
 const getSummaryAggregateStats = async (date, publisher) => {
-    if (publisher) {
-        const sql = `
+  if (publisher) {
+    const sql = `
                 SELECT
                     T1.publisher_name,
                     arr3.item_object -> 'severity' AS severity,
@@ -484,10 +491,10 @@ const getSummaryAggregateStats = async (date, publisher) => {
                 ) GROUP BY T1.publisher_name, severity;
             `;
 
-        const result = await query(sql, [date, publisher]);
-        return result;
-    }
-    const sql = `
+    const result = await query(sql, [date, publisher]);
+    return result;
+  }
+  const sql = `
             SELECT
                 T1.publisher_name,
                 arr3.item_object -> 'severity' AS severity,
@@ -507,12 +514,12 @@ const getSummaryAggregateStats = async (date, publisher) => {
             ) GROUP BY T1.publisher_name, severity;
         `;
 
-    const result = await query(sql, [date]);
-    return result;
+  const result = await query(sql, [date]);
+  return result;
 };
 
 const getMessageDateStats = async (date) => {
-    const sql = `
+  const sql = `
             SELECT
                 T1.publisher_name,
                 arr3.item_object -> 'id' AS error_id,
@@ -535,12 +542,12 @@ const getMessageDateStats = async (date) => {
             ) GROUP BY T1.publisher_name, error_id, message, severity, category;
         `;
 
-    const result = await query(sql, [date]);
-    return result;
+  const result = await query(sql, [date]);
+  return result;
 };
 
 const getMessagePublisherStats = async (date, publisher) => {
-    const sql = `
+  const sql = `
             SELECT
                 T1.publisher_name,
                 arr3.item_object -> 'id' AS error_id,
@@ -563,37 +570,37 @@ const getMessagePublisherStats = async (date, publisher) => {
             ) GROUP BY T1.publisher_name, error_id, message, severity, category;
         `;
 
-    const result = await query(sql, [date, publisher]);
-    return result;
+  const result = await query(sql, [date, publisher]);
+  return result;
 };
 
 export {
-    query,
-    getFirstRow,
-    getReportForUrl,
-    getReportWithoutErrorsForUrl,
-    getReportForTestfile,
-    getReportForHash,
-    getReportWithoutErrorsForHash,
-    getReportForId,
-    getReportWithoutErrorsForId,
-    getReportForName,
-    getReportWithoutErrorsForName,
-    getPublishersWithDocuments,
-    getPublishersWithBlackFlag,
-    getDocumentsForPublisher,
-    getReportsForPublisher,
-    getSinglePublisherById,
-    getSinglePublisherByName,
-    getSingleDocumentForId,
-    getSingleDocumentForName,
-    getAdhocValidationSession,
-    insertAdhocValidation,
-    updateAdhocValidation,
-    updateRegenerateValidationForIds,
-    updateRegenerateValidationForAll,
-    getSummaryPrecalcStats,
-    getSummaryAggregateStats,
-    getMessageDateStats,
-    getMessagePublisherStats,
+  getAdhocValidationSession,
+  getDocumentsForPublisher,
+  getFirstRow,
+  getMessageDateStats,
+  getMessagePublisherStats,
+  getPublishersWithBlackFlag,
+  getPublishersWithDocuments,
+  getReportForHash,
+  getReportForId,
+  getReportForName,
+  getReportForTestfile,
+  getReportForUrl,
+  getReportWithoutErrorsForHash,
+  getReportWithoutErrorsForId,
+  getReportWithoutErrorsForName,
+  getReportWithoutErrorsForUrl,
+  getReportsForPublisher,
+  getSingleDocumentForId,
+  getSingleDocumentForName,
+  getSinglePublisherById,
+  getSinglePublisherByName,
+  getSummaryAggregateStats,
+  getSummaryPrecalcStats,
+  insertAdhocValidation,
+  query,
+  updateAdhocValidation,
+  updateRegenerateValidationForAll,
+  updateRegenerateValidationForIds,
 };

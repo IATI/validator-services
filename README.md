@@ -112,14 +112,18 @@ let myEnvVariable = config.ENV_VAR
 
 ## Linting and Code Formatting
 
-### Prerequisities
+[ESlint](https://eslint.org/) is used for code quality and [Prettier](https://prettier.io/) is used for formatting rules, see [Prettier vs. Linters](https://prettier.io/docs/en/comparison).
 
-- To show linting inline install [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) for VSCode
+To run linting, use `npm run lint`, and to format the project, use `npm run format`.
 
-### Info
+### VS Code Integration
 
-- This is done with eslint following the airbnb-base style and using [Prettier](https://prettier.io). Implemented with [this](https://sourcelevel.io/blog/how-to-setup-eslint-and-prettier-on-node) guide.
-- If you use VSCode the formatting will happen automagically on save due to the `.vscode/settings.json` > `"editor.formatOnSave": true` setting
+Autosave is enabled in `.vscode/settings.json`.
+
+Recommended Plugins:
+
+- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 
 ## Creating a new route
 

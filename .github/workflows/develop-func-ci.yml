@@ -3,16 +3,27 @@ name: CI_AutoMerge_Dependabot
 on:
   pull_request:
     paths-ignore: # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
-      - '**/README.md'
-      - '**/dependabot.yml'
-      - '.github/workflows/prod-func-ci.yml'
-      - '.github/workflows/prod-func-deploy.yml'
-      - 'docs/*'
+      - "**/README.md"
+      - "**/dependabot.yml"
+      - ".github/workflows/prod-func-ci.yml"
+      - ".github/workflows/prod-func-deploy.yml"
+      - "docs/*"
     branches:
       - develop
       - main
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint project
+        run: npm run lint
   build:
     uses: IATI/.github/.github/workflows/build_node_save.yaml@main
     with:

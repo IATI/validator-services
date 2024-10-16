@@ -1,17 +1,17 @@
 {
-    "bindings": [
-        {
-            "authLevel": "Function",
-            "type": "HttpTrigger",
-            "direction": "in",
-            "name": "req",
-            "methods": ["get"],
-            "route": "pvt/guidance-links/{version}"
-        },
-        {
-            "type": "http",
-            "direction": "out",
-            "name": "res"
-        }
-    ]
+  "bindings": [
+    {
+      "authLevel": "Function",
+      "type": "HttpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": ["get"],
+      "route": "pvt/guidance-links/{version}"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    }
+  ]
 }

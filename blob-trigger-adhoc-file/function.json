@@ -1,12 +1,12 @@
 {
-    "disabled": false,
-    "bindings": [
-        {
-            "name": "myBlob",
-            "type": "blobTrigger",
-            "direction": "in",
-            "path": "%ADHOC_CONTAINER%/{name}",
-            "connection": "STORAGECONNECTOR"
-        }
-    ]
+  "disabled": false,
+  "bindings": [
+    {
+      "name": "myBlob",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "%ADHOC_CONTAINER%/{name}",
+      "connection": "STORAGECONNECTOR"
+    }
+  ]
 }

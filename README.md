@@ -139,8 +139,19 @@ Recommended Plugins:
 
 ### Modifying/Adding
 
-Integration tests are written in Postman v2.1 format and run with newman
-Import the `integrations-tests/azure-function-node-microservice-template.postman_collection.json` into Postman and write additional tests there
+Integration tests are written in Postman v2.1 format and run with newman.
+
+#### Process for editing tests
+
+1. Check the tests in Postman are in sync with the Github repo:
+
+   - Export the `validator-services` collection from the Postman client to `./integration-tests`
+   - Run `npm run format`
+   - Run `git diff integration-tests/validator-services-tests.postman_collection.json`
+
+2. If this confirms the tests are in sync, then edit / update the tests in Postman.
+
+   - Export again, format again, and commit.
 
 ## Release / Version Management
 

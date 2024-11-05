@@ -7,6 +7,7 @@
     "start": "func start --javascript --cors http://localhost:4200",
     "start:verbose": "func start --javascript --verbose",
     "test": "newman run integration-tests/validator-services-tests.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment.json --working-dir integration-tests/test-files",
+    "test-maintenance-mode": "newman run integration-tests/validator-services-tests.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment_maintenance_mode.json --working-dir integration-tests/test-files --folder 'Maintenance Mode'",
     "prepare": "husky install",
     "lint:eslint": "eslint .",
     "lint:prettier": "prettier . --check",
@@ -28,6 +29,7 @@
     "globals": "^15.11.0",
     "husky": "^8.0.3",
     "lint-staged": "^14.0.1",
+    "newman": "^6.2.1",
     "prettier": "^3.2.5",
     "prettier-plugin-organize-imports": "^4.1.0"
   },

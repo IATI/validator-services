@@ -4,15 +4,15 @@ on:
   workflow_dispatch: # Allow Manual Run from GitHub
   push:
     paths-ignore: # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
-      - '**/README.md' # don't run on README.md file updates anywhere in repo
-      - '**/dependabot.yml'
-      - '.github/workflows/prod-func-ci.yml'
-      - '.github/workflows/prod-func-deploy.yml'
-      - 'docs/*'
+      - "**/README.md" # don't run on README.md file updates anywhere in repo
+      - "**/dependabot.yml"
+      - ".github/workflows/prod-func-ci.yml"
+      - ".github/workflows/prod-func-deploy.yml"
+      - "docs/*"
     branches:
       - develop
   schedule:
-    - cron: '19 04 * * *' # 0419am daily
+    - cron: "19 04 * * *" # 0419am daily
 
 env:
   NAME: validator-services
@@ -61,15 +61,15 @@ jobs:
           unzip build-artifact-dev.zip
           rm build-artifact-dev.zip
 
-      - name: 'Login via Azure CLI'
-        uses: azure/login@v2.1.1
+      - name: "Login via Azure CLI"
+        uses: azure/login@v2.2.0
         with:
           creds: ${{ env.AZURE_CREDENTIALS }} # Service Principal credentials saved in GitHub Secrets
 
       - name: Set Env variables on app service
         uses: Azure/appservice-settings@v1.1.1
         with:
-          app-name: 'func-${{env.NAME}}-${{env.STAGE}}'
+          app-name: "func-${{env.NAME}}-${{env.STAGE}}"
           app-settings-json: |
             [
                 {
@@ -139,7 +139,7 @@ jobs:
                 }
             ]
 
-      - name: 'Run Azure Functions Action'
+      - name: "Run Azure Functions Action"
         uses: Azure/functions-action@v1.5.2
         with:
           app-name: func-${{ env.NAME }}-${{ env.STAGE }}
@@ -148,17 +148,17 @@ jobs:
     needs: deploy
     runs-on: ubuntu-latest
     steps:
-      - name: 'Wait for 3 minutes'
+      - name: "Wait for 3 minutes"
         run: sleep 180
 
-      - name: 'Checkout GitHub Action'
+      - name: "Checkout GitHub Action"
         uses: actions/checkout@v4
 
-      - name: 'Install newman'
+      - name: "Install newman"
         run: |
           sudo npm i -g newman
 
-      - name: 'Run integration tests'
+      - name: "Run integration tests"
         run: |
           newman run integration-tests/validator-services-tests.postman_collection.json \
             -e integration-tests/envs/validator-services-direct-dev.postman_environment.json \

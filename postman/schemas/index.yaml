@@ -1,1163 +1,1163 @@
-openapi: '3.0.0'
+openapi: "3.0.0"
 info:
-    version: '2.5.0'
-    title: 'validator-services'
-    description: Service, utility, and backend endpoints for the IATI Validator
+  version: "2.5.0"
+  title: "validator-services"
+  description: Service, utility, and backend endpoints for the IATI Validator
 
 servers:
-    - url: 'http://localhost:7071'
-      description: Local Function
-    - url: 'https://func-validator-services-dev.azurewebsites.net'
-      description: Dev environment Function (requires auth)
-    - url: 'https://func-validator-services-prod.azurewebsites.net'
-      description: Production environment Function (requires auth)
+  - url: "http://localhost:7071"
+    description: Local Function
+  - url: "https://func-validator-services-dev.azurewebsites.net"
+    description: Dev environment Function (requires auth)
+  - url: "https://func-validator-services-prod.azurewebsites.net"
+    description: Production environment Function (requires auth)
 
 paths:
-    /api/pub/version:
-        get:
-            summary: Returns application version.
-            responses:
-                200:
-                    description: Version of the application in semver format
-                    content:
-                        text/plain:
-                            schema:
-                                type: string
-                                example: 1.0.7
-                401:
-                    $ref: '#/components/responses/UnauthorizedError'
-                500:
-                    description: Unexpected server error
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Error'
-    /api/pvt/validation/regenerate:
-        patch:
-            summary: Flag a validation report to be regenerated.
-            description: Sets the `regenerate_validation_report` column in the database to `true` for a document, which makes it get picked up by the `validate` refresher process to generate a new validation report. Does so non destructively so users can still access the old report until the new is available. This will only retrigger a "Full" Validation for the file, not the initial Schema check which sets `document.file_schema_valid`. This is because the Schema shouldn't change for a specific file because the files are versioned with the standard. If something does change that would make a specific file change it's validity against the schema, a manual re-trigger should be performed.
-            requestBody:
-                description: The list of document ids to regenerate validation reports for
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/DocumentIdsArray'
-            responses:
-                204:
-                    description: Success
-                400:
-                    description: Bad Request
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Error'
-                            examples:
-                                noIdsKey:
-                                    value:
-                                        error: 'Body must contain a key "ids"'
-                                badIdsFormat:
-                                    value:
-                                        error: '"ids" must be an Array of document ids'
-                                noBodyError:
-                                    value:
-                                        error: 'No Body'
-                401:
-                    $ref: '#/components/responses/UnauthorizedError'
-                500:
-                    description: Unexpected server error
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Error'
-    /api/pvt/validation/regenerate/all:
-        patch:
-            summary: Flag ALL validation reports to be regenerated.
-            description: Sets the `regenerate_validation_report` column in the database to `true` for ALL documents, which makes it get picked up by the `validate` refresher process to generate a new validation report. Does so non destructively so users can still access the old report until the new is available. This will only retrigger a "Full" Validation for the file, not the initial Schema check which sets `document.file_schema_valid`. This is because the Schema shouldn't change for a specific file because the files are versioned with the standard. If something does change that would make a specific file change it's validity against the schema, a manual re-trigger should be performed. REFRESHER ACI CONTAINERS SHOULD BE STOPPED BEFORE INVOKING THIS ENDPOINT FOR SAFETY.
-            responses:
-                204:
-                    description: Success
-                401:
-                    $ref: '#/components/responses/UnauthorizedError'
-                500:
-                    description: Unexpected server error
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Error'
-    /api/pub/validation/existing:
-        get:
-          summary: Returns an existing validation report.
-          description: Returns a validation report for a published document when provided with an `id`, `hash`, `url`, or `name` of the document.
-          parameters:
-            - in: query
-              name: id
-              schema:
-                $ref: '#/components/schemas/Id'
-            - in: query
-              name: hash
-              schema:
-                $ref: '#/components/schemas/Hash'
-            - in: query
-              name: url
-              schema:
-                $ref: '#/components/schemas/Url'
-            - in: query
-              name: name
-              schema:
-                $ref: '#/components/schemas/Name'
-            - in: query
-              name: showerrors
-              description: If false only return summary object of validation report, not full validation report.
-              schema:
-                type: boolean
-                default: true
-          responses:
-            404:
-              description: Report not found for provided identifier
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/ClientError'
-                  examples: 
-                    noReport:
-                      value:
-                        client_error: 'The requested report does not exist.'
-                    notReady:
-                      value:
-                        client_error: 'The requested report has not yet been generated - please try again later.'
-            422:
-              description: Bad Request
-              content:
-                  application/json:
-                      schema:
-                          $ref: '#/components/schemas/ClientError'
-                      examples:
-                          noQueryParam:
-                              value:
-                                  client_error: 'Either the id, url, hash or name of the document as obtained from the IATI Registry must be supplied as a GET parameter'
-                          badIdsFormat:
-                              value:
-                                  client_error: '"ids" must be an Array of document ids'
-                          noBodyError:
-                              value:
-                                  client_error: 'No Body'
-            200:
-              description: Validation Report
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/ValidationReport'
-    /api/pvt/publishers:
-        get:
-          summary: Returns a list of publishers.
-          description: Returns a list of all publishers that have published a document (`package_count` > 0). 
-          responses:
-            200:
-              description: list of publishers metadata
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/Publishers'
-            401:
-              $ref: '#/components/responses/UnauthorizedError'
-            500:
-                description: Unexpected server error
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/Error'
-    /api/pvt/publishers/{lookupValue}:
-        get:
-          summary: Returns a single publisher.
-          description: Return a single publisher by providing the id or name.
-          parameters:
-            - in: query
-              name: lookupKey
-              required: true
-              description: key to lookup the publisher with
-              schema:
-                type: string
-                enum: 
-                 - 'id'
-                 - 'name'
-            - in: path
-              name: lookupValue
-              required: true
-              description: id or name of the publisher to return
-              schema:
-                type: string
-                example: 'jica'
-          responses:
-            200:
-              description: JSON array of publisher information, this endpoint only returns one value in the array.
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/Publisher'
-            401:
-              $ref: '#/components/responses/UnauthorizedError'
-            500:
-                description: Unexpected server error
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/Error'
-    /api/pvt/publishers/{publisherId}/documents:
-        get:
-          summary: Return list of documents for a publisher.
-          description: |
-            Provided with a publisher id, this endpoint returns all the documents associated with the publisher. \
-            Does not return `errors` object of the validation report to limit the size of the response, use `/api/pvt/documents/{lookupValue}` to get errors as well.
-          parameters:
-            - in: path
-              name: publisherId
-              required: true
-              description: id of the publisher to return documents for
-              schema:
-                type: string
-                example: '8797b894-9858-492e-a109-dc45b75ce27b'
-          responses:
-            200:
-              description: list of publishers documents, returns [] if nothing found 
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/Documents'
-            401:
-              $ref: '#/components/responses/UnauthorizedError'
-            500:
-                description: Unexpected server error
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/Error'
-    /api/pvt/publishers/flagged:
-      get:
-        summary: Returns publishers with a black flag.
-        description: Publishers can be "black flagged" by the unified platform validation process if they publish over 100 critically invalid files in 2 hrs. 
-        responses:
-            200:
-              description: list of publishers that have a black flag
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/Publishers'
-            401:
-              $ref: '#/components/responses/UnauthorizedError'
-            500:
-                description: Unexpected server error
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/Error'
-    /api/pvt/documents/{lookupValue}:
-      get:
-          summary: Returns a single document.
-          description: Returns metadata about a single published document when provided with an `id` or `name` of the document.
-          parameters:
-            - in: query
-              name: lookupKey
-              required: true
-              description: key to lookup the document with
-              schema:
-                type: string
-                enum: 
-                 - 'id'
-                 - 'name'
-            - in: path
-              name: lookupValue
-              required: true
-              description: id or name of the document to return
-              schema:
-                type: string
-              examples: 
-                name:
-                  value: 'fifty_eight-et'
-                id: 
-                  value: '971828f5-d7ca-40b5-ae38-2fd4c11846e0'
-          responses:
-            200:
-              description: document metadata, one object in an array
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/Documents'
-            401:
-              $ref: '#/components/responses/UnauthorizedError'
-            404:
-              description: Document Not found
-              content:
-                  application/json:
-                      schema:
-                          $ref: '#/components/schemas/ClientError'
-                      examples:
-                          notFound:
-                              value:
-                                  client_error: 'Cannot find document with <lookupKey>: <lookupValue>'
-            422:
-              description: Bad Request
-              content:
-                  application/json:
-                      schema:
-                          $ref: '#/components/schemas/ClientError'
-                      examples:
-                          noLookupKeyParam:
-                              value:
-                                  client_error: 'Either id or name must be supplied as the lookupKey GET query parameter.'
-                          noLookupValue:
-                              value:
-                                  client_error: 'Either id or name of the document - as obtained from the IATI Registry - must be supplied in the URL'
-            500:
-                description: Unexpected server error
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/Error'
-    /api/pvt/adhoc/upload:
-      post:
-        summary: Upload a document from a file.
-        description: |
-          Post an IATI XML document in the body to be uploaded to blob storage and store metadata in the database.
-          ## Actions
-          - Saves file to Blob storage with path/name `"%ADHOC_CONTAINER%/{sessionId}###{filename}###{guid}"`
-          - Adds entry into `adhoc_validation` database table with `.session_id`, `.filename`, `.guid`
-        parameters:
-          - in: query
-            name: filename
-            description: name of file
-            schema:
-              type: string
-              example: iati-act-no-errors-vs-test.xml
-          - in: query
-            name: sessionId
-            description: Unique sessionId of browser session, generated by the front end. 
-            schema:
-              $ref: '#/components/schemas/SessionId'
-          - in: query
-            name: guid
-            description: unique guid for file
-            schema:
-              type: string
-              example: '9b63a276-d315-4630-9d13-e3792d0e50be'
-        requestBody:
-          required: true
+  /api/pub/version:
+    get:
+      summary: Returns application version.
+      responses:
+        200:
+          description: Version of the application in semver format
           content:
-            multipart/form-data:
+            text/plain:
               schema:
-                properties:
-                  file: 
-                    type: array
-                    items:
-                      type: string
-                      format: binary
-        responses:
-          200:
-              description: Success
-          400:
-              description: Bad Request
-              content:
-                  text/plain:
-                      schema:
-                          type: string
-                      examples:
-                          noFile:
-                              value: 'No IATI file attached'
-                          noFilename:
-                              value: 'No filename apparent'
-                          noSessionId:
-                              value: 'No sessionId apparent'
-                          noGuid:
-                              value: 'No guid apparent'
-                          badFormat:
-                              value: 'Expect Request Content-Type to be multipart/form-data'
-                          badFormFormat:
-                              value: 'Expect form data Content-Type to be text/xml or application/xml'
-                          parseError:
-                              value: 'Couldnt parse form data'
-                          fileEmpty:
-                              value: 'File in request body is empty.'
-          401:
-              $ref: '#/components/responses/UnauthorizedError'
-          500:
-              description: Unexpected server error
-              content:
-                  application/json:
-                      schema:
-                          $ref: '#/components/schemas/Error'
-    /api/pvt/adhoc/url:
-      post:
-        summary: Upload document from a URL.
-        description: |
-         Uploads IATI XML from the provided URL to blob storage and stores metadata in database.
-         ## Actions
-          - Saves file to Blob storage with path/name `"%ADHOC_CONTAINER%/{sessionId}###{url}###{guid}"`
-          - Adds entry into `adhoc_validation` database table with `.session_id`, `.filename`, `.guid`
-        parameters:
-          - in: query
-            name: url
-            description: url of file to upload
+                type: string
+                example: 1.0.7
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        500:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pvt/validation/regenerate:
+    patch:
+      summary: Flag a validation report to be regenerated.
+      description: Sets the `regenerate_validation_report` column in the database to `true` for a document, which makes it get picked up by the `validate` refresher process to generate a new validation report. Does so non destructively so users can still access the old report until the new is available. This will only retrigger a "Full" Validation for the file, not the initial Schema check which sets `document.file_schema_valid`. This is because the Schema shouldn't change for a specific file because the files are versioned with the standard. If something does change that would make a specific file change it's validity against the schema, a manual re-trigger should be performed.
+      requestBody:
+        description: The list of document ids to regenerate validation reports for
+        required: true
+        content:
+          application/json:
             schema:
-              type: string
-              example: 'https://raw.githubusercontent.com/IATI/js-validator-api/develop/integration-tests/test-files/iati-act-no-errors.xml'
-          - in: query
-            name: sessionId
-            description: Unique sessionId of browser session, generated by the front end. 
+              $ref: "#/components/schemas/DocumentIdsArray"
+      responses:
+        204:
+          description: Success
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                noIdsKey:
+                  value:
+                    error: 'Body must contain a key "ids"'
+                badIdsFormat:
+                  value:
+                    error: '"ids" must be an Array of document ids'
+                noBodyError:
+                  value:
+                    error: "No Body"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        500:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pvt/validation/regenerate/all:
+    patch:
+      summary: Flag ALL validation reports to be regenerated.
+      description: Sets the `regenerate_validation_report` column in the database to `true` for ALL documents, which makes it get picked up by the `validate` refresher process to generate a new validation report. Does so non destructively so users can still access the old report until the new is available. This will only retrigger a "Full" Validation for the file, not the initial Schema check which sets `document.file_schema_valid`. This is because the Schema shouldn't change for a specific file because the files are versioned with the standard. If something does change that would make a specific file change it's validity against the schema, a manual re-trigger should be performed. REFRESHER ACI CONTAINERS SHOULD BE STOPPED BEFORE INVOKING THIS ENDPOINT FOR SAFETY.
+      responses:
+        204:
+          description: Success
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        500:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pub/validation/existing:
+    get:
+      summary: Returns an existing validation report.
+      description: Returns a validation report for a published document when provided with an `id`, `hash`, `url`, or `name` of the document.
+      parameters:
+        - in: query
+          name: id
+          schema:
+            $ref: "#/components/schemas/Id"
+        - in: query
+          name: hash
+          schema:
+            $ref: "#/components/schemas/Hash"
+        - in: query
+          name: url
+          schema:
+            $ref: "#/components/schemas/Url"
+        - in: query
+          name: name
+          schema:
+            $ref: "#/components/schemas/Name"
+        - in: query
+          name: showerrors
+          description: If false only return summary object of validation report, not full validation report.
+          schema:
+            type: boolean
+            default: true
+      responses:
+        404:
+          description: Report not found for provided identifier
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientError"
+              examples:
+                noReport:
+                  value:
+                    client_error: "The requested report does not exist."
+                notReady:
+                  value:
+                    client_error: "The requested report has not yet been generated - please try again later."
+        422:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientError"
+              examples:
+                noQueryParam:
+                  value:
+                    client_error: "Either the id, url, hash or name of the document as obtained from the IATI Registry must be supplied as a GET parameter"
+                badIdsFormat:
+                  value:
+                    client_error: '"ids" must be an Array of document ids'
+                noBodyError:
+                  value:
+                    client_error: "No Body"
+        200:
+          description: Validation Report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationReport"
+  /api/pvt/publishers:
+    get:
+      summary: Returns a list of publishers.
+      description: Returns a list of all publishers that have published a document (`package_count` > 0).
+      responses:
+        200:
+          description: list of publishers metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Publishers"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        500:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pvt/publishers/{lookupValue}:
+    get:
+      summary: Returns a single publisher.
+      description: Return a single publisher by providing the id or name.
+      parameters:
+        - in: query
+          name: lookupKey
+          required: true
+          description: key to lookup the publisher with
+          schema:
+            type: string
+            enum:
+              - "id"
+              - "name"
+        - in: path
+          name: lookupValue
+          required: true
+          description: id or name of the publisher to return
+          schema:
+            type: string
+            example: "jica"
+      responses:
+        200:
+          description: JSON array of publisher information, this endpoint only returns one value in the array.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Publisher"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        500:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pvt/publishers/{publisherId}/documents:
+    get:
+      summary: Return list of documents for a publisher.
+      description: |
+        Provided with a publisher id, this endpoint returns all the documents associated with the publisher. \
+        Does not return `errors` object of the validation report to limit the size of the response, use `/api/pvt/documents/{lookupValue}` to get errors as well.
+      parameters:
+        - in: path
+          name: publisherId
+          required: true
+          description: id of the publisher to return documents for
+          schema:
+            type: string
+            example: "8797b894-9858-492e-a109-dc45b75ce27b"
+      responses:
+        200:
+          description: list of publishers documents, returns [] if nothing found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Documents"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        500:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pvt/publishers/flagged:
+    get:
+      summary: Returns publishers with a black flag.
+      description: Publishers can be "black flagged" by the unified platform validation process if they publish over 100 critically invalid files in 2 hrs.
+      responses:
+        200:
+          description: list of publishers that have a black flag
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Publishers"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        500:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pvt/documents/{lookupValue}:
+    get:
+      summary: Returns a single document.
+      description: Returns metadata about a single published document when provided with an `id` or `name` of the document.
+      parameters:
+        - in: query
+          name: lookupKey
+          required: true
+          description: key to lookup the document with
+          schema:
+            type: string
+            enum:
+              - "id"
+              - "name"
+        - in: path
+          name: lookupValue
+          required: true
+          description: id or name of the document to return
+          schema:
+            type: string
+          examples:
+            name:
+              value: "fifty_eight-et"
+            id:
+              value: "971828f5-d7ca-40b5-ae38-2fd4c11846e0"
+      responses:
+        200:
+          description: document metadata, one object in an array
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Documents"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        404:
+          description: Document Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientError"
+              examples:
+                notFound:
+                  value:
+                    client_error: "Cannot find document with <lookupKey>: <lookupValue>"
+        422:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientError"
+              examples:
+                noLookupKeyParam:
+                  value:
+                    client_error: "Either id or name must be supplied as the lookupKey GET query parameter."
+                noLookupValue:
+                  value:
+                    client_error: "Either id or name of the document - as obtained from the IATI Registry - must be supplied in the URL"
+        500:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pvt/adhoc/upload:
+    post:
+      summary: Upload a document from a file.
+      description: |
+        Post an IATI XML document in the body to be uploaded to blob storage and store metadata in the database.
+        ## Actions
+        - Saves file to Blob storage with path/name `"%ADHOC_CONTAINER%/{sessionId}###{filename}###{guid}"`
+        - Adds entry into `adhoc_validation` database table with `.session_id`, `.filename`, `.guid`
+      parameters:
+        - in: query
+          name: filename
+          description: name of file
+          schema:
+            type: string
+            example: iati-act-no-errors-vs-test.xml
+        - in: query
+          name: sessionId
+          description: Unique sessionId of browser session, generated by the front end.
+          schema:
+            $ref: "#/components/schemas/SessionId"
+        - in: query
+          name: guid
+          description: unique guid for file
+          schema:
+            type: string
+            example: "9b63a276-d315-4630-9d13-e3792d0e50be"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/SessionId'
-          - in: query
-            name: guid
-            description: guid for file
-            schema:
-              type: string
-              example: '9b63a276-d315-4630-9d13-e3792d0e50be'
-        responses:
-          200:
-              description: Success
-          400:
-              description: Bad Request
-              content:
-                  application/json:
-                      schema:
-                          $ref: '#/components/schemas/ErrorMessage'
-                      examples:
-                          noFile:
-                              value:
-                                  message: 'No IATI file attached'
-                          noFilename:
-                              value:
-                                  message: 'No filename apparent'
-                          noSessionId:
-                              value:
-                                  message: 'No sessionId apparent'
-                          noGuid:
-                              value:
-                                  message: 'No guid apparent'
-                          badFormat:
-                              value:
-                                  message: 'Expect Request Content-Type to be multipart/form-data'
-                          badFormFormat:
-                              value:
-                                  message: 'Expect form data Content-Type to be text/xml or application/xml'
-                          parseError:
-                              value:
-                                  message: 'Couldnt parse form data'
-                          fileEmpty:
-                              value:
-                                  message: 'File in request body is empty.'
-          401:
-              $ref: '#/components/responses/UnauthorizedError'
-          500:
-              description: Unexpected server error
-              content:
-                  application/json:
-                      schema:
-                          $ref: '#/components/schemas/Error'
-    /api/pvt/adhoc/session:
-      get:
-        summary: Returns session information for provided sessionId.
-        description: Returns session information for documents that are validated ad-hoc by the validator. Does not return `errors` object of the validation report to limit the size of the response, use `/api/pvt/documents/{lookupValue}` to get errors.
-        parameters:
-          - in: query
-            name: sessionId
-            description: Unique sessionId of browser session, generated by the front end.
-            schema:
-              $ref: '#/components/schemas/SessionId'
-        responses:
-          200:
-              description: Session information about adhoc validated documents
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/SessionInfo'
-          400:
-              description: Bad Request
-              content:
-                  application/json:
-                      schema:
-                          $ref: '#/components/schemas/ErrorMessage'
-                      examples:
-                          noSessionId:
-                              value:
-                                  message: 'No sessionId apparent'
-          401:
-              $ref: '#/components/responses/UnauthorizedError'
-          500:
-              description: Unexpected server error
-              content:
-                  application/json:
-                      schema:
-                          $ref: '#/components/schemas/Error'
-    /api/pvt/guidance-links/{version}:
-        get:
-            summary: Returns guidance links for an IATI version.
-            description: |
-              Returns guidance paths and links for the IATI Rulesets used by validator. \
-              These are pulled from the [IATI/IATI-Rulesets](https://github.com/IATI/IATI-Rulesets) repository.
-            parameters: 
-              - in: path
-                name: version
-                required: true
-                schema: 
-                  type: string
-                  enum:
-                    - '2.01'
-                    - '2.02'
-                    - '2.03'
-            responses:
-                200:
-                    description: OK
-                    content:
-                      application/json:
-                        schema:
-                          $ref: '#/components/schemas/GuidanceLinks'
-                422:
-                  description: Bad Request
-                  content:
-                      application/json:
-                          schema:
-                              $ref: '#/components/schemas/ErrorMessage'
-                          examples:
-                              badVersion:
-                                  value:
-                                      message: 'Version <version> of the IATI Standard is not supported. Supported versions: <versions>'
-                401:
-                    $ref: '#/components/responses/UnauthorizedError'
-                500:
-                    description: Unexpected server error
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Error'
-    /api/pub/stats/all:
-      get:
-        summary: Returns all statistics
-        description: A count of the number of instances of all validation advisories, warnings, errors, and critical errors, grouped by publisher and error, for all publishers.
-        parameters: 
-          - in: query
-            name: date
-            description: Filters statistics to Validation reports generated before or on the given date. In format YYYY-MM-DD, defaults to "9999-01-01".
-            required: false
-            schema:
-              $ref: '#/components/schemas/Date'
-          - in: query
-            name: format
-            description: Changes the output format of the statistics. Default is "json", options include "json" and "csv".
-            required: false
-            schema:
-              $ref: '#/components/schemas/Format'
-        responses:
-          200:
-              description: Validator Statistics
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/StatsJSON'
-                text/csv:
-                  schema:
-                    $ref: '#/components/schemas/StatsCSV'
-          401:
-              $ref: '#/components/responses/UnauthorizedError'
-          500:
-              description: Unexpected server error
-              content:
-                  application/json:
-                      schema:
-                          $ref: '#/components/schemas/Error'
-    /api/pub/stats/publisher/{publisher}:
-      get:
-        summary: Returns statistics for a publisher
-        description: A count of the number of instances of all validation advisories, warnings, errors, and critical errors, grouped by error, for one publisher.
-        parameters: 
-          - in: path
-            name: publisher
-            description: Only return stats for specified publisher
-            required: true
-            schema:
-              $ref: '#/components/schemas/PublisherName'
-          - in: query
-            name: date
-            description: Filters statistics to Validation reports generated before or on the given date. In format YYYY-MM-DD, defaults to "9999-01-01".
-            required: false
-            schema:
-              $ref: '#/components/schemas/Date'
-          - in: query
-            name: format
-            description: Changes the output format of the statistics. Default is "json", options include "json" and "csv".
-            required: false
-            schema:
-              $ref: '#/components/schemas/Format'
-        responses:
-          200:
-              description: Validator Statistics
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/StatsJSON'
-                text/csv:
-                  schema:
-                    $ref: '#/components/schemas/StatsCSV'
-          401:
-              $ref: '#/components/responses/UnauthorizedError'
-          500:
-              description: Unexpected server error
-              content:
-                  application/json:
-                      schema:
-                          $ref: '#/components/schemas/Error'
-    /api/pub/stats/summary_aggregate:
-      get:
-        summary: Returns summary aggregate statistics
-        description: A count of the number of instances of all validation advisories, warnings, errors, and critical errors, grouped by publisher and severity.
-        parameters: 
-          - in: query
-            name: date
-            description: Filters statistics to Validation reports generated before or on the given date. In format YYYY-MM-DD, defaults to "9999-01-01".
-            required: false
-            schema:
-              $ref: '#/components/schemas/Date'
-          - in: query
-            name: publisher
-            description: Filters statistics to a single publisher, defaults to all publishers.
-            required: false
-            schema:
-              $ref: '#/components/schemas/PublisherName'
-          - in: query
-            name: format
-            description: Changes the output format of the statistics. Default is "json", options include "json" and "csv".
-            required: false
-            schema:
-              $ref: '#/components/schemas/Format'
-        responses:
-          200:
-              description: Validator Statistics
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/StatsSummaryJSON'
-                text/csv:
-                  schema:
-                    $ref: '#/components/schemas/StatsSummaryCSV'
-          401:
-              $ref: '#/components/responses/UnauthorizedError'
-          500:
-              description: Unexpected server error
-              content:
-                  application/json:
-                      schema:
-                          $ref: '#/components/schemas/Error'
-    /api/pub/stats/summary_precalc:
-      get:
-        summary: Returns summary precalculated statistics
-        description: Counts of warnings, errors, and critical errors as reported by the Validator API (may differ from count of instances for a number of errors, it is recommended users use the summary_aggregate instead) , grouped by publisher.
-        parameters: 
-          - in: query
-            name: date
-            description: Filters statistics to Validation reports generated before or on the given date. In format YYYY-MM-DD, defaults to "9999-01-01".
-            required: false
-            schema:
-              $ref: '#/components/schemas/Date'
-          - in: query
-            name: publisher
-            description: Filters statistics to a single publisher, defaults to all publishers.
-            required: false
-            schema:
-              $ref: '#/components/schemas/PublisherName'
-          - in: query
-            name: format
-            description: Changes the output format of the statistics. Default is "json", options include "json" and "csv".
-            required: false
-            schema:
-              $ref: '#/components/schemas/Format'
-        responses:
-          200:
-              description: Validator Statistics
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/StatsSummaryJSON'
-                text/csv:
-                  schema:
-                    $ref: '#/components/schemas/StatsSummaryCSV'
-          401:
-              $ref: '#/components/responses/UnauthorizedError'
-          500:
-              description: Unexpected server error
-              content:
-                  application/json:
-                      schema:
-                          $ref: '#/components/schemas/Error'
-
-components:
-    responses:
-        UnauthorizedError:
-            description: API key is missing or invalid
-    schemas:
-        Id:
-          type: string
-          description: Document id in unified platform database.
-          example: '971828f5-d7ca-40b5-ae38-2fd4c11846e0'
-        Hash:
-          type: string
-          description: Document hash in unified platform database.
-          example: '404504c0df91c3d4ae07bb6135e349ad90be401a'
-        Url:
-          type: string
-          description: Url of document in unified platform database.
-          example: 'https://raw.githubusercontent.com/IATI/js-validator-api/develop/integration-tests/test-files/iati-act-no-errors.xml'
-        Name:
-          type: string
-          description: Name of document in IATI registry and unified platform.
-          example: 'fifty_eight-et'
-        SessionId:
-          type: string
-          description: Unique sessionId of browser session, generated by the front end. 
-          example: 'laqs9itibxpsk23sar7'
-        PublisherName:
-          type: string 
-          description: Name of publisher "slug" in unified platform/registry
-          example: 'finland_mfa'
-        Date:
-          type: string
-          description: Date string in YYYY-MM-DD format
-          example: '2022-01-31'
-        Format:
-          type: string
-          enum:
-            - 'csv'
-        DocumentIdsArray:
-            type: object
-            properties:
-                ids:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/Id'         
-        Error:
-            type: object
-            required:
-                - error
-            properties:
-                error:
-                    description: A human readable error message
-                    type: string
-        ErrorMessage:
-            type: object
-            required:
-                - message
-            properties:
-                message:
-                    description: A human readable error message
-                    type: string
-        ClientError:
-            type: object
-            required:
-                - client_error
-            properties:
-                error:
-                    description: A human readable error message
-                    type: string
-        ResponseMessage:
-            type: object
-            required:
-                - message
-            properties:
-                message:
-                    description: A human readable response message
-                    type: string
-        ValidationReport:
-          description: Validation report with some report metadata.
-          externalDocs:
-            url: '../../docs/validationReport.schema.json'
-          type: object
-          properties:
-            registry_hash:
-              type: string
-            registry_id:
-              type: string
-            registry_name:
-              type: string
-            document_url:
-              type: string
-            valid:
-              type: boolean
-            report:
-              type: object
               properties:
-                valid:
-                  type: boolean
-                errors:
+                file:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      title:
-                        type: string
-                      errors:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            errors:
-                              type: array
-                              items:
-                                type: object
-                                properties:
-                                  id:
-                                    type: string
-                                  context:
-                                    type: array
-                                    items:
-                                      type: object
-                                      properties:
-                                        text:
-                                          type: string
-                                      required:
-                                        - text
-                                  message:
-                                    type: string
-                                  severity:
-                                    type: string
-                            category:
-                              type: string
-                      identifier:
-                        type: string
-                    required:
-                      - title
-                      - errors
-                      - identifier
-                summary:
-                  type: object
-                  properties:
-                    error:
-                      type: integer
-                    warning:
-                      type: integer
-                    critical:
-                      type: integer
-                  required:
-                    - error
-                    - warning
-                    - critical
-                  additionalProperties: false
-                fileType:
-                  type: string
-                apiVersion:
-                  type: string
-                iatiVersion:
-                  type: string
-                rulesetCommitSha:
-                  type: string
-                codelistCommitSha:
-                  type: string
-                orgIdPrefixFileName:
-                  type: string
-              required:
-                - valid
-                - errors
-                - summary
-                - fileType
-                - apiVersion
-                - iatiVersion
-                - rulesetCommitSha
-                - codelistCommitSha
-                - orgIdPrefixFileName
-              additionalProperties: false
-          additionalProperties: false
-          required:
-            - registry_hash
-            - registry_id
-            - registry_name
-            - document_url
-            - valid
-            - report
-        Publishers:
+                    type: string
+                    format: binary
+      responses:
+        200:
+          description: Success
+        400:
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                noFile:
+                  value: "No IATI file attached"
+                noFilename:
+                  value: "No filename apparent"
+                noSessionId:
+                  value: "No sessionId apparent"
+                noGuid:
+                  value: "No guid apparent"
+                badFormat:
+                  value: "Expect Request Content-Type to be multipart/form-data"
+                badFormFormat:
+                  value: "Expect form data Content-Type to be text/xml or application/xml"
+                parseError:
+                  value: "Couldnt parse form data"
+                fileEmpty:
+                  value: "File in request body is empty."
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        500:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pvt/adhoc/url:
+    post:
+      summary: Upload document from a URL.
+      description: |
+        Uploads IATI XML from the provided URL to blob storage and stores metadata in database.
+        ## Actions
+         - Saves file to Blob storage with path/name `"%ADHOC_CONTAINER%/{sessionId}###{url}###{guid}"`
+         - Adds entry into `adhoc_validation` database table with `.session_id`, `.filename`, `.guid`
+      parameters:
+        - in: query
+          name: url
+          description: url of file to upload
+          schema:
+            type: string
+            example: "https://raw.githubusercontent.com/IATI/js-validator-api/develop/integration-tests/test-files/iati-act-no-errors.xml"
+        - in: query
+          name: sessionId
+          description: Unique sessionId of browser session, generated by the front end.
+          schema:
+            $ref: "#/components/schemas/SessionId"
+        - in: query
+          name: guid
+          description: guid for file
+          schema:
+            type: string
+            example: "9b63a276-d315-4630-9d13-e3792d0e50be"
+      responses:
+        200:
+          description: Success
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+              examples:
+                noFile:
+                  value:
+                    message: "No IATI file attached"
+                noFilename:
+                  value:
+                    message: "No filename apparent"
+                noSessionId:
+                  value:
+                    message: "No sessionId apparent"
+                noGuid:
+                  value:
+                    message: "No guid apparent"
+                badFormat:
+                  value:
+                    message: "Expect Request Content-Type to be multipart/form-data"
+                badFormFormat:
+                  value:
+                    message: "Expect form data Content-Type to be text/xml or application/xml"
+                parseError:
+                  value:
+                    message: "Couldnt parse form data"
+                fileEmpty:
+                  value:
+                    message: "File in request body is empty."
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        500:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pvt/adhoc/session:
+    get:
+      summary: Returns session information for provided sessionId.
+      description: Returns session information for documents that are validated ad-hoc by the validator. Does not return `errors` object of the validation report to limit the size of the response, use `/api/pvt/documents/{lookupValue}` to get errors.
+      parameters:
+        - in: query
+          name: sessionId
+          description: Unique sessionId of browser session, generated by the front end.
+          schema:
+            $ref: "#/components/schemas/SessionId"
+      responses:
+        200:
+          description: Session information about adhoc validated documents
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionInfo"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+              examples:
+                noSessionId:
+                  value:
+                    message: "No sessionId apparent"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        500:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pvt/guidance-links/{version}:
+    get:
+      summary: Returns guidance links for an IATI version.
+      description: |
+        Returns guidance paths and links for the IATI Rulesets used by validator. \
+        These are pulled from the [IATI/IATI-Rulesets](https://github.com/IATI/IATI-Rulesets) repository.
+      parameters:
+        - in: path
+          name: version
+          required: true
+          schema:
+            type: string
+            enum:
+              - "2.01"
+              - "2.02"
+              - "2.03"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuidanceLinks"
+        422:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+              examples:
+                badVersion:
+                  value:
+                    message: "Version <version> of the IATI Standard is not supported. Supported versions: <versions>"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        500:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pub/stats/all:
+    get:
+      summary: Returns all statistics
+      description: A count of the number of instances of all validation advisories, warnings, errors, and critical errors, grouped by publisher and error, for all publishers.
+      parameters:
+        - in: query
+          name: date
+          description: Filters statistics to Validation reports generated before or on the given date. In format YYYY-MM-DD, defaults to "9999-01-01".
+          required: false
+          schema:
+            $ref: "#/components/schemas/Date"
+        - in: query
+          name: format
+          description: Changes the output format of the statistics. Default is "json", options include "json" and "csv".
+          required: false
+          schema:
+            $ref: "#/components/schemas/Format"
+      responses:
+        200:
+          description: Validator Statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsJSON"
+            text/csv:
+              schema:
+                $ref: "#/components/schemas/StatsCSV"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        500:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pub/stats/publisher/{publisher}:
+    get:
+      summary: Returns statistics for a publisher
+      description: A count of the number of instances of all validation advisories, warnings, errors, and critical errors, grouped by error, for one publisher.
+      parameters:
+        - in: path
+          name: publisher
+          description: Only return stats for specified publisher
+          required: true
+          schema:
+            $ref: "#/components/schemas/PublisherName"
+        - in: query
+          name: date
+          description: Filters statistics to Validation reports generated before or on the given date. In format YYYY-MM-DD, defaults to "9999-01-01".
+          required: false
+          schema:
+            $ref: "#/components/schemas/Date"
+        - in: query
+          name: format
+          description: Changes the output format of the statistics. Default is "json", options include "json" and "csv".
+          required: false
+          schema:
+            $ref: "#/components/schemas/Format"
+      responses:
+        200:
+          description: Validator Statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsJSON"
+            text/csv:
+              schema:
+                $ref: "#/components/schemas/StatsCSV"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        500:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pub/stats/summary_aggregate:
+    get:
+      summary: Returns summary aggregate statistics
+      description: A count of the number of instances of all validation advisories, warnings, errors, and critical errors, grouped by publisher and severity.
+      parameters:
+        - in: query
+          name: date
+          description: Filters statistics to Validation reports generated before or on the given date. In format YYYY-MM-DD, defaults to "9999-01-01".
+          required: false
+          schema:
+            $ref: "#/components/schemas/Date"
+        - in: query
+          name: publisher
+          description: Filters statistics to a single publisher, defaults to all publishers.
+          required: false
+          schema:
+            $ref: "#/components/schemas/PublisherName"
+        - in: query
+          name: format
+          description: Changes the output format of the statistics. Default is "json", options include "json" and "csv".
+          required: false
+          schema:
+            $ref: "#/components/schemas/Format"
+      responses:
+        200:
+          description: Validator Statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsSummaryJSON"
+            text/csv:
+              schema:
+                $ref: "#/components/schemas/StatsSummaryCSV"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        500:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/pub/stats/summary_precalc:
+    get:
+      summary: Returns summary precalculated statistics
+      description: Counts of warnings, errors, and critical errors as reported by the Validator API (may differ from count of instances for a number of errors, it is recommended users use the summary_aggregate instead) , grouped by publisher.
+      parameters:
+        - in: query
+          name: date
+          description: Filters statistics to Validation reports generated before or on the given date. In format YYYY-MM-DD, defaults to "9999-01-01".
+          required: false
+          schema:
+            $ref: "#/components/schemas/Date"
+        - in: query
+          name: publisher
+          description: Filters statistics to a single publisher, defaults to all publishers.
+          required: false
+          schema:
+            $ref: "#/components/schemas/PublisherName"
+        - in: query
+          name: format
+          description: Changes the output format of the statistics. Default is "json", options include "json" and "csv".
+          required: false
+          schema:
+            $ref: "#/components/schemas/Format"
+      responses:
+        200:
+          description: Validator Statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsSummaryJSON"
+            text/csv:
+              schema:
+                $ref: "#/components/schemas/StatsSummaryCSV"
+        401:
+          $ref: "#/components/responses/UnauthorizedError"
+        500:
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  responses:
+    UnauthorizedError:
+      description: API key is missing or invalid
+  schemas:
+    Id:
+      type: string
+      description: Document id in unified platform database.
+      example: "971828f5-d7ca-40b5-ae38-2fd4c11846e0"
+    Hash:
+      type: string
+      description: Document hash in unified platform database.
+      example: "404504c0df91c3d4ae07bb6135e349ad90be401a"
+    Url:
+      type: string
+      description: Url of document in unified platform database.
+      example: "https://raw.githubusercontent.com/IATI/js-validator-api/develop/integration-tests/test-files/iati-act-no-errors.xml"
+    Name:
+      type: string
+      description: Name of document in IATI registry and unified platform.
+      example: "fifty_eight-et"
+    SessionId:
+      type: string
+      description: Unique sessionId of browser session, generated by the front end.
+      example: "laqs9itibxpsk23sar7"
+    PublisherName:
+      type: string
+      description: Name of publisher "slug" in unified platform/registry
+      example: "finland_mfa"
+    Date:
+      type: string
+      description: Date string in YYYY-MM-DD format
+      example: "2022-01-31"
+    Format:
+      type: string
+      enum:
+        - "csv"
+    DocumentIdsArray:
+      type: object
+      properties:
+        ids:
           type: array
           items:
-            type: object
-            properties:
-              org_id:
-                type: string
-              name:
-                type: string
-              title:
-                type: string
-              state:
-                type: string
-              country_code:
-                type: string
-              package_count:
-                type: integer
-              iati_id:
-                type: string
-              black_flag:
-                type: string
-              black_flag_notified:
-                type: boolean
-            required:
-              - org_id
-              - name
-              - title
-              - state
-              - country_code
-              - package_count
-              - iati_id
-              - black_flag
-              - black_flag_notified
-        Publisher:
-          type: array
-          items:
-            type: object
-            properties:
-              org_id:
-                type: string
-              name:
-                type: string
-              description:
-                type: string
-              title:
-                type: string
-              state:
-                type: string
-              image_url:
-                type: string
-              country_code:
-                type: string
-              package_count:
-                type: integer
-              iati_id:
-                type: string
-        Documents:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-              hash:
-                type: string
-              url:
-                type: string
-              name:
-                type: string
-              first_seen:
-                type: string
-              downloaded:
-                type: string
-              download_error:
-                type: string
-              file_schema_valid:
-                type: boolean
-              validation:
-                type: integer
-              regenerate_validation_report:
-                type: boolean
-              publisher:
-                type: string
-              modified:
-                type: string
-              solrize_end:
-                type: string
-              clean_start:
-                type: string
-              clean_end:
-                type: string
-              clean_error:
-                type: 'string'
-              validation_created:
-                type: string
-              valid:
-                type: boolean
-              report:
-                type: object
-                properties:
-                  valid:
-                    type: boolean
-                  summary:
-                    type: object
-                    properties:
-                      error:
-                        type: integer
-                      warning:
-                        type: integer
-                      critical:
-                        type: integer
-                    required:
-                      - error
-                      - warning
-                      - critical
-                    additionalProperties: false
-                  fileType:
-                    type: string
-                  iatiVersion:
-                    type: string
-                required:
-                  - valid
-                  - summary
-                  - fileType
-                  - iatiVersion
-                additionalProperties: false
-            required:
-              - id
-              - hash
-              - url
-              - name
-              - first_seen
-              - downloaded
-              - download_error
-              - file_schema_valid
-              - validation
-              - regenerate_validation_report
-              - publisher
-              - modified
-              - solrize_end
-              - clean_start
-              - clean_end
-              - clean_error
-              - validation_created
-              - valid
-              - report
-        SessionInfo:
-          type: array
-          items:
-            type: object
-            properties:
-              guid:
-                type: string
-              filename:
-                type: string
-              report:
-                type: object
-                properties:
-                  valid:
-                    type: boolean
-                  summary:
-                    type: object
-                    properties:
-                      error:
-                        type: integer
-                      warning:
-                        type: integer
-                      critical:
-                        type: integer
-                    required:
-                      - error
-                      - warning
-                      - critical
-                    additionalProperties: false
-                  fileType:
-                    type: string
-                  iatiVersion:
-                    type: string
-                required:
-                  - valid
-                  - summary
-                  - fileType
-                  - iatiVersion
-                additionalProperties: false
-              valid:
-                type: boolean
-              session_id:
-                type: string
-              created:
-                type: string
-              validated:
-                type: string
-        GuidanceLinks:
+            $ref: "#/components/schemas/Id"
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: A human readable error message
+          type: string
+    ErrorMessage:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          description: A human readable error message
+          type: string
+    ClientError:
+      type: object
+      required:
+        - client_error
+      properties:
+        error:
+          description: A human readable error message
+          type: string
+    ResponseMessage:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          description: A human readable response message
+          type: string
+    ValidationReport:
+      description: Validation report with some report metadata.
+      externalDocs:
+        url: "../../docs/validationReport.schema.json"
+      type: object
+      properties:
+        registry_hash:
+          type: string
+        registry_id:
+          type: string
+        registry_name:
+          type: string
+        document_url:
+          type: string
+        valid:
+          type: boolean
+        report:
           type: object
           properties:
-            version:
-              type: string
-              description: IATI version of the guidance links.
-            commitSha:
-              type: string
-              description: Git commit sha of the guidance links.
-            content:
+            valid:
+              type: boolean
+            errors:
+              type: array
+              items:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        errors:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                              context:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    text:
+                                      type: string
+                                  required:
+                                    - text
+                              message:
+                                type: string
+                              severity:
+                                type: string
+                        category:
+                          type: string
+                  identifier:
+                    type: string
+                required:
+                  - title
+                  - errors
+                  - identifier
+            summary:
               type: object
-              description: Each key is a rule ID from the validator in X.X.X format.
               properties:
-                X.X.X:
-                  type: object
-                  properties:
-                    path:
-                      description: Path to guidance information on IATI Standard website SSOT.
-                      type: string
-                    url:
-                      description: Full URL to guidance information, used for non-dynamic guidance.
-                      type: string
-                  additionalProperties: false
-          required:
-            - version
-            - commitSha
-            - content
-        StatsSummaryJSON:
-          type: object
-          properties:
-            publisher_name:
-              type: object
-              description: publisher name for the stats
-              properties:
-                critical:
-                  type: integer
                 error:
                   type: integer
                 warning:
                   type: integer
+                critical:
+                  type: integer
               required:
-                - critical
                 - error
                 - warning
+                - critical
               additionalProperties: false
-          additionalProperties: true
-        StatsSummaryCSV:
+            fileType:
+              type: string
+            apiVersion:
+              type: string
+            iatiVersion:
+              type: string
+            rulesetCommitSha:
+              type: string
+            codelistCommitSha:
+              type: string
+            orgIdPrefixFileName:
+              type: string
+          required:
+            - valid
+            - errors
+            - summary
+            - fileType
+            - apiVersion
+            - iatiVersion
+            - rulesetCommitSha
+            - codelistCommitSha
+            - orgIdPrefixFileName
+          additionalProperties: false
+      additionalProperties: false
+      required:
+        - registry_hash
+        - registry_id
+        - registry_name
+        - document_url
+        - valid
+        - report
+    Publishers:
+      type: array
+      items:
+        type: object
+        properties:
+          org_id:
+            type: string
+          name:
+            type: string
+          title:
+            type: string
+          state:
+            type: string
+          country_code:
+            type: string
+          package_count:
+            type: integer
+          iati_id:
+            type: string
+          black_flag:
+            type: string
+          black_flag_notified:
+            type: boolean
+        required:
+          - org_id
+          - name
+          - title
+          - state
+          - country_code
+          - package_count
+          - iati_id
+          - black_flag
+          - black_flag_notified
+    Publisher:
+      type: array
+      items:
+        type: object
+        properties:
+          org_id:
+            type: string
+          name:
+            type: string
+          description:
+            type: string
+          title:
+            type: string
+          state:
+            type: string
+          image_url:
+            type: string
+          country_code:
+            type: string
+          package_count:
+            type: integer
+          iati_id:
+            type: string
+    Documents:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+          hash:
+            type: string
+          url:
+            type: string
+          name:
+            type: string
+          first_seen:
+            type: string
+          downloaded:
+            type: string
+          download_error:
+            type: string
+          file_schema_valid:
+            type: boolean
+          validation:
+            type: integer
+          regenerate_validation_report:
+            type: boolean
+          publisher:
+            type: string
+          modified:
+            type: string
+          solrize_end:
+            type: string
+          clean_start:
+            type: string
+          clean_end:
+            type: string
+          clean_error:
+            type: "string"
+          validation_created:
+            type: string
+          valid:
+            type: boolean
+          report:
+            type: object
+            properties:
+              valid:
+                type: boolean
+              summary:
+                type: object
+                properties:
+                  error:
+                    type: integer
+                  warning:
+                    type: integer
+                  critical:
+                    type: integer
+                required:
+                  - error
+                  - warning
+                  - critical
+                additionalProperties: false
+              fileType:
+                type: string
+              iatiVersion:
+                type: string
+            required:
+              - valid
+              - summary
+              - fileType
+              - iatiVersion
+            additionalProperties: false
+        required:
+          - id
+          - hash
+          - url
+          - name
+          - first_seen
+          - downloaded
+          - download_error
+          - file_schema_valid
+          - validation
+          - regenerate_validation_report
+          - publisher
+          - modified
+          - solrize_end
+          - clean_start
+          - clean_end
+          - clean_error
+          - validation_created
+          - valid
+          - report
+    SessionInfo:
+      type: array
+      items:
+        type: object
+        properties:
+          guid:
+            type: string
+          filename:
+            type: string
+          report:
+            type: object
+            properties:
+              valid:
+                type: boolean
+              summary:
+                type: object
+                properties:
+                  error:
+                    type: integer
+                  warning:
+                    type: integer
+                  critical:
+                    type: integer
+                required:
+                  - error
+                  - warning
+                  - critical
+                additionalProperties: false
+              fileType:
+                type: string
+              iatiVersion:
+                type: string
+            required:
+              - valid
+              - summary
+              - fileType
+              - iatiVersion
+            additionalProperties: false
+          valid:
+            type: boolean
+          session_id:
+            type: string
+          created:
+            type: string
+          validated:
+            type: string
+    GuidanceLinks:
+      type: object
+      properties:
+        version:
           type: string
-          description: csv with header row "publisher_name","critical","error","warning"
-          example: | 
-            "publisher_name","critical","error","warning"
-            "finland_mfa","146","1665","0"
-        StatsJSON:
+          description: IATI version of the guidance links.
+        commitSha:
+          type: string
+          description: Git commit sha of the guidance links.
+        content:
           type: object
+          description: Each key is a rule ID from the validator in X.X.X format.
           properties:
-            publisher_name:
+            X.X.X:
               type: object
               properties:
-                <X.X.X>:
-                  type: object
-                  description: Validator Error ID 
-                  properties:
-                    count:
-                      type: string
-                    message:
-                      type: string
-                    severity:
-                      type: string
-                    category:
-                      type: string
-                  required:
-                    - count
-                    - message
-                    - severity
-                    - category
-                  additionalProperties: false
-              additionalProperties: true
-          additionalProperties: true
+                path:
+                  description: Path to guidance information on IATI Standard website SSOT.
+                  type: string
+                url:
+                  description: Full URL to guidance information, used for non-dynamic guidance.
+                  type: string
+              additionalProperties: false
+      required:
+        - version
+        - commitSha
+        - content
+    StatsSummaryJSON:
+      type: object
+      properties:
+        publisher_name:
+          type: object
+          description: publisher name for the stats
+          properties:
+            critical:
+              type: integer
+            error:
+              type: integer
+            warning:
+              type: integer
           required:
-            - publisher_name
-        StatsCSV:
-          type: string
-          description: csv with header row "publisher_name","id","message","severity","category","count"
-          example: | 
-            "publisher_name","id","message","severity","category","count"
-            "finland_mfa","0.6.1","Version 1.00 of the IATI Standard is no longer supported. Supported versions: 2.01, 2.02, 2.03","critical","documents","144"
-            "finland_mfa","1.1.2","The activity identifier must be unique for each activity.","error","identifiers","2"
-    securitySchemes:
-        ApiKeyHeader:
-            type: apiKey
-            in: header
-            name: x-functions-key
-        ApiKeyQuery:
-            type: apiKey
-            in: query
-            name: x-functions-key
+            - critical
+            - error
+            - warning
+          additionalProperties: false
+      additionalProperties: true
+    StatsSummaryCSV:
+      type: string
+      description: csv with header row "publisher_name","critical","error","warning"
+      example: |
+        "publisher_name","critical","error","warning"
+        "finland_mfa","146","1665","0"
+    StatsJSON:
+      type: object
+      properties:
+        publisher_name:
+          type: object
+          properties:
+            <X.X.X>:
+              type: object
+              description: Validator Error ID
+              properties:
+                count:
+                  type: string
+                message:
+                  type: string
+                severity:
+                  type: string
+                category:
+                  type: string
+              required:
+                - count
+                - message
+                - severity
+                - category
+              additionalProperties: false
+          additionalProperties: true
+      additionalProperties: true
+      required:
+        - publisher_name
+    StatsCSV:
+      type: string
+      description: csv with header row "publisher_name","id","message","severity","category","count"
+      example: |
+        "publisher_name","id","message","severity","category","count"
+        "finland_mfa","0.6.1","Version 1.00 of the IATI Standard is no longer supported. Supported versions: 2.01, 2.02, 2.03","critical","documents","144"
+        "finland_mfa","1.1.2","The activity identifier must be unique for each activity.","error","identifiers","2"
+  securitySchemes:
+    ApiKeyHeader:
+      type: apiKey
+      in: header
+      name: x-functions-key
+    ApiKeyQuery:
+      type: apiKey
+      in: query
+      name: x-functions-key
 security:
-    - ApiKeyHeader: []
-    - ApiKeyQuery: []
+  - ApiKeyHeader: []
+  - ApiKeyQuery: []

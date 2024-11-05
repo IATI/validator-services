@@ -1,29 +1,35 @@
 {
-    "type": "object",
-    "required": ["registry_hash", "registry_id", "document_url", "valid", "report"],
-    "properties": {
-        "registry_hash": {
-            "type": "string",
-            "description": "hash of the file as defined by the IATI registry"
-        },
-        "registry_id": {
-            "type": "string",
-            "description": "id of the file as defined by the IATI registry"
-        },
-        "registry_name": {
-            "type": "string",
-            "description": "name of the file as defined by the IATI registry"
-        },
-        "document_url": {
-            "type": "string",
-            "description": "url of the file as defined in the IATI registry"
-        },
-        "valid": {
-            "type": "boolean",
-            "description": "Files with no critical severity errors are considered valid"
-        },
-        "report": {
-            "$ref": "https://raw.githubusercontent.com/IATI/js-validator-api/develop/docs/validationReport.schema.json"
-        }
+  "type": "object",
+  "required": [
+    "registry_hash",
+    "registry_id",
+    "document_url",
+    "valid",
+    "report"
+  ],
+  "properties": {
+    "registry_hash": {
+      "type": "string",
+      "description": "hash of the file as defined by the IATI registry"
+    },
+    "registry_id": {
+      "type": "string",
+      "description": "id of the file as defined by the IATI registry"
+    },
+    "registry_name": {
+      "type": "string",
+      "description": "name of the file as defined by the IATI registry"
+    },
+    "document_url": {
+      "type": "string",
+      "description": "url of the file as defined in the IATI registry"
+    },
+    "valid": {
+      "type": "boolean",
+      "description": "Files with no critical severity errors are considered valid"
+    },
+    "report": {
+      "$ref": "https://raw.githubusercontent.com/IATI/js-validator-api/develop/docs/validationReport.schema.json"
     }
+  }
 }

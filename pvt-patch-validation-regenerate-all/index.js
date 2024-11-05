@@ -1,7 +1,17 @@
 import { updateRegenerateValidationForAll } from "../database/db.js";
+import {
+  isInMaintenanceMode,
+  maintenanceModes,
+  setMaintenanceModeResponse,
+} from "../utils/maintenance-mode.js";
 
 export default async function pvtPatchValidationRegenerateAll(context) {
   try {
+    if (isInMaintenanceMode(maintenanceModes.NO_WRITE)) {
+      setMaintenanceModeResponse(context);
+      return;
+    }
+
     await updateRegenerateValidationForAll();
 
     context.res = {

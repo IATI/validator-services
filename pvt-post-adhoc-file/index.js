@@ -1,4 +1,9 @@
 import { insertAdhocValidation } from "../database/db.js";
+import {
+  isInMaintenanceMode,
+  maintenanceModes,
+  setMaintenanceModeResponse,
+} from "../utils/maintenance-mode.js";
 
 function endWithBadResponse(context, message = "Bad Request", status = 400) {
   context.log.error(message);
@@ -26,6 +31,12 @@ function getBoundary(header) {
 export default async function pvtPostAdhocFile(context, req) {
   try {
     const { body, query, headers } = req;
+
+    if (isInMaintenanceMode(maintenanceModes.NO_WRITE)) {
+      setMaintenanceModeResponse(context);
+      return;
+    }
+
     if (!body) {
       return endWithBadResponse(context, `No IATI file attached`);
     }

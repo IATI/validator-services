@@ -1,6 +1,11 @@
 import fetch from "node-fetch";
 import config from "../config/config.js";
 import { updateAdhocValidation } from "../database/db.js";
+import {
+  getMaintenanceModeMessage,
+  isInMaintenanceMode,
+  maintenanceModes,
+} from "../utils/maintenance-mode.js";
 
 export default async function blobTriggerAdhocFile(context) {
   let errorStatus = null;
@@ -9,6 +14,15 @@ export default async function blobTriggerAdhocFile(context) {
   let report = null;
 
   try {
+    if (isInMaintenanceMode(maintenanceModes.NO_WRITE)) {
+      console.log(
+        `validator-services is in maintenance mode so can't process blob trigger: ${getMaintenanceModeMessage()}`,
+      );
+      throw new Error(
+        `validator-services is in maintenance mode so can't process blob trigger: ${getMaintenanceModeMessage()}`,
+      );
+    }
+
     console.log("Blob Trigger: Making Validator request");
 
     result = await fetch(config.VALIDATOR_API_URL, {

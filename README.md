@@ -133,7 +133,7 @@ Recommended Plugins:
 
 ### Running
 
-- Install newman globally `npm i -g newman`
+- Install the dev dependencies, or ensure you have newman installed globally (`npm i newman -g`)
 - Start function `npm start`
 - Run Tests `npm test`
 
@@ -151,7 +151,25 @@ Integration tests are written in Postman v2.1 format and run with newman.
 
 2. If this confirms the tests are in sync, then edit / update the tests in Postman.
 
-   - Export again, format again, and commit.
+3. When done, export from Postman again, format again, and commit.
+
+### Limitations
+
+#### Tests of the Maintenance Mode
+
+The final folder of Postman tests is called `Maintenance Mode`. The app can be put in Maintenance Mode by setting an environment variable. But because the integration tests are run against an already started instance of the app (that is, Newman does not control the instance of the app to test against), it is not possible for Newman to turn this mode on part way through the test run.
+
+As such, the Maintenance Mode tests have to be run separately from all the other tests, and they can only be run locally, not as part of the CI/CD pipeline.
+
+To run the Maintenance Mode tests:
+
+1. Edit `.env` to turn on Maintenance Mode.
+2. Start the application as normal (with `npm start`)
+3. Run just the Maintenance Mode tests with `npm run test-maintenance-mode`
+
+#### Testing a local instance
+
+If you want to test against a local instance of `validator-services` you need to have it pointed to a Unified Pipeline database. If you use a local database, you will need to ensure that you have run the Pipeline refresher with a reasonable number of datasets through to the validate stage, because the tests search for a dataset which has warnings, to check various things.
 
 ## Release / Version Management
 

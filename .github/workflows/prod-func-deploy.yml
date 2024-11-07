@@ -24,6 +24,8 @@ env:
   ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
   ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
   AZURE_CREDENTIALS: ${{ secrets.PROD_AZURE_CREDENTIALS }}
+  MAINTENANCE_MODE: ${{ secrets.PROD_MAINTENANCE_MODE }}
+  MAINTENANCE_MODE_MESSAGE: ${{ secrets.PROD_MAINTENANCE_MODE_MESSAGE }}
 
 jobs:
   build_save:
@@ -121,6 +123,16 @@ jobs:
                 {
                     "name": "FUNCTIONS_WORKER_RUNTIME",
                     "value": "node",
+                    "slotSetting": false
+                },
+                {
+                    "name": "MAINTENANCE_MODE",
+                    "value": "${{ env.MAINTENANCE_MODE }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "MAINTENANCE_MODE_MESSAGE",
+                    "value": "${{ env.MAINTENANCE_MODE_MESSAGE }}",
                     "slotSetting": false
                 }
             ]

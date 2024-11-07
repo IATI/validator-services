@@ -1,6 +1,11 @@
 import fetch from "node-fetch";
 import config from "../config/config.js";
 import { insertAdhocValidation } from "../database/db.js";
+import {
+  isInMaintenanceMode,
+  maintenanceModes,
+  setMaintenanceModeResponse,
+} from "../utils/maintenance-mode.js";
 import { checkRespStatus } from "../utils/utils.js";
 
 function endWithBadResponse(
@@ -19,6 +24,11 @@ function endWithBadResponse(
 // eslint-disable-next-line consistent-return
 export default async function pvtPostAdhocUrl(context, req) {
   try {
+    if (isInMaintenanceMode(maintenanceModes.NO_WRITE)) {
+      setMaintenanceModeResponse(context);
+      return;
+    }
+
     if (!req.query.url) {
       return endWithBadResponse(context, { message: `No filename apparent` });
     }

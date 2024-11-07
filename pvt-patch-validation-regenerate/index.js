@@ -1,8 +1,18 @@
 import { updateRegenerateValidationForIds } from "../database/db.js";
+import {
+  isInMaintenanceMode,
+  maintenanceModes,
+  setMaintenanceModeResponse,
+} from "../utils/maintenance-mode.js";
 
 export default async function pvtPatchValidationRegenerate(context, req) {
   try {
     const { body } = req;
+
+    if (isInMaintenanceMode(maintenanceModes.NO_WRITE)) {
+      setMaintenanceModeResponse(context);
+      return;
+    }
 
     // No body
     if (!body || JSON.stringify(body) === "{}") {

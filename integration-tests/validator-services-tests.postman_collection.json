@@ -1771,6 +1771,215 @@
       ]
     },
     {
+      "name": "Maintenance Mode",
+      "item": [
+        {
+          "name": "pvt-post-adhoc-file POST /pvt/adhoc/upload - Disabled",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 503\", function () {",
+                  "    pm.response.to.have.status(503);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (pm.environment.get(\"testingMaintenanceMode\") !== \"true\") {",
+                  "    pm.execution.skipRequest();",
+                  "}",
+                  "",
+                  "const uuid = require('uuid');",
+                  "pm.environment.set(\"file_guid\", uuid.v4());",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "iati-act-no-errors-vs-test.xml"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseURL}}/pvt/adhoc/upload?filename=iati-act-no-errors-vs-test.xml&sessionId={{sessionId}}&guid={{file_guid}}",
+              "host": ["{{baseURL}}"],
+              "path": ["pvt", "adhoc", "upload"],
+              "query": [
+                {
+                  "key": "filename",
+                  "value": "iati-act-no-errors-vs-test.xml"
+                },
+                {
+                  "key": "sessionId",
+                  "value": "{{sessionId}}"
+                },
+                {
+                  "key": "guid",
+                  "value": "{{file_guid}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pvt-post-adhoc-url POST /pvt/adhoc/url - Disabled",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 503\", function () {",
+                  "    pm.response.to.have.status(503);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (pm.environment.get(\"testingMaintenanceMode\") !== \"true\") {",
+                  "    pm.execution.skipRequest();",
+                  "}",
+                  "",
+                  "const uuid = require('uuid');",
+                  "pm.environment.set(\"url_guid\", uuid.v4());"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/pvt/adhoc/url?url=https://raw.githubusercontent.com/IATI/js-validator-api/develop/integration-tests/test-files/iati-act-no-errors.xml&sessionId={{sessionId}}&guid={{url_guid}}",
+              "host": ["{{baseURL}}"],
+              "path": ["pvt", "adhoc", "url"],
+              "query": [
+                {
+                  "key": "url",
+                  "value": "https://raw.githubusercontent.com/IATI/js-validator-api/develop/integration-tests/test-files/iati-act-no-errors.xml"
+                },
+                {
+                  "key": "sessionId",
+                  "value": "{{sessionId}}"
+                },
+                {
+                  "key": "guid",
+                  "value": "{{url_guid}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pvt-validation-regenerate PATCH /pvt/validation/regenerate - Disabled",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 503\", function () {",
+                  "    pm.response.to.have.status(503);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "if (pm.environment.get(\"testingMaintenanceMode\") !== \"true\") {",
+                  "    pm.execution.skipRequest();",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"ids\": [\"{{document_id}}\"]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/pvt/validation/regenerate",
+              "host": ["{{baseURL}}"],
+              "path": ["pvt", "validation", "regenerate"]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "exec": [
+              "const uuid = require('uuid');",
+              "if (!pm.environment.get(\"sessionId\")) {",
+              "    pm.environment.set('sessionId', uuid.v4());",
+              "}",
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "exec": [""]
+          }
+        }
+      ]
+    },
+    {
       "name": "pub-get-version GET /pub/version",
       "event": [
         {

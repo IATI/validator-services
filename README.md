@@ -86,6 +86,19 @@ Required due to the storage binding used by this function
 }
 ```
 
+#### Maintenance Mode
+
+There is a maintenance mode which is controlled via the `MAINTENANCE_MODE` and `MAINTENANCE_MODE_MESSAGE` environment variables.
+For the Function App on Azure, these are stored in Github secrets and populated using Github actions, there being two copies with
+the standard `DEV_` and `PROD_` prefixes.
+
+`MAINTENANCE_MODE` can take values:
+
+- `DISABLED` - off
+- `NO_WRITE` - those API end points which write to the Pipeline refresher DB are disabled
+  - API end points: `adhoc/upload`, `adhoc/url`, `validation/regenerate`, `validation/regenerate/all`, `blob-trigger-adhoc-file`
+  - These endpoints will return 503 Service Unavailable, with the message in `MAINTENANCE_MODE_MESSAGE`
+
 ### Adding New
 
 Add in:

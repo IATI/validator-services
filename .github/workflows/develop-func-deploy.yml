@@ -170,17 +170,17 @@ jobs:
         run: |
           sudo npm i -g newman
 
-      - name: "Run integration tests (no maintenance mode)"
+      - name: "Run integration tests (when MAINTENANCE_MODE turned off)"
+        if: env.MAINTENANCE_MODE == 'DISABLED'
         run: |
-          [[ "$MAINTENANCE_MODE" == "DISABLED" ]] && 
           newman run integration-tests/validator-services-tests.postman_collection.json \
             -e integration-tests/envs/validator-services-direct-dev.postman_environment.json \
             --env-var keyValue=$API_KEY \
             --working-dir integration-tests/test-files
 
-      - name: "Run integration tests (maintenance mode)"
+      - name: "Run integration tests (when MAINTENANCE_MODE turned on)"
+        if: env.MAINTENANCE_MODE != 'DISABLED'
         run: |
-          [[ "$MAINTENANCE_MODE" != "DISABLED" ]] && 
           newman run integration-tests/validator-services-tests.postman_collection.json \
             -e integration-tests/envs/validator-services-direct-dev.postman_environment.json \
             --env-var keyValue=$API_KEY \

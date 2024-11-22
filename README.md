@@ -42,16 +42,19 @@ See OpenAPI specification `postman/schemas/index.yaml`. To view locally in Swagg
 1. Follow instructions for nvm/node prerequisties above
 1. Run `npm i`
 1. Run `npm start` to run the function locally using the Azure Functions Core Tools
+   - Note: depending on which aspect of this app you are developing, or testing, running the app locally may require also running locally the validator ([js-validator-api](https://github.com/iati/js-validator-api)) and/or the database part of the unified pipeline refresher ([refresher]https://github.com/iati/refresher)).
 
 ## Environment Variables
 
-### Set Up
+### Initial set up
 
-`cp .env.example .env`
+#### `.env` app configuration file
 
-### Description
+When running locally the app is configured using the `.env` environment file.
 
-#### .env
+- Copy the example environment file
+  - `cp .env.example .env`
+- Edit as needed, variables explained below:
 
 ```bash
 # DB connection
@@ -68,11 +71,16 @@ ADHOC_CONTAINER=
 # validator API url and api key
 VALIDATOR_API_URL=
 VALIDATOR_FUNC_KEY=
+
+MAINTENANCE_MODE=DISABLED  # DISABLED | NO_WRITE | NO_READ
+MAINTENANCE_MODE_MESSAGE="The Validator website is in read-only mode for essential maintenance."
 ```
 
-#### local.settings.json
+See below for explanation of `MAINTENANCE_MODE` variable.
 
-Required due to the storage binding used by this function
+#### `local.settings.json` for VS Code
+
+If you run the app through VS Code, you need to put the Azure details in `local.settings.json` as well as the `.env` file. This is needed due to the storage binding used by this function.
 
 ```json
 {
@@ -98,22 +106,7 @@ the standard `DEV_` and `PROD_` prefixes.
 - `NO_WRITE` - those API end points which write to the Pipeline refresher DB are disabled
   - API end points: `adhoc/upload`, `adhoc/url`, `validation/regenerate`, `validation/regenerate/all`, `blob-trigger-adhoc-file`
   - These endpoints will return 503 Service Unavailable, with the message in `MAINTENANCE_MODE_MESSAGE`
-
-### Adding New
-
-Add in:
-
-1. .env.example
-1. .env
-1. `/config/config.js`
-
-Import
-
-```
-const config = require("./config");
-
-let myEnvVariable = config.ENV_VAR
-```
+- `NO_READ` - currently unused by this app, but the code which implements maintenance mode could be (spun out as module and) used elsewhere, so this common use-case was included. `NO_READ` implies `NO_WRITE`.
 
 ## Attached Debugging (VSCode)
 
@@ -127,7 +120,11 @@ let myEnvVariable = config.ENV_VAR
 
 [ESlint](https://eslint.org/) is used for code quality and [Prettier](https://prettier.io/) is used for formatting rules, see [Prettier vs. Linters](https://prettier.io/docs/en/comparison).
 
-To run linting, use `npm run lint`, and to format the project, use `npm run format`.
+To run linting, use `npm run lint`. This will run `eslint` and `prettier` in checking/read-only mode, and show you if there are any errors.
+
+To format the code, run `npm run format`.
+
+There is a pre-commit hook which checks the code is formatted properly, so it should not be possible to commit without properly formatting the code. If this is bypassed, linting is also done on Github when creating a PR, and this will produce an error is the code is not properly formatted.
 
 ### VS Code Integration
 
@@ -138,23 +135,45 @@ Recommended Plugins:
 - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 
-## Creating a new route
+## Creating a new API route using the Azure Functions cli
 
 `func new --name <routename> --template "HTTP trigger" --authlevel "function"`
 
 ## Integration Tests
 
-### Running
+Integration tests are written in Postman v2.1 format. They should be edited in Postman, and then exported into the repository. During development the test suite can be run from Postman or locally using `newman`. During deployment, they are run on Github using `newman`.
+
+The tests currently run against an actual server (i.e., dev, production, or a local instance). This means the test runner does not control the instance being tested. This caused an issue with the new maintenance mode (introduced October 2024) because we expect different results according to whether maintenance mode is active or not, but the test runner can't control this. For now, the Github Actions workflow has been setup to run two different sets of tests: when maintenance mode is active, certain folders in the test suite aren't run.
+
+It would be better to spin up a dedicate test environment on Github using docker compose. There is a Github issue for doing this work: see #487.
+
+### Running the tests locally
+
+#### Against a local instance of `validator-services`
+
+If you want to test against a local instance of `validator-services` you need to have it pointed to a Unified Pipeline database and an Azure storage account.
+
+If you use a local database, you will need to ensure that you have run the Pipeline refresher with a reasonable number of datasets through to the validate stage, because the tests search for a dataset which has warnings, to check various things.
 
 - Install the dev dependencies, or ensure you have newman installed globally (`npm i newman -g`)
 - Start function `npm start`
 - Run Tests `npm test`
 
-### Modifying/Adding
+#### Against a remote instance
 
-Integration tests are written in Postman v2.1 format and run with newman.
+You can also run the tests locally against the dev or production instance. (This can be useful if a problem has been reported with dev or production).
 
-#### Process for editing tests
+To run against the dev instance:
+
+```
+npx newman run integration-tests/validator-services-tests.postman_collection.json -e integration-tests/envs/validator-services-direct-dev.postman_environment.json --working-dir integration-tests/test-files --env-var "keyValue=REPLACE_WITH_FUNCTIONS_KEY"
+```
+
+You need to replace `REPLACE_WITH_FUNCTIONS_KEY` with the Azure Functions App dev key.
+
+To run against production, use `integration-tests/envs/validator-services-direct-PROD.postman_environment.json` with the `-e` flag instead and use the production Azure key.
+
+### Modifying/Adding Tets
 
 1. Check the tests in Postman are in sync with the Github repo:
 
@@ -164,7 +183,7 @@ Integration tests are written in Postman v2.1 format and run with newman.
 
 2. If this confirms the tests are in sync, then edit / update the tests in Postman.
 
-3. When done, export from Postman again, format again, and commit.
+3. When done editin gin Postman, export from Postman again, format again, and commit.
 
 ### Limitations
 
@@ -174,15 +193,11 @@ The final folder of Postman tests is called `Maintenance Mode`. The app can be p
 
 As such, the Maintenance Mode tests have to be run separately from all the other tests, and they can only be run locally, not as part of the CI/CD pipeline.
 
-To run the Maintenance Mode tests:
+To run the Maintenance Mode tests locally:
 
 1. Edit `.env` to turn on Maintenance Mode.
 2. Start the application as normal (with `npm start`)
 3. Run just the Maintenance Mode tests with `npm run test-maintenance-mode`
-
-#### Testing a local instance
-
-If you want to test against a local instance of `validator-services` you need to have it pointed to a Unified Pipeline database. If you use a local database, you will need to ensure that you have run the Pipeline refresher with a reasonable number of datasets through to the validate stage, because the tests search for a dataset which has warnings, to check various things.
 
 ## Release / Version Management
 

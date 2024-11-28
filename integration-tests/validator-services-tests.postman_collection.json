@@ -1578,10 +1578,10 @@
       ]
     },
     {
-      "name": "Flagged Pulishers",
+      "name": "Flagged Publishers",
       "item": [
         {
-          "name": "GET Black Flagged Publishers",
+          "name": "GET Flagged Publishers",
           "event": [
             {
               "listen": "test",

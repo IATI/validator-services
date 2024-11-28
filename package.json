@@ -7,7 +7,7 @@
     "start": "func start --javascript --cors http://localhost:4200",
     "start:verbose": "func start --javascript --verbose",
     "test": "newman run integration-tests/validator-services-tests.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment.json --working-dir integration-tests/test-files",
-    "test-maintenance-mode": "newman run integration-tests/validator-services-tests.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment_maintenance_mode.json --working-dir integration-tests/test-files --folder 'Maintenance Mode'",
+    "test-maintenance-mode": "newman run integration-tests/validator-services-tests.postman_collection.json -e integration-tests/envs/local-function-7071.postman_environment.json --working-dir integration-tests/test-files --env-var testingMaintenanceMode=true --folder Initialisation --folder 'Publishers and Documents' --folder 'Guidance Links' --folder 'Flagged Publishers' --folder Statistics --folder 'Maintenance Mode'",
     "prepare": "husky install",
     "lint:eslint": "eslint .",
     "lint:prettier": "prettier . --check",

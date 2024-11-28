@@ -183,7 +183,7 @@ To run against production, use `integration-tests/envs/validator-services-direct
 
 2. If this confirms the tests are in sync, then edit / update the tests in Postman.
 
-3. When done editin gin Postman, export from Postman again, format again, and commit.
+3. When done editing in Postman, export from Postman again, format again, and commit.
 
 ### Limitations
 

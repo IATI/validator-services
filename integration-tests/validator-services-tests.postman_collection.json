@@ -3,8 +3,8 @@
     "_postman_id": "670a6541-0509-4d79-8b62-550460c4a700",
     "name": "validator-services-tests",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "29844336",
-    "_collection_link": "https://iatisecretariat.postman.co/workspace/IATI~c354ba4e-15bf-41ee-9d69-a5a5360da160/collection/13097277-670a6541-0509-4d79-8b62-550460c4a700?action=share&source=collection_link&creator=29844336"
+    "_exporter_id": "39928899",
+    "_collection_link": "https://iatisecretariat.postman.co/workspace/c354ba4e-15bf-41ee-9d69-a5a5360da160/collection/13097277-670a6541-0509-4d79-8b62-550460c4a700?action=share&source=collection_link&creator=39928899"
   },
   "item": [
     {
@@ -1031,9 +1031,9 @@
                   "    pm.test(\"Body contains same sessionId as request\", function () {",
                   "        pm.expect(jsonData[0].session_id).to.eql(pm.environment.get(\"sessionId\"));",
                   "    }); ",
-                  "    postman.setNextRequest('pub-get-report GET /pub/validation/existing?testfile=<url_guid>')",
+                  "    pm.execution.setNextRequest('pub-get-report GET /pub/validation/existing?testfile=<url_guid>')",
                   "} else {",
-                  "    postman.setNextRequest('Wait')",
+                  "    pm.execution.setNextRequest('Wait')",
                   "}",
                   ""
                 ],
@@ -1073,7 +1073,9 @@
             {
               "listen": "test",
               "script": {
-                "exec": ["postman.setNextRequest('pvt-get-adhoc-session URL')"],
+                "exec": [
+                  "pm.execution.setNextRequest('pvt-get-adhoc-session URL')"
+                ],
                 "type": "text/javascript",
                 "packages": {}
               }
@@ -1562,8 +1564,8 @@
             "type": "text/javascript",
             "exec": [
               "const uuid = require('uuid');",
-              "if (!environment.sessionId) {",
-              "    postman.setEnvironmentVariable('sessionId', uuid.v4());",
+              "if (!pm.environment.sessionId) {",
+              "    pm.environment.set('sessionId', uuid.v4());",
               "}"
             ]
           }

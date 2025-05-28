@@ -26,6 +26,8 @@ env:
   AZURE_CREDENTIALS: ${{ secrets.PROD_AZURE_CREDENTIALS }}
   MAINTENANCE_MODE: ${{ secrets.PROD_MAINTENANCE_MODE }}
   MAINTENANCE_MODE_MESSAGE: ${{ secrets.PROD_MAINTENANCE_MODE_MESSAGE }}
+  GITHUB_OAUTH_APP_CLIENT_ID: ${{ secrets.IATI_GITHUB_OAUTH_APP_CLIENT_ID }}
+  GITHUB_OAUTH_APP_CLIENT_SECRET: ${{ secrets.IATI_GITHUB_OAUTH_APP_CLIENT_SECRET }}
 
 jobs:
   build_save:
@@ -133,6 +135,16 @@ jobs:
                 {
                     "name": "MAINTENANCE_MODE_MESSAGE",
                     "value": "${{ env.MAINTENANCE_MODE_MESSAGE }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "GITHUB_OAUTH_APP_CLIENT_ID",
+                    "value": "${{ env.GITHUB_OAUTH_APP_CLIENT_ID }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "GITHUB_OAUTH_APP_CLIENT_SECRET",
+                    "value": "${{ env.GITHUB_OAUTH_APP_CLIENT_SECRET }}",
                     "slotSetting": false
                 }
             ]

@@ -2,6 +2,7 @@ name: Deploy_To_PROD_Function_On_Release
 
 # Runs when a Release is published from GitHub UI
 on:
+  workflow_dispatch: # Allow Manual Run from GitHub
   release:
     types: [published]
 
@@ -26,6 +27,8 @@ env:
   AZURE_CREDENTIALS: ${{ secrets.PROD_AZURE_CREDENTIALS }}
   MAINTENANCE_MODE: ${{ secrets.PROD_MAINTENANCE_MODE }}
   MAINTENANCE_MODE_MESSAGE: ${{ secrets.PROD_MAINTENANCE_MODE_MESSAGE }}
+  GITHUB_OAUTH_APP_CLIENT_ID: ${{ secrets.IATI_GITHUB_OAUTH_APP_CLIENT_ID }}
+  GITHUB_OAUTH_APP_CLIENT_SECRET: ${{ secrets.IATI_GITHUB_OAUTH_APP_CLIENT_SECRET }}
 
 jobs:
   build_save:
@@ -40,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: build-artifact-prod
 
@@ -50,7 +53,7 @@ jobs:
           rm build-artifact-prod.zip
 
       - name: "Login via Azure CLI"
-        uses: azure/login@v2.2.0
+        uses: azure/login@v2.3.0
         with:
           creds: ${{ env.AZURE_CREDENTIALS }} # Service Principal credentials saved in GitHub Secrets
 
@@ -110,7 +113,7 @@ jobs:
                   "value": "${{ env.VALIDATOR_FUNC_KEY }}",
                   "slotSetting": false
                 },
-                { 
+                {
                     "name": "AzureWebJobsSecretStorageType",
                     "value": "keyvault",
                     "slotSetting": false
@@ -134,11 +137,21 @@ jobs:
                     "name": "MAINTENANCE_MODE_MESSAGE",
                     "value": "${{ env.MAINTENANCE_MODE_MESSAGE }}",
                     "slotSetting": false
+                },
+                {
+                    "name": "GITHUB_OAUTH_APP_CLIENT_ID",
+                    "value": "${{ env.GITHUB_OAUTH_APP_CLIENT_ID }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "GITHUB_OAUTH_APP_CLIENT_SECRET",
+                    "value": "${{ env.GITHUB_OAUTH_APP_CLIENT_SECRET }}",
+                    "slotSetting": false
                 }
             ]
 
       - name: "Run Azure Functions Action"
-        uses: Azure/functions-action@v1.5.2
+        uses: Azure/functions-action@v1.5.3
         with:
           app-name: func-${{ env.NAME }}-${{ env.STAGE }}
 
@@ -150,7 +163,7 @@ jobs:
         run: sleep 180
 
       - name: "Checkout GitHub Action"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: "Install newman"
         run: |

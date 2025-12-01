@@ -35,6 +35,8 @@ env:
   AZURE_CREDENTIALS: ${{ secrets.DEV_AZURE_CREDENTIALS }}
   MAINTENANCE_MODE: ${{ secrets.DEV_MAINTENANCE_MODE }}
   MAINTENANCE_MODE_MESSAGE: ${{ secrets.DEV_MAINTENANCE_MODE_MESSAGE }}
+  GITHUB_OAUTH_APP_CLIENT_ID: ${{ secrets.IATI_GITHUB_OAUTH_APP_CLIENT_ID }}
+  GITHUB_OAUTH_APP_CLIENT_SECRET: ${{ secrets.IATI_GITHUB_OAUTH_APP_CLIENT_SECRET }}
 
 jobs:
   should_run:
@@ -54,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: build-artifact-dev
 
@@ -64,7 +66,7 @@ jobs:
           rm build-artifact-dev.zip
 
       - name: "Login via Azure CLI"
-        uses: azure/login@v2.2.0
+        uses: azure/login@v2.3.0
         with:
           creds: ${{ env.AZURE_CREDENTIALS }} # Service Principal credentials saved in GitHub Secrets
 
@@ -148,11 +150,21 @@ jobs:
                     "name": "MAINTENANCE_MODE_MESSAGE",
                     "value": "${{ env.MAINTENANCE_MODE_MESSAGE }}",
                     "slotSetting": false
+                },
+                {
+                    "name": "GITHUB_OAUTH_APP_CLIENT_ID",
+                    "value": "${{ env.GITHUB_OAUTH_APP_CLIENT_ID }}",
+                    "slotSetting": false
+                },
+                {
+                    "name": "GITHUB_OAUTH_APP_CLIENT_SECRET",
+                    "value": "${{ env.GITHUB_OAUTH_APP_CLIENT_SECRET }}",
+                    "slotSetting": false
                 }
             ]
 
       - name: "Run Azure Functions Action"
-        uses: Azure/functions-action@v1.5.2
+        uses: Azure/functions-action@v1.5.3
         with:
           app-name: func-${{ env.NAME }}-${{ env.STAGE }}
 
@@ -164,7 +176,7 @@ jobs:
         run: sleep 180
 
       - name: "Checkout GitHub Action"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: "Install newman"
         run: |

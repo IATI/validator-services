@@ -25,7 +25,8 @@ const config = {
   REDIS_CACHE_SEC: process.env.REDIS_CACHE_SEC || 86400,
   REDIS_KEY: process.env.REDIS_KEY,
   REDIS_HOSTNAME: process.env.REDIS_HOSTNAME,
-  GITHUB_BASIC_TOKEN: process.env.GITHUB_BASIC_TOKEN,
+  GITHUB_OAUTH_APP_CLIENT_ID: process.env.GITHUB_OAUTH_APP_CLIENT_ID,
+  GITHUB_OAUTH_APP_CLIENT_SECRET: process.env.GITHUB_OAUTH_APP_CLIENT_SECRET,
   PGCONFIG: {
     host: process.env.PGHOST,
     user: process.env.PGUSER,

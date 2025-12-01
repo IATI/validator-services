@@ -74,6 +74,10 @@ VALIDATOR_FUNC_KEY=
 
 MAINTENANCE_MODE=DISABLED  # DISABLED | NO_WRITE | NO_READ
 MAINTENANCE_MODE_MESSAGE="The Validator website is in read-only mode for essential maintenance."
+
+# An Github auth app. No special permissions or access needed. Optional, but you may get rate limited very easily if you don't.
+GITHUB_OAUTH_APP_CLIENT_ID=
+GITHUB_OAUTH_APP_CLIENT_SECRET=
 ```
 
 See below for explanation of `MAINTENANCE_MODE` variable.

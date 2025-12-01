@@ -2,6 +2,7 @@ name: Deploy_To_PROD_Function_On_Release
 
 # Runs when a Release is published from GitHub UI
 on:
+  workflow_dispatch: # Allow Manual Run from GitHub
   release:
     types: [published]
 
@@ -112,7 +113,7 @@ jobs:
                   "value": "${{ env.VALIDATOR_FUNC_KEY }}",
                   "slotSetting": false
                 },
-                { 
+                {
                     "name": "AzureWebJobsSecretStorageType",
                     "value": "keyvault",
                     "slotSetting": false

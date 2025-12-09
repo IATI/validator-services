@@ -1252,9 +1252,18 @@
                   "});",
                   "pm.test(\"Your test name\", function () {",
                   "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.message).to.eql(\"Error fetching from provided URL: HTTP Error Response: 400 BAD REQUEST\");",
+                  "    pm.expect(jsonData.message).to.eql(\"Error fetching from provided URL: HTTP Error Response: 400 Bad Request\");",
                   "});"
                 ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "packages": {},
                 "type": "text/javascript"
               }
             }
@@ -1263,13 +1272,13 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{baseURL}}/pvt/adhoc/url?url=https://httpbin.org/status/400&sessionId={{sessionId}}&guid={{$guid}}",
+              "raw": "{{baseURL}}/pvt/adhoc/url?url=https://postman-echo.com/status/400&sessionId={{sessionId}}&guid={{$guid}}",
               "host": ["{{baseURL}}"],
               "path": ["pvt", "adhoc", "url"],
               "query": [
                 {
                   "key": "url",
-                  "value": "https://httpbin.org/status/400"
+                  "value": "https://postman-echo.com/status/400"
                 },
                 {
                   "key": "sessionId",
@@ -1296,10 +1305,12 @@
                   "});",
                   "pm.test(\"Error message contains HTTP response from URL\", function () {",
                   "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.message).to.eql(\"Error fetching from provided URL: HTTP Error Response: 500 INTERNAL SERVER ERROR\");",
+                  "    pm.expect(jsonData.message).to.eql(\"Error fetching from provided URL: HTTP Error Response: 500 Internal Server Error\");",
                   "});"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -1307,13 +1318,13 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{baseURL}}/pvt/adhoc/url?url=https://httpbin.org/status/500&sessionId={{sessionId}}&guid={{$guid}}",
+              "raw": "{{baseURL}}/pvt/adhoc/url?url=https://postman-echo.com/status/500&sessionId={{sessionId}}&guid={{$guid}}",
               "host": ["{{baseURL}}"],
               "path": ["pvt", "adhoc", "url"],
               "query": [
                 {
                   "key": "url",
-                  "value": "https://httpbin.org/status/500"
+                  "value": "https://postman-echo.com/status/500"
                 },
                 {
                   "key": "sessionId",

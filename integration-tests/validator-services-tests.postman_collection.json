@@ -3,8 +3,8 @@
     "_postman_id": "670a6541-0509-4d79-8b62-550460c4a700",
     "name": "validator-services-tests",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "39928899",
-    "_collection_link": "https://iatisecretariat.postman.co/workspace/c354ba4e-15bf-41ee-9d69-a5a5360da160/collection/13097277-670a6541-0509-4d79-8b62-550460c4a700?action=share&source=collection_link&creator=39928899"
+    "_exporter_id": "29844336",
+    "_collection_link": "https://iatisecretariat.postman.co/workspace/IATI~c354ba4e-15bf-41ee-9d69-a5a5360da160/collection/13097277-670a6541-0509-4d79-8b62-550460c4a700?action=share&source=collection_link&creator=29844336"
   },
   "item": [
     {
@@ -837,7 +837,9 @@
                   "    pm.expect(Object.keys(jsonData.content).reduce((acc, id) => [...acc].concat(Object.keys(jsonData.content[id])), [])).to.include.members(['path', 'url']);",
                   "});"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -850,7 +852,51 @@
               "path": ["pvt", "guidance-links", "2.03"]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "pvt-get-guidance-links - good",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseURL}}/pvt/guidance-links/2.03",
+                  "host": ["{{baseURL}}"],
+                  "path": ["pvt", "guidance-links", "2.03"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Date",
+                  "value": "Wed, 28 May 2025 13:47:05 GMT"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "gzip"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                },
+                {
+                  "key": "Vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "Request-Context",
+                  "value": "appId=cid-v1:f6a0d8a6-f35a-4714-bedc-a5492ba65a7e"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"version\": \"2.03\",\n    \"commitSha\": \"2cd1a14f6c584000ae6d76e708c73ddcc12b6c40\",\n    \"content\": {\n        \"1.1.3\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/iati-identifier/\"\n        },\n        \"1.1.21\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/iati-identifier/\"\n        },\n        \"1.14.8\": {\n            \"url\": \"https://iatistandard.org/en/guidance/preparing-organisation/organisation-account/how-to-create-your-iati-organisation-identifier/\"\n        },\n        \"6.11.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-dates-status/\"\n        },\n        \"6.2.2\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-thematic-focus/\"\n        },\n        \"4.1.1\": {\n            \"path\": \"codelists/Language/\"\n        },\n        \"6.7.2\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-thematic-focus/\"\n        },\n        \"7.8.1\": {\n            \"path\": \"codelists/Currency/\"\n        },\n        \"11.1.1\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/\"\n        },\n        \"11.1.2\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-dates-status/\"\n        },\n        \"11.1.3\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-dates-status/\"\n        },\n        \"11.1.4\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-dates-status/\"\n        },\n        \"11.1.5\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-dates-status/\"\n        },\n        \"11.2.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/financial-transactions/\"\n        },\n        \"11.2.2\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/financial-transactions/\"\n        },\n        \"1.14.13\": {\n            \"url\": \"https://iatistandard.org/en/guidance/preparing-organisation/organisation-account/how-to-create-your-iati-organisation-identifier/\"\n        },\n        \"1.14.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/preparing-organisation/organisation-account/how-to-create-your-iati-organisation-identifier/\"\n        },\n        \"2.1.2\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-thematic-focus/\"\n        },\n        \"3.4.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/countries-regions/\"\n        },\n        \"3.4.4\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/countries-regions/\"\n        },\n        \"3.4.2\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/countries-regions/\"\n        },\n        \"7.9.2\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/country-budget-items/budget-item/\"\n        },\n        \"7.9.1\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/country-budget-items/budget-item/\"\n        },\n        \"7.9.4\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/country-budget-items/budget-item/\"\n        },\n        \"107.1.2\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-classifications/\"\n        },\n        \"2.1.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-thematic-focus/\"\n        },\n        \"2.1.4\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-thematic-focus/\"\n        },\n        \"3.1.2\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/countries-regions/\"\n        },\n        \"12.1.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/countries-regions/\"\n        },\n        \"12.3.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-thematic-focus/\"\n        },\n        \"12.2.1\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/capital-spend/\"\n        },\n        \"2.2.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-thematic-focus/\"\n        },\n        \"102.1.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-thematic-focus/\"\n        },\n        \"107.1.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-classifications/\"\n        },\n        \"107.2.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-classifications/\"\n        },\n        \"6.6.2\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-thematic-focus/\"\n        },\n        \"3.6.2\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/financial-transactions/\"\n        },\n        \"3.7.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/countries-regions/\"\n        },\n        \"3.7.2\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/countries-regions/\"\n        },\n        \"3.1.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/countries-regions/\"\n        },\n        \"3.1.4\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/countries-regions/\"\n        },\n        \"107.2.2\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-classifications/\"\n        },\n        \"6.8.1\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/other-identifier/owner-org/narrative\"\n        },\n        \"6.9.1\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/transaction/provider-org/narrative/\"\n        },\n        \"6.9.2\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/transaction/receiver-org/narrative/\"\n        },\n        \"6.14.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-classifications/\"\n        },\n        \"6.13.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-classifications/\"\n        },\n        \"1.18.8\": {\n            \"url\": \"https://iatistandard.org/en/guidance/preparing-organisation/organisation-account/how-to-create-your-iati-organisation-identifier/\"\n        },\n        \"1.12.13\": {\n            \"url\": \"https://iatistandard.org/en/guidance/preparing-organisation/organisation-account/how-to-create-your-iati-organisation-identifier/\"\n        },\n        \"1.18.13\": {\n            \"url\": \"https://iatistandard.org/en/guidance/preparing-organisation/organisation-account/how-to-create-your-iati-organisation-identifier/\"\n        },\n        \"1.12.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/preparing-organisation/organisation-account/how-to-create-your-iati-organisation-identifier/\"\n        },\n        \"1.18.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/preparing-organisation/organisation-account/how-to-create-your-iati-organisation-identifier/\"\n        },\n        \"11.4.1\": {\n            \"path\": \"organisation-standard/iati-organisations/iati-organisation/\"\n        },\n        \"4.5.1\": {\n            \"path\": \"codelists/Language/\"\n        },\n        \"7.8.2\": {\n            \"path\": \"codelists/Currency/\"\n        },\n        \"6.10.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-participants/\"\n        },\n        \"8.6.3\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/organisation-budgets-spend/\"\n        },\n        \"7.5.3\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/activity-budgets/\"\n        },\n        \"11.3.1\": {\n            \"url\": \"https://iatistandard.org/en/guidance/standard-guidance/organisation-budgets-spend/\"\n        },\n        \"8.11.1\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/result/indicator/reference/\"\n        },\n        \"8.6.1\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/result/indicator/period/period-start/\"\n        },\n        \"8.8.1\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/result/indicator/baseline/\"\n        },\n        \"8.8.2\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/result/indicator/baseline/\"\n        },\n        \"8.8.3\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/result/indicator/baseline/\"\n        },\n        \"8.9.1\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/result/indicator/period/target/\"\n        },\n        \"8.9.2\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/result/indicator/period/target/\"\n        },\n        \"8.9.3\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/result/indicator/period/target/\"\n        },\n        \"8.10.1\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/result/indicator/period/actual/\"\n        },\n        \"8.10.2\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/result/indicator/period/actual/\"\n        },\n        \"8.10.3\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/result/indicator/period/actual/\"\n        },\n        \"4.3.1\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/title/\"\n        },\n        \"4.4.1\": {\n            \"path\": \"activity-standard/iati-activities/iati-activity/description/\"\n        }\n    }\n}"
+            }
+          ]
         }
       ]
     },

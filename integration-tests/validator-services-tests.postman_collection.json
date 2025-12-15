@@ -1696,14 +1696,21 @@
                   "    });",
                   "});",
                   "",
+                  "",
+                  "// This was setting publisher_name to first publisher pulled with errors, but",
+                  "// there is a problem in /stats/summary_aggregate in that it doesn't check ",
+                  "// the publisher is still current, and this meant later tests failed. For now",
+                  "// just set this to 'undp', when /stats/summary_aggregate is fixed to only",
+                  "// return stats for current publishers, we can revert this.",
                   "pm.test(\"Set publisher name for subsequent stats tests\", function () {",
                   "    var jsonData = pm.response.json();",
-                  "    pm.collectionVariables.set(\"publisher_name\", Object.keys(jsonData)[0]);",
+                  "    pm.collectionVariables.set(\"publisher_name\", \"undp\");",
                   "});",
                   ""
                 ],
                 "type": "text/javascript",
-                "packages": {}
+                "packages": {},
+                "requests": {}
               }
             }
           ],

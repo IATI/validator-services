@@ -472,23 +472,18 @@ const getSummaryPrecalcStats = async (date, publisher) => {
 const getSummaryAggregateStats = async (date, publisher) => {
   if (publisher) {
     const sql = `
-                SELECT
-                    T1.publisher_name,
-                    arr3.item_object -> 'severity' AS severity,
-                    SUM( JSONB_ARRAY_LENGTH(arr3.item_object -> 'context') ) AS count
-                FROM validation AS T1,
-                JSONB_ARRAY_ELEMENTS(T1.report -> 'errors') WITH ORDINALITY arr(item_object, position),
-                JSONB_ARRAY_ELEMENTS(arr.item_object -> 'errors') WITH ORDINALITY arr2(item_object, position),
-                JSONB_ARRAY_ELEMENTS(arr2.item_object -> 'errors') WITH ORDINALITY arr3(item_object, position)
-                WHERE T1.created <= $1
-                AND T1.publisher_name = $2
-                AND T1.report IS NOT NULL
-                AND NOT EXISTS(
-                    SELECT * FROM validation AS T2
-                    WHERE T2.created <= $1
-                    AND T2.document_id = T1.document_id
-                    AND T2.created > T1.created
-                ) GROUP BY T1.publisher_name, severity;
+            SELECT
+                v.publisher_name,
+                item ->> 'severity' as severity,
+                SUM(JSONB_ARRAY_LENGTH(item -> 'context')) as count
+            FROM (
+                SELECT DISTINCT ON (document_id) publisher_name, report
+                FROM validation
+                WHERE created <= $1 AND publisher_name = $2
+                ORDER BY document_id, created DESC
+            ) v,
+            LATERAL jsonb_path_query(v.report, '$.errors[*].errors[*].errors[*]') as item
+            GROUP BY 1, 2;
             `;
 
     const result = await query(sql, [date, publisher]);
@@ -496,22 +491,17 @@ const getSummaryAggregateStats = async (date, publisher) => {
   }
   const sql = `
             SELECT
-                T1.publisher_name,
-                arr3.item_object -> 'severity' AS severity,
-                SUM( JSONB_ARRAY_LENGTH(arr3.item_object -> 'context') ) AS count
-            FROM validation AS T1,
-            JSONB_ARRAY_ELEMENTS(T1.report -> 'errors') WITH ORDINALITY arr(item_object, position),
-            JSONB_ARRAY_ELEMENTS(arr.item_object -> 'errors') WITH ORDINALITY arr2(item_object, position),
-            JSONB_ARRAY_ELEMENTS(arr2.item_object -> 'errors') WITH ORDINALITY arr3(item_object, position)
-            WHERE T1.created <= $1
-            AND T1.report IS NOT NULL
-            AND T1.publisher_name IS NOT NULL
-            AND NOT EXISTS(
-                SELECT * FROM validation AS T2
-                WHERE T2.created <= $1
-                AND T2.document_id = T1.document_id
-                AND T2.created > T1.created
-            ) GROUP BY T1.publisher_name, severity;
+                v.publisher_name,
+                item ->> 'severity' as severity,
+                SUM(JSONB_ARRAY_LENGTH(item -> 'context')) as count
+            FROM (
+                SELECT DISTINCT ON (document_id) publisher_name, report
+                FROM validation
+                WHERE created <= $1 AND publisher_name IS NOT NULL
+                ORDER BY document_id, created DESC
+            ) v,
+            LATERAL jsonb_path_query(v.report, '$.errors[*].errors[*].errors[*]') as item
+            GROUP BY 1, 2;             
         `;
 
   const result = await query(sql, [date]);
@@ -521,26 +511,20 @@ const getSummaryAggregateStats = async (date, publisher) => {
 const getMessageDateStats = async (date) => {
   const sql = `
             SELECT
-                T1.publisher_name,
+                v.publisher_name,
                 arr3.item_object -> 'id' AS error_id,
                 arr3.item_object -> 'message' AS message,
                 arr3.item_object -> 'severity' AS severity,
                 arr2.item_object -> 'category' as category,
                 SUM( JSONB_ARRAY_LENGTH(arr3.item_object -> 'context') ) AS count
-            FROM validation AS T1,
-            JSONB_ARRAY_ELEMENTS(T1.report -> 'errors') WITH ORDINALITY arr(item_object, position),
+            FROM (SELECT DISTINCT ON (document_id) publisher_name, report
+                FROM validation
+                WHERE created <= $1 AND publisher_name IS NOT NULL
+                ORDER BY document_id, created DESC) v,
+            JSONB_ARRAY_ELEMENTS(v.report -> 'errors') WITH ORDINALITY arr(item_object, position),
             JSONB_ARRAY_ELEMENTS(arr.item_object -> 'errors') WITH ORDINALITY arr2(item_object, position),
             JSONB_ARRAY_ELEMENTS(arr2.item_object -> 'errors') WITH ORDINALITY arr3(item_object, position)
-            WHERE T1.created <= $1
-            AND T1.report IS NOT NULL
-            AND T1.publisher_name IS NOT NULL
-            AND NOT EXISTS(
-                SELECT * FROM validation AS T2
-                WHERE T2.created <= $1
-                AND T2.document_id = T1.document_id
-                AND T2.created > T1.created
-            ) GROUP BY T1.publisher_name, error_id, message, severity, category;
-        `;
+            GROUP BY v.publisher_name, error_id, message, severity, category order by publisher_name, error_id;`;
 
   const result = await query(sql, [date]);
   return result;

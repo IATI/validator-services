@@ -3,7 +3,8 @@ name: Deploy_To_Dev_Function_On_Push
 on:
   workflow_dispatch: # Allow Manual Run from GitHub
   push:
-    paths-ignore: # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
+    paths-ignore:
+      # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
       - "**/README.md" # don't run on README.md file updates anywhere in repo
       - "**/dependabot.yml"
       - ".github/workflows/prod-func-ci.yml"
@@ -47,7 +48,7 @@ jobs:
     if: ${{ needs.should_run.outputs.should_run == 'true' }}
     uses: IATI/.github/.github/workflows/build_node_save.yaml@main
     with:
-      npm_version: ^10
+      npm_version: ^11
       save_artifact: true
       artifact_name: build-artifact-dev
 
@@ -126,7 +127,7 @@ jobs:
                   "value": "${{ env.VALIDATOR_FUNC_KEY }}",
                   "slotSetting": false
                 },
-                { 
+                {
                     "name": "AzureWebJobsSecretStorageType",
                     "value": "keyvault",
                     "slotSetting": false

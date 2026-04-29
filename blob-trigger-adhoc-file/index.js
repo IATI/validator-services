@@ -9,9 +9,9 @@ import {
 
 export default async function blobTriggerAdhocFile(context) {
   let errorStatus = null;
-  let result = null;
+  let result;
   let valid = null;
-  let report = null;
+  let report;
 
   try {
     if (isInMaintenanceMode(maintenanceModes.NO_WRITE)) {

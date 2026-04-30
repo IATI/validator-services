@@ -27,7 +27,6 @@ function getBoundary(header) {
   return "";
 }
 
-// eslint-disable-next-line consistent-return
 export default async function pvtPostAdhocFile(context, req) {
   try {
     const { body, query, headers } = req;

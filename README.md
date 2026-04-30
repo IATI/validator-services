@@ -20,12 +20,10 @@ See OpenAPI specification `postman/schemas/index.yaml`. To view locally in Swagg
 #### blob-trigger-adhoc-file
 
 - Blob Trigger
-
   - When file is added to blob storage container with name `ADHOC_CONTAINER`, this Function is triggered.
   - `/api/pvt/adhoc/upload` or `/api/pvt/adhoc/url` are the endpoints used to add files to blob storage.
 
 - Actions
-
   - Sends file to Validator API
   - Saves validation report and metadata to `adhoc_validation` table
 
@@ -155,7 +153,7 @@ It would be better to spin up a dedicate test environment on Github using docker
 
 #### Against a local instance of `validator-services`
 
-If you want to test against a local instance of `validator-services` you need to have it pointed to a Unified Pipeline database and an Azure storage account.
+If you want to run the tests against a local instance of `validator-services` you need to have your locally running version of `validator-services` pointed to a Unified Pipeline database and an Azure storage account. You can do this using the [Unified Data Platform Local Dev](https://github.com/IATI/unified-data-platform-local-dev) setup.
 
 If you use a local database, you will need to ensure that you have run the Pipeline refresher with a reasonable number of datasets through to the validate stage, because the tests search for a dataset which has warnings, to check various things.
 
@@ -180,7 +178,6 @@ To run against production, use `integration-tests/envs/validator-services-direct
 ### Modifying/Adding Tets
 
 1. Check the tests in Postman are in sync with the Github repo:
-
    - Export the `validator-services` collection from the Postman client to `./integration-tests`
    - Run `npm run format`
    - Run `git diff integration-tests/validator-services-tests.postman_collection.json`

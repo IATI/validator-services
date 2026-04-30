@@ -21,7 +21,6 @@ function endWithBadResponse(
   };
 }
 
-// eslint-disable-next-line consistent-return
 export default async function pvtPostAdhocUrl(context, req) {
   try {
     if (isInMaintenanceMode(maintenanceModes.NO_WRITE)) {

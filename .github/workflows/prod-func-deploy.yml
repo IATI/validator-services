@@ -1,3 +1,4 @@
+---
 name: Deploy_To_PROD_Function_On_Release
 
 # Runs when a Release is published from GitHub UI
@@ -129,6 +130,11 @@ jobs:
                     "slotSetting": false
                 },
                 {
+                    "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                    "value": "~24",
+                    "slotSetting": false
+                },
+                {
                     "name": "MAINTENANCE_MODE",
                     "value": "${{ env.MAINTENANCE_MODE }}",
                     "slotSetting": false
@@ -149,6 +155,11 @@ jobs:
                     "slotSetting": false
                 }
             ]
+          # Turn 32bit off because Node 24 on Windows App Service is 64-bit only
+          general-settings-json: |
+            {
+                "use32BitWorkerProcess": false
+            }
 
       - name: "Run Azure Functions Action"
         uses: Azure/functions-action@v1.5.6

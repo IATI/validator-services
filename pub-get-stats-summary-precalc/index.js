@@ -12,13 +12,25 @@ export default async function pubGetStatsSummaryPrecalc(context, req) {
 
     if (format === "csv") {
       const csvString = [
-        ["publisher_name", "critical", "error", "warning", "advisory"],
+        [
+          "publisher_name",
+          "critical",
+          "error",
+          "warning",
+          "advisory",
+          "documents_with_critical",
+          "documents_with_error",
+          "documents",
+        ],
         ...result.map((item) => [
           item.publisher_name,
           item.critical,
           item.error,
           item.warning,
           item.advisory,
+          item.documents_with_critical,
+          item.documents_with_error,
+          item.documents,
         ]),
       ]
         .map((e) => e.map((c) => `"${c}"`).join(","))
@@ -38,6 +50,9 @@ export default async function pubGetStatsSummaryPrecalc(context, req) {
           error: parseInt(row.error, 10),
           warning: parseInt(row.warning, 10),
           advisory: parseInt(row.advisory, 10),
+          documents_with_critical: parseInt(row.documents_with_critical, 10),
+          documents_with_error: parseInt(row.documents_with_error, 10),
+          documents: parseInt(row.documents, 10),
         };
       });
 

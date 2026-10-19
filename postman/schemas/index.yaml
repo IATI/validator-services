@@ -649,7 +649,7 @@ paths:
   /api/pub/stats/summary_precalc:
     get:
       summary: Returns summary precalculated statistics
-      description: Counts of warnings, errors, and critical errors as reported by the Validator API (may differ from count of instances for a number of errors, it is recommended users use the summary_aggregate instead) , grouped by publisher. Also includes the number of documents, and the number of documents with at least one critical error or error, based on the latest Validation report for each document.
+      description: Counts of warnings, errors, and critical errors as reported by the Validator API (may differ from count of instances for a number of errors, it is recommended users use the summary_aggregate instead) , grouped by publisher. Also includes the number of documents, and the number of documents with at least one critical error or error, based on the latest Validation report for each document. Only documents that are currently published are included.
       parameters:
         - in: query
           name: date
@@ -1137,7 +1137,7 @@ components:
               description: Number of documents whose latest Validation report has at least one error
             documents:
               type: integer
-              description: Number of documents with a Validation report
+              description: Number of currently published documents with a Validation report
           required:
             - critical
             - error

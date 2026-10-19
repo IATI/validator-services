@@ -1,6 +1,6 @@
 {
   "name": "validator-services",
-  "version": "2.9.5",
+  "version": "2.9.6",
   "description": "Backend microservice provider for the IATI Validator on the Unified Platform",
   "type": "module",
   "scripts": {
@@ -23,14 +23,14 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.0",
-    "eslint": "^10.4.1",
+    "eslint": "^10.5.0",
     "eslint-config-flat-gitignore": "^2.0.0",
     "eslint-config-prettier": "^10.0.0",
     "globals": "^17.6.0",
     "husky": "^9.0.0",
     "lint-staged": "^17.0.7",
     "newman": "^6.2.1",
-    "prettier": "^3.2.5",
+    "prettier": "^3.8.4",
     "prettier-plugin-organize-imports": "^4.1.0"
   },
   "lint-staged": {

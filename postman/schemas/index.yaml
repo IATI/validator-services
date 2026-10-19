@@ -649,7 +649,7 @@ paths:
   /api/pub/stats/summary_precalc:
     get:
       summary: Returns summary precalculated statistics
-      description: Counts of warnings, errors, and critical errors as reported by the Validator API (may differ from count of instances for a number of errors, it is recommended users use the summary_aggregate instead) , grouped by publisher.
+      description: Counts of warnings, errors, and critical errors as reported by the Validator API (may differ from count of instances for a number of errors, it is recommended users use the summary_aggregate instead) , grouped by publisher. Also includes the number of documents, and the number of documents with at least one critical error or error, based on the latest Validation report for each document. Only documents that are currently published are included.
       parameters:
         - in: query
           name: date
@@ -675,10 +675,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/StatsSummaryJSON"
+                $ref: "#/components/schemas/StatsSummaryPrecalcJSON"
             text/csv:
               schema:
-                $ref: "#/components/schemas/StatsSummaryCSV"
+                $ref: "#/components/schemas/StatsSummaryPrecalcCSV"
         401:
           $ref: "#/components/responses/UnauthorizedError"
         500:
@@ -1114,6 +1114,46 @@ components:
       example: |
         "publisher_name","critical","error","warning"
         "finland_mfa","146","1665","0"
+    StatsSummaryPrecalcJSON:
+      type: object
+      properties:
+        publisher_name:
+          type: object
+          description: publisher name for the stats
+          properties:
+            critical:
+              type: integer
+            error:
+              type: integer
+            warning:
+              type: integer
+            advisory:
+              type: integer
+            documents_with_critical:
+              type: integer
+              description: Number of documents whose latest Validation report has at least one critical error
+            documents_with_error:
+              type: integer
+              description: Number of documents whose latest Validation report has at least one error
+            documents:
+              type: integer
+              description: Number of currently published documents with a Validation report
+          required:
+            - critical
+            - error
+            - warning
+            - advisory
+            - documents_with_critical
+            - documents_with_error
+            - documents
+          additionalProperties: false
+      additionalProperties: true
+    StatsSummaryPrecalcCSV:
+      type: string
+      description: csv with header row "publisher_name","critical","error","warning","advisory","documents_with_critical","documents_with_error","documents"
+      example: |
+        "publisher_name","critical","error","warning","advisory","documents_with_critical","documents_with_error","documents"
+        "finland_mfa","146","1665","0","12","3","20","25"
     StatsJSON:
       type: object
       properties:

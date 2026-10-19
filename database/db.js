@@ -430,10 +430,17 @@ const getSummaryPrecalcStats = async (date, publisher) => {
                 SUM( (T1.report -> 'summary' ->> 'critical') :: INTEGER) as critical,
                 SUM( (T1.report -> 'summary' ->> 'error') :: INTEGER) as error,
                 SUM( (T1.report -> 'summary' ->> 'warning') :: INTEGER) as warning,
-                SUM(COALESCE((T1.report -> 'summary' ->> 'advisory') :: INTEGER, 0)) as advisory
+                SUM(COALESCE((T1.report -> 'summary' ->> 'advisory') :: INTEGER, 0)) as advisory,
+                COUNT(*) FILTER (WHERE (T1.report -> 'summary' ->> 'critical') :: INTEGER > 0) as documents_with_critical,
+                COUNT(*) FILTER (WHERE (T1.report -> 'summary' ->> 'error') :: INTEGER > 0) as documents_with_error,
+                COUNT(*) as documents
             FROM validation AS T1
             WHERE T1.created <= $1
             AND T1.publisher_name = $2
+            AND EXISTS(
+                SELECT * FROM document AS D
+                WHERE D.id = T1.document_id
+            )
             AND NOT EXISTS(
                 SELECT * FROM validation AS T2
                 WHERE T2.created <= $1
@@ -452,10 +459,17 @@ const getSummaryPrecalcStats = async (date, publisher) => {
                 SUM( (T1.report -> 'summary' ->> 'critical') :: INTEGER) as critical,
                 SUM( (T1.report -> 'summary' ->> 'error') :: INTEGER) as error,
                 SUM( (T1.report -> 'summary' ->> 'warning') :: INTEGER) as warning,
-                SUM(COALESCE((T1.report -> 'summary' ->> 'advisory') :: INTEGER, 0)) as advisory
+                SUM(COALESCE((T1.report -> 'summary' ->> 'advisory') :: INTEGER, 0)) as advisory,
+                COUNT(*) FILTER (WHERE (T1.report -> 'summary' ->> 'critical') :: INTEGER > 0) as documents_with_critical,
+                COUNT(*) FILTER (WHERE (T1.report -> 'summary' ->> 'error') :: INTEGER > 0) as documents_with_error,
+                COUNT(*) as documents
             FROM validation AS T1
             WHERE T1.created <= $1
             AND T1.publisher_name IS NOT NULL
+            AND EXISTS(
+                SELECT * FROM document AS D
+                WHERE D.id = T1.document_id
+            )
             AND NOT EXISTS(
                 SELECT * FROM validation AS T2
                 WHERE T2.created <= $1

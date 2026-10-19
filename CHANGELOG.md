@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 Changes before 2.9.5 are not recorded here; see the git history.
 
-## [Unreleased]
+## [2.9.6] - 2026-10-19
 
 ### Added
 
@@ -16,8 +16,7 @@ Changes before 2.9.5 are not recorded here; see the git history.
   and CSV. This lets the Dashboard show the percentage of a publisher's files
   with critical errors or errors
   ([#546](https://github.com/IATI/validator-services/issues/546)). The counts
-  use the latest validation report for each document, so they include
-  documents that are no longer published.
+  use the latest validation report for each document.
 
 ### Changed
 
@@ -25,5 +24,10 @@ Changes before 2.9.5 are not recorded here; see the git history.
   also document the `advisory` count it already returned.
 
 ### Fixed
+
+- `pub/stats/summary_precalc` no longer includes documents that are no longer
+  published, or publishers that no longer publish. Previously it counted the
+  latest validation report for every document ever validated
+  ([#512](https://github.com/IATI/validator-services/issues/512)).
 
 ### Removed

@@ -437,6 +437,10 @@ const getSummaryPrecalcStats = async (date, publisher) => {
             FROM validation AS T1
             WHERE T1.created <= $1
             AND T1.publisher_name = $2
+            AND EXISTS(
+                SELECT * FROM document AS D
+                WHERE D.id = T1.document_id
+            )
             AND NOT EXISTS(
                 SELECT * FROM validation AS T2
                 WHERE T2.created <= $1
@@ -462,6 +466,10 @@ const getSummaryPrecalcStats = async (date, publisher) => {
             FROM validation AS T1
             WHERE T1.created <= $1
             AND T1.publisher_name IS NOT NULL
+            AND EXISTS(
+                SELECT * FROM document AS D
+                WHERE D.id = T1.document_id
+            )
             AND NOT EXISTS(
                 SELECT * FROM validation AS T2
                 WHERE T2.created <= $1
